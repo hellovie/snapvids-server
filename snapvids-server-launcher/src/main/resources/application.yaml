@@ -1,10 +1,7 @@
-server:
-  port: 8888
-
 # 通用配置
 spring:
   profiles:
-    active: dev
+    active: @profileActive@
   banner:
     location: classpath:static/banner.txt
 

@@ -26,6 +26,34 @@
         <spring-boot.version>2.7.6</spring-boot.version>
     </properties>
 
+    <!-- 环境配置 -->
+    <profiles>
+        <!-- 「默认」开发环境 -->
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <profileActive>dev</profileActive>
+            </properties>
+        </profile>
+        <!-- 测试环境 -->
+        <profile>
+            <id>test</id>
+            <properties>
+                <profileActive>test</profileActive>
+            </properties>
+        </profile>
+        <!-- 生产环境 -->
+        <profile>
+            <id>prod</id>
+            <properties>
+                <profileActive>prod</profileActive>
+            </properties>
+        </profile>
+    </profiles>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -91,7 +119,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
                 <configuration>
-                    <mainClass>io.github.hellovie.snapvids.SnapvidsServerApplication</mainClass>
+                    <mainClass>io.github.hellovie.snapvids.launcher.MainApplication</mainClass>
                     <skip>true</skip>
                 </configuration>
                 <executions>

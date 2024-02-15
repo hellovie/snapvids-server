@@ -1,0 +1,7 @@
+# 测试环境配置
+server:
+  port: ${SERVER_PORT}
+
+spring:
+  config:
+    import: optional:file:.env.test[.properties]
