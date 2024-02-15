@@ -1,0 +1,130 @@
+package io.github.hellovie.snapvids.common.module.common;
+
+import io.github.hellovie.snapvids.common.exception.manager.ExceptionCode;
+import io.github.hellovie.snapvids.common.exception.manager.ExceptionModule;
+import io.github.hellovie.snapvids.common.exception.manager.ExceptionSource;
+import io.github.hellovie.snapvids.common.exception.notify.ExceptionNotifyInfo;
+import io.github.hellovie.snapvids.common.exception.notify.NotifyService;
+import io.github.hellovie.snapvids.common.exception.notify.NotifyServiceManager;
+import io.github.hellovie.snapvids.common.exception.notify.NotifyServiceManager.Builder;
+import io.github.hellovie.snapvids.common.module.ExceptionModuleType;
+
+import static io.github.hellovie.snapvids.common.exception.model.ExceptionSourceType.*;
+
+/**
+ * 通用模块异常状态码枚举类。
+ *
+ * @author hellovie
+ * @since 1.0.0
+ */
+public enum CommonExceptionType implements ExceptionCode {
+
+    /**
+     * 这是一个业务异常测试案例
+     */
+    TEST_BUSINESS_EXCEPTION(BUSINESS, 1, "这是一个业务异常测试案例", true),
+
+    /**
+     * 找不到异常通知服务 {@link NotifyService} 的实现类
+     *
+     * @see NotifyServiceManager#notify(String, ExceptionNotifyInfo)
+     */
+    NOTIFY_SERVICE_NOT_FOUND(ENVIRONMENT, 2, "找不到异常通知服务的实现类", false),
+
+    /**
+     * 异常通知服务注入失败
+     *
+     * @see Builder#addNotifyService(String, NotifyService)
+     */
+    NOTIFY_SERVICE_INVALID_INJECTION(ENVIRONMENT, 3, "异常通知服务注入失败", false),
+
+    /**
+     * 未知异常
+     */
+    UNKNOWN_EXCEPTION(UNKNOWN, 9999, "服务器繁忙，请稍后再试", false),
+    ;
+
+    /**
+     * 模块信息
+     */
+    private final ExceptionModule module;
+
+    /**
+     * 异常来源
+     */
+    private final ExceptionSource source;
+
+    /**
+     * 错误编号
+     */
+    private final int number;
+
+    /**
+     * 异常信息
+     */
+    private final String message;
+
+    /**
+     * 是否允许重试
+     * <p>true：允许重试</p>
+     */
+    private final boolean canRetry;
+
+    CommonExceptionType(ExceptionSource source, int number, String message, boolean canRetry) {
+        this.module = ExceptionModuleType.COMMON_MODULE;
+        this.source = source;
+        this.number = number;
+        this.message = message;
+        this.canRetry = canRetry;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see ExceptionCode#getModule()
+     */
+    @Override
+    public ExceptionModule getModule() {
+        return this.module;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see ExceptionCode#getSource()
+     */
+    @Override
+    public ExceptionSource getSource() {
+        return this.source;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see ExceptionCode#getNumber()
+     */
+    @Override
+    public int getNumber() {
+        return this.number;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see ExceptionCode#getMessage()
+     */
+    @Override
+    public String getMessage() {
+        return this.message;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see ExceptionCode#canRetry()
+     */
+    @Override
+    public boolean canRetry() {
+        return this.canRetry;
+    }
+}

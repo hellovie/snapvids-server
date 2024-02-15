@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author hellovie
  * @since 1.0.0
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "io.github.hellovie.snapvids")
 public class MainApplication {
 
     public static void main(String[] args) {
