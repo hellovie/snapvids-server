@@ -1,2 +1,12 @@
 server:
   port: 8888
+
+# 通用配置
+spring:
+  profiles:
+    active: dev
+  banner:
+    location: classpath:static/banner.txt
+
+logging:
+  config: classpath:config/logback-spring.xml
