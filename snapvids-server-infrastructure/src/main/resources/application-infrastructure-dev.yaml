@@ -1,0 +1,9 @@
+# 开发环境配置
+spring:
+  config:
+    import:
+      - optional:file:.env.dev[.properties]
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST}:3306/${DATABASE_NAME}?characterEncoding=UTF8&serverTimezone=UTC&allowMultiQueries=true&useAffectedRows=true
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}

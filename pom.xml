@@ -63,6 +63,16 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>8.0.28</version>
+            </dependency>
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-core</artifactId>
+                <version>8.2.0</version>
+            </dependency>
             <!-- 本项目的依赖 -->
             <dependency>
                 <groupId>io.github.hellovie</groupId>

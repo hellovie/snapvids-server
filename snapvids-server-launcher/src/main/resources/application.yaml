@@ -2,6 +2,7 @@
 spring:
   profiles:
     active: @profileActive@
+    include: infrastructure
   banner:
     location: classpath:static/banner.txt
 
