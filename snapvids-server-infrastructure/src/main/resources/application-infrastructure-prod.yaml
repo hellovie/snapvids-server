@@ -1,9 +1,16 @@
 # 生产环境配置
 spring:
   config:
+    # 前面是启动类读取配置文件的路径，后面是测试类读取配置文件的路径
+    # 写法不同，但指向同个文件，原因未知
     import:
       - optional:file:.env.prod[.properties]
+      - optional:file:../.env.prod[.properties]
   datasource:
     url: jdbc:mysql://${MYSQL_HOST}:3306/${DATABASE_NAME}?characterEncoding=UTF8&serverTimezone=UTC&allowMultiQueries=true&useAffectedRows=true
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
+  redis:
+    host: ${REDIS_HOST}
+    port: 6379
+    password: ${REDIS_PASSWORD}

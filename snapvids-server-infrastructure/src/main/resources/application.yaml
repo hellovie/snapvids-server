@@ -1,0 +1,5 @@
+# 给模块内部测试使用
+spring:
+  profiles:
+    active: @profileActive@
+    include: infrastructure
