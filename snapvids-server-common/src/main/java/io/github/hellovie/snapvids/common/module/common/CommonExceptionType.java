@@ -39,6 +39,16 @@ public enum CommonExceptionType implements ExceptionCode {
     NOTIFY_SERVICE_INVALID_INJECTION(ENVIRONMENT, 3, "异常通知服务注入失败", false),
 
     /**
+     * 参数不存在
+     */
+    PARAMS_NOT_FOUND(SYSTEM, 4, "参数不存在", false),
+
+    /**
+     * ID不存在
+     */
+    ID_NOT_FOUND(BUSINESS, 5, "ID不存在", false),
+
+    /**
      * 未知异常
      */
     UNKNOWN_EXCEPTION(UNKNOWN, 9999, "服务器繁忙，请稍后再试", false),

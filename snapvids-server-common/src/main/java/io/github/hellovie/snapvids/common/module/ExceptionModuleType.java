@@ -3,6 +3,7 @@ package io.github.hellovie.snapvids.common.module;
 import io.github.hellovie.snapvids.common.exception.manager.ExceptionCode;
 import io.github.hellovie.snapvids.common.exception.manager.ExceptionModule;
 import io.github.hellovie.snapvids.common.module.common.CommonExceptionType;
+import io.github.hellovie.snapvids.common.module.user.UserExceptionType;
 
 /**
  * 异常模块信息枚举。
@@ -13,6 +14,8 @@ import io.github.hellovie.snapvids.common.module.common.CommonExceptionType;
 public enum ExceptionModuleType implements ExceptionModule {
 
     COMMON_MODULE(0, "通用模块", "通用模块", CommonExceptionType.class),
+
+    USER_MODULE(1, "用户模块", "用户模块", UserExceptionType.class),
 
     ;
 
