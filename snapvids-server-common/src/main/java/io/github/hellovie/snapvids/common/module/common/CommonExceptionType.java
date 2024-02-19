@@ -49,6 +49,16 @@ public enum CommonExceptionType implements ExceptionCode {
     ID_NOT_FOUND(BUSINESS, 5, "ID不存在", false),
 
     /**
+     * JWT Token 生成失败
+     */
+    CREATE_JWT_TOKEN_FAILURE(SYSTEM, 6, "JWT Token生成失败", false),
+
+    /**
+     * 解密 JWT Token 失败
+     */
+    DECRYPT_JWT_TOKEN_FAILURE(SYSTEM, 7, "JWT Token解密失败", false),
+
+    /**
      * 未知异常
      */
     UNKNOWN_EXCEPTION(UNKNOWN, 9999, "服务器繁忙，请稍后再试", false),
