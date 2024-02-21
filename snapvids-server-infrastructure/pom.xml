@@ -50,6 +50,10 @@
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.ksuid</groupId>
+            <artifactId>ksuid</artifactId>
+        </dependency>
         <!-- 本项目的依赖 -->
         <dependency>
             <groupId>io.github.hellovie</groupId>
