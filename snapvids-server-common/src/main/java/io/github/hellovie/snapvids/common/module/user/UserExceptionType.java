@@ -48,12 +48,12 @@ public enum UserExceptionType implements ExceptionCode {
     /**
      * 密码的盐值不能为空
      */
-    PASSWORD_SALT_CANNOT_BE_EMPTY(SYSTEM, 7, "密码的盐值不能为空", true),
+    PASSWORD_SALT_CANNOT_BE_EMPTY(SYSTEM, 7, "密码的盐值不能为空", false),
 
     /**
      * 错误的密码盐值
      */
-    WRONG_PASSWORD_SALT(SYSTEM, 8, "错误的密码盐值", true),
+    WRONG_PASSWORD_SALT(SYSTEM, 8, "错误的密码盐值", false),
 
     /**
      * 密码错误
@@ -119,6 +119,11 @@ public enum UserExceptionType implements ExceptionCode {
      * 错误的IP地址
      */
     WRONG_IP_ADDRESS(BUSINESS, 21, "错误的IP地址", true),
+
+    /**
+     * 密码密文不能为空
+     */
+    PASSWORD_CIPHERTEXT_CANNOT_BE_EMPTY(SYSTEM, 22, "密码密文不能为空", false),
 
     ;
 
