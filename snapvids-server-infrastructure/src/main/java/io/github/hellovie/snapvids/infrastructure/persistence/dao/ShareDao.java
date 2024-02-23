@@ -1,7 +1,8 @@
-package io.github.hellovie.snapvids.infrastructure.persistence.repository;
+package io.github.hellovie.snapvids.infrastructure.persistence.dao;
 
 import io.github.hellovie.snapvids.infrastructure.persistence.entity.Share;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 /**
  * 分享仓储。
@@ -9,5 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author hellovie
  * @since 1.0.0
  */
-public interface ShareRepository extends JpaRepository<Share, Long> {
+@Repository("shareDao")
+public interface ShareDao extends JpaRepository<Share, Long> {
 }

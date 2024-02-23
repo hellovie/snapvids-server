@@ -1,7 +1,8 @@
-package io.github.hellovie.snapvids.infrastructure.persistence.repository;
+package io.github.hellovie.snapvids.infrastructure.persistence.dao;
 
 import io.github.hellovie.snapvids.infrastructure.persistence.entity.File;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 /**
  * 文件仓储。
@@ -9,5 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author hellovie
  * @since 1.0.0
  */
-public interface FileRepository extends JpaRepository<File, Long> {
+@Repository("fileDao")
+public interface FileDao extends JpaRepository<File, Long> {
 }

@@ -40,7 +40,7 @@ public class User extends BaseEntity {
     /**
      * 最后登录 IP
      */
-    private Long lastLoginIp;
+    private Integer lastLoginIp;
 
     /**
      * 最后登录时间
@@ -51,7 +51,7 @@ public class User extends BaseEntity {
      * 注册 IP
      */
     @Column(updatable = false)
-    private Long registerIp;
+    private Integer registerIp;
 
     /**
      * 注册时间
@@ -121,11 +121,11 @@ public class User extends BaseEntity {
         return this;
     }
 
-    public Long getLastLoginIp() {
+    public Integer getLastLoginIp() {
         return lastLoginIp;
     }
 
-    public User setLastLoginIp(Long lastLoginIp) {
+    public User setLastLoginIp(Integer lastLoginIp) {
         this.lastLoginIp = lastLoginIp;
         return this;
     }
@@ -139,11 +139,11 @@ public class User extends BaseEntity {
         return this;
     }
 
-    public Long getRegisterIp() {
+    public Integer getRegisterIp() {
         return registerIp;
     }
 
-    public User setRegisterIp(Long registerIp) {
+    public User setRegisterIp(Integer registerIp) {
         this.registerIp = registerIp;
         return this;
     }
