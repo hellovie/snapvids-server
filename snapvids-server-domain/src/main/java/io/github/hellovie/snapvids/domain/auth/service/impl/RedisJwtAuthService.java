@@ -307,22 +307,20 @@ public class RedisJwtAuthService implements AuthService {
         Map<String, Long> tempRefreshTokens = new HashMap<>(refreshTokens);
 
         long now = new Date().getTime() / 1000;
-        long refreshTokenExpiredTime = now + AuthService.REFRESH_TOKEN_EXPIRED_IN_SECONDS;
         // 先遍历刷新令牌，若刷新令牌过期，访问令牌也一定过期
         for (String token : tempRefreshTokens.keySet()) {
             // 令牌已过期
-            if (refreshTokens.get(token) != null && refreshTokens.get(token) >= refreshTokenExpiredTime) {
+            if (refreshTokens.get(token) != null && refreshTokens.get(token) <= now) {
                 accessTokens.remove(token);
                 refreshTokens.remove(token);
             }
         }
 
         Map<String, Long> tempAccessTokens = new HashMap<>(accessTokens);
-        long accessTokenExpiredTime = now + AuthService.ACCESS_TOKEN_EXPIRED_IN_SECONDS;
-        // 先遍历刷新令牌，若刷新令牌过期，访问令牌也一定过期
+        // 再遍历访问令牌
         for (String token : tempAccessTokens.keySet()) {
             // 令牌已过期
-            if (accessTokens.get(token) != null && accessTokens.get(token) >= accessTokenExpiredTime) {
+            if (accessTokens.get(token) != null && accessTokens.get(token) <= now) {
                 accessTokens.remove(token);
             }
         }
