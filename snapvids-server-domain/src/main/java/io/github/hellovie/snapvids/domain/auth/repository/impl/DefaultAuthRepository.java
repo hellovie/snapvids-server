@@ -22,10 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.github.hellovie.snapvids.common.module.user.UserCacheKey.USER_ACCESS_TOKEN;
@@ -156,6 +153,20 @@ public class DefaultAuthRepository implements AuthRepository {
                     updateRows, username.getValue(), lastLoginIp.getIntAddress(), lastLoginTime);
             throw new DataException(UserExceptionType.UPDATE_USER_LOGIN_INFO_ERROR);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see AuthRepository#removeToken(long, String...)
+     */
+    @Override
+    public void removeToken(long userId, String... tokenId) {
+        String accessTokenKey = USER_ACCESS_TOKEN + userId;
+        String refreshTokenKey = USER_REFRESH_TOKEN + userId;
+        Object[] tokenIds = Arrays.stream(tokenId).toArray();
+        cacheService.delInMap(accessTokenKey, tokenIds);
+        cacheService.delInMap(refreshTokenKey, tokenIds);
     }
 
     /**

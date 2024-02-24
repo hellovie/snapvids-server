@@ -68,4 +68,12 @@ public interface AuthRepository {
      * @throws DataException 更新失败抛出异常
      */
     void updateLoginInfoByUsername(Username username, Ip lastLoginIp, Timestamp lastLoginTime) throws DataException;
+
+    /**
+     * 移除访问令牌和刷新令牌。
+     *
+     * @param userId  用户 id
+     * @param tokenId 要移除的 token id
+     */
+    void removeToken(long userId, String... tokenId);
 }

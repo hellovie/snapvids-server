@@ -48,4 +48,9 @@ public interface AuthService {
      * @return 用户登录信息
      */
     LoginInfo login(LoginParams<?> loginParams);
+
+    /**
+     * 退出登录。
+     */
+    void logout();
 }

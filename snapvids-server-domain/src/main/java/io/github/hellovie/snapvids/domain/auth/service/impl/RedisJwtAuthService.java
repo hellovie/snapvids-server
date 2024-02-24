@@ -1,6 +1,7 @@
 package io.github.hellovie.snapvids.domain.auth.service.impl;
 
 import io.github.hellovie.snapvids.common.cache.CacheService;
+import io.github.hellovie.snapvids.common.context.Context;
 import io.github.hellovie.snapvids.common.exception.business.AuthException;
 import io.github.hellovie.snapvids.common.exception.business.DataException;
 import io.github.hellovie.snapvids.common.exception.business.ServiceException;
@@ -19,8 +20,10 @@ import io.github.hellovie.snapvids.domain.auth.strategy.LoginParams;
 import io.github.hellovie.snapvids.domain.auth.strategy.RegisterParams;
 import io.github.hellovie.snapvids.domain.auth.vo.LoginInfo;
 import io.github.hellovie.snapvids.domain.auth.vo.TokenInfo;
+import io.github.hellovie.snapvids.domain.util.ContextHolder;
 import io.github.hellovie.snapvids.infrastructure.properties.JwtProperties;
 import io.github.hellovie.snapvids.types.common.Id;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -39,6 +42,11 @@ import java.util.concurrent.TimeUnit;
 public class RedisJwtAuthService implements AuthService {
 
     private static final Logger LOG = LoggerFactory.getLogger(RedisJwtAuthService.class);
+
+    /**
+     * Authorization 前缀
+     */
+    private static final String AUTHORIZATION_PREFIX = "Bearer ";
 
     /**
      * JWT 中存放 用户 ID 的 Claim Key
@@ -114,6 +122,37 @@ public class RedisJwtAuthService implements AuthService {
         LoginInfo loginInfo = new LoginInfo(account, tokenInfo);
         LOG.info("[Login result]>>> loginInfo={}", loginInfo);
         return loginInfo;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see AuthService#logout()
+     */
+    @Override
+    public void logout() {
+        Context context = ContextHolder.getContext();
+        if (context == null || StringUtils.isBlank(context.getAuthorization()) ||
+                !context.getAuthorization().startsWith(AUTHORIZATION_PREFIX)) {
+            return;
+        }
+
+        String token = context.getAuthorization().replaceFirst(AUTHORIZATION_PREFIX, "");
+        try {
+            Map<String, String> payload = jwtTokenService.getPayload(jwtProperties.getSecret(), token);
+            long userId = Long.parseLong(payload.get(JWT_UID_CLAIM_KEY));
+            String tokenId = payload.get(JWT_TOKEN_ID_CLAIM_KEY);
+            String type = payload.get(JWT_TOKEN_TYPE_CLAIM_KEY);
+
+            // 无法清除缓存中的令牌的情况，直接返回
+            if (!TokenType.ACCESS_TOKEN.getKey().equals(type) || "".equals(tokenId) || userId <= 0L) {
+                return;
+            }
+
+            repository.removeToken(userId, tokenId);
+        } catch (Exception ex) {
+            LOG.error("[Logout exception]>>> {}", ex.getMessage(), ex);
+        }
     }
 
     /**
