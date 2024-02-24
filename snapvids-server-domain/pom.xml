@@ -12,6 +12,11 @@
     <description>领域层：负责领域业务</description>
 
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- 本项目的依赖 -->
         <dependency>
             <groupId>io.github.hellovie</groupId>

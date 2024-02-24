@@ -125,6 +125,81 @@ public enum UserExceptionType implements ExceptionCode {
      */
     PASSWORD_CIPHERTEXT_CANNOT_BE_EMPTY(SYSTEM, 22, "密码密文不能为空", false),
 
+    /**
+     * 注册参数不能为空
+     */
+    REGISTER_PARAMS_CANNOT_BE_NULL(BUSINESS, 23, "注册参数不能为空", true),
+
+    /**
+     * 登录参数不能为空
+     */
+    LOGIN_PARAMS_CANNOT_BE_NULL(BUSINESS, 24, "登录参数不能为空", true),
+
+    /**
+     * 访问令牌不能为空
+     */
+    ACCESS_TOKEN_CANNOT_BE_EMPTY(BUSINESS, 25, "访问令牌不能为空", true),
+
+    /**
+     * 刷新令牌不能为空
+     */
+    REFRESH_TOKEN_CANNOT_BE_EMPTY(BUSINESS, 26, "刷新令牌不能为空", true),
+
+    /**
+     * 无效的过期时间
+     */
+    INVALID_REFRESH_TOKEN_EXPIRATION_TIME(BUSINESS, 27, "无效的过期时间", true),
+
+    /**
+     * 找不到认证策略
+     */
+    AUTH_STRATEGY_NOT_FOUND(SYSTEM, 28, "找不到认证策略", false),
+
+    /**
+     * 用户已锁定，无法再登录
+     */
+    USER_LOCKED_CAN_NOT_LOGIN(BUSINESS, 29, "账号已锁定，无法登录", false),
+
+    /**
+     * 出现访问令牌数量大于刷新令牌的情况
+     */
+    ACCESS_TOKEN_NUM_EXCEEDS_REFRESH_TOKEN_NUM(SYSTEM, 30, "出现访问令牌数量大于刷新令牌的情况", false),
+
+    /**
+     * 该用户正在登录中，请稍后再试
+     */
+    USER_LOGGING_IN_TRY_AGAIN_LATER(BUSINESS, 31, "该用户正在登录中，请稍后再试", false),
+
+    /**
+     * 用户已存在
+     */
+    USER_ALREADY_EXIST(BUSINESS, 32, "用户已存在", true),
+
+    /**
+     * 用户不存在
+     */
+    USER_NOT_FOUND(BUSINESS, 33, "用户不存在", true),
+
+    /**
+     * 用户状态异常
+     */
+    USER_STATE_EXCEPTION(SYSTEM, 34, "用户状态异常", false),
+
+    /**
+     * 账号已被锁定
+     */
+    USER_STATE_LOCK(BUSINESS, 35, "账号已被锁定", false),
+
+    /**
+     * 账号已被禁用
+     */
+    USER_STATE_DISABLE(BUSINESS, 36, "账号已被禁用", false),
+
+    /**
+     * 更新用户登录信息失败
+     */
+    UPDATE_USER_LOGIN_INFO_ERROR(SYSTEM, 37, "更新用户登录信息失败", false),
+
     ;
 
     /**

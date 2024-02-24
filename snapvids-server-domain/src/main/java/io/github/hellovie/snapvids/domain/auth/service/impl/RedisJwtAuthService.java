@@ -1,0 +1,353 @@
+package io.github.hellovie.snapvids.domain.auth.service.impl;
+
+import io.github.hellovie.snapvids.common.cache.CacheService;
+import io.github.hellovie.snapvids.common.exception.business.AuthException;
+import io.github.hellovie.snapvids.common.exception.business.DataException;
+import io.github.hellovie.snapvids.common.exception.business.ServiceException;
+import io.github.hellovie.snapvids.common.exception.system.ConfigException;
+import io.github.hellovie.snapvids.common.exception.system.UtilException;
+import io.github.hellovie.snapvids.common.module.user.UserCacheKey;
+import io.github.hellovie.snapvids.common.module.user.UserExceptionType;
+import io.github.hellovie.snapvids.common.service.IdGenerateService;
+import io.github.hellovie.snapvids.common.service.TokenService;
+import io.github.hellovie.snapvids.domain.auth.entity.Account;
+import io.github.hellovie.snapvids.domain.auth.enums.TokenType;
+import io.github.hellovie.snapvids.domain.auth.repository.AuthRepository;
+import io.github.hellovie.snapvids.domain.auth.service.AuthService;
+import io.github.hellovie.snapvids.domain.auth.strategy.AuthStrategy;
+import io.github.hellovie.snapvids.domain.auth.strategy.LoginParams;
+import io.github.hellovie.snapvids.domain.auth.strategy.RegisterParams;
+import io.github.hellovie.snapvids.domain.auth.vo.LoginInfo;
+import io.github.hellovie.snapvids.domain.auth.vo.TokenInfo;
+import io.github.hellovie.snapvids.infrastructure.properties.JwtProperties;
+import io.github.hellovie.snapvids.types.common.Id;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * Redis + JWT 的认证服务实现类。
+ *
+ * @author hellovie
+ * @since 1.0.0
+ */
+@Service("redisJwtAuthService")
+public class RedisJwtAuthService implements AuthService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RedisJwtAuthService.class);
+
+    /**
+     * JWT 中存放 用户 ID 的 Claim Key
+     */
+    private static final String JWT_UID_CLAIM_KEY = "uid";
+
+    /**
+     * JWT 中存放 Token ID 的 Claim Key
+     */
+    private static final String JWT_TOKEN_ID_CLAIM_KEY = "token-id";
+
+    /**
+     * JWT 中存放 Token 类型的 Claim Key
+     */
+    private static final String JWT_TOKEN_TYPE_CLAIM_KEY = "token-type";
+
+    /**
+     * JWT Token 配置类
+     */
+    @Resource(name = "jwtProperties")
+    private JwtProperties jwtProperties;
+
+    /**
+     * JWT Token 服务
+     */
+    @Resource(name = "jwtTokenService")
+    private TokenService jwtTokenService;
+
+    /**
+     * Ksuid 生成器
+     */
+    @Resource(name = "ksuidGenerator")
+    private IdGenerateService<String> ksuidGenerator;
+
+    @Resource
+    private Map<String, AuthStrategy> strategyMap;
+
+    @Resource(name = "authRepository")
+    private AuthRepository repository;
+
+    @Resource(name = "redisCacheService")
+    private CacheService cacheService;
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see AuthService#register(RegisterParams)
+     */
+    @Override
+    public LoginInfo register(final RegisterParams<?> registerParams) {
+        LOG.info("[Register params]>>> type={}, params={}", registerParams.getAuthType(), registerParams.getParams());
+        AuthStrategy strategy = getAuthStrategy(registerParams.getAuthType());
+        Account account = strategy.register(registerParams);
+        checkUserState(account);
+        TokenInfo tokenInfo = createTokenInfo(account.getId());
+        LoginInfo loginInfo = new LoginInfo(account, tokenInfo);
+        LOG.info("[Register result]>>> loginInfo={}", loginInfo);
+        return loginInfo;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see AuthService#login(LoginParams)
+     */
+    @Override
+    public LoginInfo login(final LoginParams<?> loginParams) {
+        LOG.info("[Login params]>>> type={}, params={}", loginParams.getAuthType(), loginParams.getParams());
+        AuthStrategy strategy = getAuthStrategy(loginParams.getAuthType());
+        Account account = strategy.login(loginParams);
+        checkUserState(account);
+        TokenInfo tokenInfo = createTokenInfo(account.getId());
+        LoginInfo loginInfo = new LoginInfo(account, tokenInfo);
+        LOG.info("[Login result]>>> loginInfo={}", loginInfo);
+        return loginInfo;
+    }
+
+    /**
+     * 检查用户账号状态是否健康。
+     *
+     * @param account 用户账号
+     * @throws AuthException 用户账号状态不健康抛出
+     */
+    private void checkUserState(Account account) throws AuthException {
+        if (account == null) {
+            throw new AuthException(UserExceptionType.USER_STATE_EXCEPTION);
+        }
+
+        switch (account.getState()) {
+            case ENABLE:
+                return;
+            case DISABLE:
+                LOG.info("[The user has been disabled]>>> username={}", account.getUsername().getValue());
+                throw new AuthException(UserExceptionType.USER_STATE_DISABLE);
+            case LOCK:
+                LOG.info("[The user is locked out]>>> username={}", account.getUsername().getValue());
+                throw new AuthException(UserExceptionType.USER_STATE_LOCK);
+            default:
+                throw new AuthException(UserExceptionType.USER_STATE_EXCEPTION);
+        }
+    }
+
+    /**
+     * 生成登录令牌信息。
+     * <p>每次颁发新的访问令牌时，都会颁发新的刷新令牌，而刷新令牌的时间远大于访问令牌。</p>
+     * <p>访问令牌数量 <= 刷新令牌数量，所以用户是否在线和同时在线数以访问令牌为主。</p>
+     * <p>对于当前用户的登录账号的请求是串行的。</p>
+     * <p>能够生成登录令牌的条件如下：</p>
+     * <ul>
+     *     <li>{@link AuthService#WHETHER_LOCK_USER} = false：没有锁定用户。</li>
+     *     <li>{@link AuthService#WHETHER_LOCK_USER} = true：当该用户的同时在线数未超出限制
+     *     （{@link AuthService#MAXIMUM_LOGIN_TOKEN_ID}）时。</li>
+     * </ul>
+     *
+     * @param identifier 用户标识
+     * @throws DataException 生成失败抛出异常
+     */
+    private TokenInfo createTokenInfo(final Id identifier) throws DataException {
+        String lockKey = UserCacheKey.USER_LOGIN_LOCK + identifier.getValue();
+        boolean tryLock = cacheService.lock(lockKey, 1, TimeUnit.MINUTES);
+
+        if (tryLock) {
+            try {
+                Map<String, Long> accessTokens = repository.findOnlineAccessTokenByUserId(identifier);
+                Map<String, Long> refreshTokens = repository.findOnlineRefreshTokenByUserId(identifier);
+                checkTokenQuantity(accessTokens, refreshTokens);
+
+                if (AuthService.WHETHER_LOCK_USER && refreshTokens.size() >= AuthService.MAXIMUM_LOGIN_TOKEN_ID) {
+                    // 用户已锁定，同时超出该用户的同时在线数，无法生成登录令牌
+                    throw new DataException(UserExceptionType.USER_LOCKED_CAN_NOT_LOGIN);
+                }
+
+                // 清除无效令牌
+                clearTokens(accessTokens, refreshTokens);
+
+                // 满足条件，生成 JWT Token
+                String tokenId = ksuidGenerator.genId();
+                LOG.info("[Create token id]>>> tokenId={}", tokenId);
+                String jwtAccessToken = createJwtToken(identifier, tokenId, TokenType.ACCESS_TOKEN);
+                String jwtRefreshToken = createJwtToken(identifier, tokenId, TokenType.REFRESH_TOKEN);
+
+                // 更新 Token ID 到缓存
+                long now = new Date().getTime() / 1000;
+                accessTokens.put(tokenId, now + AuthService.ACCESS_TOKEN_EXPIRED_IN_SECONDS);
+                refreshTokens.put(tokenId, now + AuthService.REFRESH_TOKEN_EXPIRED_IN_SECONDS);
+                repository.saveOnlineToken(identifier, accessTokens, refreshTokens);
+                LOG.info("[Save online token]>>> accessToken=[{}, {}], refreshToken=[{}, {}]",
+                        tokenId, accessTokens.get(tokenId), tokenId, refreshTokens.get(tokenId));
+                LOG.info("[The number of tokens currently online]>>> accessTokens.size={}, refreshTokens.size={}",
+                        accessTokens.size(), refreshTokens.size());
+
+                TokenInfo tokenInfo = new TokenInfo(jwtAccessToken, jwtRefreshToken, REFRESH_TOKEN_EXPIRED_IN_SECONDS);
+                LOG.info("[Create token info]>>> tokenInfo={}", tokenInfo);
+                return tokenInfo;
+            } finally {
+                cacheService.unlock(lockKey);
+            }
+        }
+
+        // 在该用户账号登录的过程中，该账号还有登录请求，抛出异常
+        throw new ServiceException(UserExceptionType.USER_LOGGING_IN_TRY_AGAIN_LATER);
+    }
+
+    /**
+     * 清除无效令牌（过期和超出数量）。
+     *
+     * @param accessTokens  访问令牌集合
+     * @param refreshTokens 刷新令牌集合
+     */
+    private void clearTokens(Map<String, Long> accessTokens, Map<String, Long> refreshTokens) {
+        // 清除过期的令牌
+        clearExpiredTokens(accessTokens, refreshTokens);
+        checkTokenQuantity(accessTokens, refreshTokens);
+        // 清除超出数量的令牌
+        clearExcessQuantityTokens(accessTokens, refreshTokens);
+        checkTokenQuantity(accessTokens, refreshTokens);
+    }
+
+    /**
+     * 清除超出数量的令牌（保留一个空位）。
+     * <p>将超出数量 {@link AuthService#MAXIMUM_LOGIN_TOKEN_ID} 的令牌中，最先过期的令牌清除。</p>
+     *
+     * @param accessTokens  访问令牌集合
+     * @param refreshTokens 刷新令牌集合
+     */
+    private void clearExcessQuantityTokens(Map<String, Long> accessTokens, Map<String, Long> refreshTokens) {
+        LOG.info("[ClearExcessQuantityTokens params]>>> accessTokens.size={}, refreshTokens.size={}",
+                accessTokens.size(), refreshTokens.size());
+
+        // 保留一个空位
+        int clearSize = refreshTokens.size() - AuthService.MAXIMUM_LOGIN_TOKEN_ID + 1;
+        if (clearSize <= 0) {
+            return;
+        }
+
+        // 刷新令牌根据过期时间从小到大排序
+        List<Map.Entry<String, Long>> refreshTokenList = new ArrayList<>(refreshTokens.entrySet());
+        refreshTokenList.sort(Map.Entry.comparingByValue());
+
+        // 开始清除令牌，根据刷新令牌来判断用户同时在线的令牌数
+        int clearNum = 0;
+        for (Map.Entry<String, Long> entry : refreshTokenList) {
+            if (clearNum == clearSize) {
+                break;
+            }
+            accessTokens.remove(entry.getKey());
+            refreshTokens.remove(entry.getKey());
+            clearNum++;
+        }
+
+        LOG.info("[ClearExcessQuantityTokens result]>>> accessTokens.size={}, refreshTokens.size={}",
+                accessTokens.size(), refreshTokens.size());
+    }
+
+    /**
+     * 清除过期的令牌。
+     *
+     * @param accessTokens  访问令牌集合
+     * @param refreshTokens 刷新令牌集合
+     */
+    private void clearExpiredTokens(Map<String, Long> accessTokens, Map<String, Long> refreshTokens) {
+        LOG.info("[ClearExpiredTokens params]>>> accessTokens.size={}, refreshTokens.size={}", accessTokens.size(),
+                refreshTokens.size());
+
+        // 使用副本遍历，这样 remove 就不会影响原 Map。
+        // 解决 java.util.ConcurrentModificationException 问题。
+        Map<String, Long> tempRefreshTokens = new HashMap<>(refreshTokens);
+
+        long now = new Date().getTime() / 1000;
+        long refreshTokenExpiredTime = now + AuthService.REFRESH_TOKEN_EXPIRED_IN_SECONDS;
+        // 先遍历刷新令牌，若刷新令牌过期，访问令牌也一定过期
+        for (String token : tempRefreshTokens.keySet()) {
+            // 令牌已过期
+            if (refreshTokens.get(token) != null && refreshTokens.get(token) >= refreshTokenExpiredTime) {
+                accessTokens.remove(token);
+                refreshTokens.remove(token);
+            }
+        }
+
+        Map<String, Long> tempAccessTokens = new HashMap<>(accessTokens);
+        long accessTokenExpiredTime = now + AuthService.ACCESS_TOKEN_EXPIRED_IN_SECONDS;
+        // 先遍历刷新令牌，若刷新令牌过期，访问令牌也一定过期
+        for (String token : tempAccessTokens.keySet()) {
+            // 令牌已过期
+            if (accessTokens.get(token) != null && accessTokens.get(token) >= accessTokenExpiredTime) {
+                accessTokens.remove(token);
+            }
+        }
+
+        LOG.info("[ClearExpiredTokens result]>>> accessTokens.size={}, refreshTokens.size={}", accessTokens.size(),
+                refreshTokens.size());
+    }
+
+    /**
+     * 检查令牌数量是否正常。
+     *
+     * @param accessTokens  访问令牌集合
+     * @param refreshTokens 刷新令牌集合
+     * @throws UtilException 访问令牌数量超出刷新令牌数量抛出
+     */
+    private void checkTokenQuantity(final Map<String, Long> accessTokens, final Map<String, Long> refreshTokens) {
+        if (accessTokens.size() > refreshTokens.size()) {
+            throw new UtilException(UserExceptionType.ACCESS_TOKEN_NUM_EXCEEDS_REFRESH_TOKEN_NUM);
+        }
+    }
+
+    /**
+     * 生成带有 uid，tokenId，tokenType 的 JWT Token。
+     *
+     * @param uid       用户 ID
+     * @param tokenId   Token ID
+     * @param tokenType Token 令牌类型
+     * @return JWT Token
+     * @throws UtilException 生成 JWT Token 失败抛出异常
+     */
+    private String createJwtToken(final Id uid, final String tokenId, final TokenType tokenType)
+            throws UtilException {
+
+        HashMap<String, String> payload = new HashMap<>(3);
+        payload.put(JWT_UID_CLAIM_KEY, String.valueOf(uid.getValue()));
+        payload.put(JWT_TOKEN_ID_CLAIM_KEY, tokenId);
+        payload.put(JWT_TOKEN_TYPE_CLAIM_KEY, tokenType.getKey());
+
+        return jwtTokenService.create(payload, jwtProperties.getExpiredInSeconds(), jwtProperties.getSecret());
+    }
+
+    /**
+     * 根据认证类型获取指定的认证策略实现类。
+     *
+     * @param type 认证类型
+     * @return 认证策略实现类
+     * @throws ConfigException 找不到认证策略实现类抛出
+     */
+    private AuthStrategy getAuthStrategy(final AuthStrategy.AuthType type) throws ConfigException {
+        if (strategyMap == null) {
+            LOG.error("[Get auth strategy failed]>>> strategyMap=null");
+            throw new ConfigException(UserExceptionType.AUTH_STRATEGY_NOT_FOUND);
+        }
+
+        if (strategyMap.isEmpty()) {
+            LOG.error("[Get auth strategy failed]>>> strategyMap.size=0");
+            throw new ConfigException(UserExceptionType.AUTH_STRATEGY_NOT_FOUND);
+        }
+
+        if (type == null || !strategyMap.containsKey(type.name())) {
+            LOG.error("[Get auth strategy failed]>>> type={}", type);
+            throw new ConfigException(UserExceptionType.AUTH_STRATEGY_NOT_FOUND);
+        }
+
+        return strategyMap.get(type.name());
+    }
+}
