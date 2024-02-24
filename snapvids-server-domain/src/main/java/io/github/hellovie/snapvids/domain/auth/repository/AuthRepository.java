@@ -60,6 +60,14 @@ public interface AuthRepository {
     SysUser saveSysUser(SysUser sysUser);
 
     /**
+     * 根据 id 获取 {@link SysUser} 对象。
+     *
+     * @param id 用户 id
+     * @return 系统用户，用户不存在返回 null
+     */
+    SysUser findSysUserById(Id id);
+
+    /**
      * 仅更新用户登录信息，不更新其他属性。
      *
      * @param username      用户名
@@ -76,4 +84,38 @@ public interface AuthRepository {
      * @param tokenId 要移除的 token id
      */
     void removeToken(long userId, String... tokenId);
+
+    /**
+     * 获取访问令牌的过期时间。
+     *
+     * @param userId  用户 id
+     * @param tokenId 令牌 id
+     * @return 访问令牌的过期时间，不存在则返回 null
+     */
+    Long getAccessTokenExpiredTime(long userId, String tokenId);
+
+    /**
+     * 获取刷新令牌的过期时间。
+     *
+     * @param userId  用户 id
+     * @param tokenId 令牌 id
+     * @return 刷新令牌的过期时间，不存在则返回 null
+     */
+    Long getRefreshTokenExpiredTime(long userId, String tokenId);
+
+    /**
+     * 移除访问令牌。
+     *
+     * @param userId  用户 id
+     * @param tokenId 令牌 id
+     */
+    void removeAccessToken(long userId, String tokenId);
+
+    /**
+     * 移除刷新令牌。
+     *
+     * @param userId  用户 id
+     * @param tokenId 令牌 id
+     */
+    void removeRefreshToken(long userId, String tokenId);
 }

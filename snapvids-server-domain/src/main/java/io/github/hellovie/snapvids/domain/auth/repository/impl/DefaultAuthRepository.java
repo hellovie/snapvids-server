@@ -138,6 +138,18 @@ public class DefaultAuthRepository implements AuthRepository {
     /**
      * {@inheritDoc}
      *
+     * @see AuthRepository#findSysUserById(Id)
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public SysUser findSysUserById(Id id) {
+        Optional<User> optional = userDao.findById(id.getValue());
+        return optional.map(this::toSysUser).orElse(null);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @see AuthRepository#updateLoginInfoByUsername(Username, Ip, Timestamp)
      */
     @Override
@@ -167,6 +179,71 @@ public class DefaultAuthRepository implements AuthRepository {
         Object[] tokenIds = Arrays.stream(tokenId).toArray();
         cacheService.delInMap(accessTokenKey, tokenIds);
         cacheService.delInMap(refreshTokenKey, tokenIds);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see AuthRepository#getAccessTokenExpiredTime(long, String)
+     */
+    @Override
+    public Long getAccessTokenExpiredTime(long userId, String tokenId) {
+        String accessTokenKey = USER_ACCESS_TOKEN + userId;
+        return getTokenExpiredTime(accessTokenKey, tokenId);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see AuthRepository#getRefreshTokenExpiredTime(long, String)
+     */
+    @Override
+    public Long getRefreshTokenExpiredTime(long userId, String tokenId) {
+        String refreshTokenKey = USER_REFRESH_TOKEN + userId;
+        return getTokenExpiredTime(refreshTokenKey, tokenId);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see AuthRepository#removeAccessToken(long, String)
+     */
+    @Override
+    public void removeAccessToken(long userId, String tokenId) {
+        String accessTokenKey = USER_ACCESS_TOKEN + userId;
+        cacheService.delInMap(accessTokenKey, tokenId);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see AuthRepository#removeRefreshToken(long, String)
+     */
+    @Override
+    public void removeRefreshToken(long userId, String tokenId) {
+        String refreshTokenKey = USER_REFRESH_TOKEN + userId;
+        cacheService.delInMap(refreshTokenKey, tokenId);
+    }
+
+    /**
+     * 获取令牌的过期时间。
+     *
+     * @param key   缓存 key
+     * @param field map field
+     * @return 令牌的过期时间
+     */
+    private Long getTokenExpiredTime(String key, String field) {
+        Map<String, Object> map = cacheService.getMap(key);
+        if (map == null || map.isEmpty()) {
+            return null;
+        }
+
+        Map<String, Long> tokenMap = convertLongValueTokenMap(map);
+        if (!tokenMap.containsKey(field)) {
+            return null;
+        }
+
+        return tokenMap.get(field);
     }
 
     /**

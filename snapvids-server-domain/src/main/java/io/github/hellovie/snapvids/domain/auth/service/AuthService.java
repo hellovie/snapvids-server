@@ -1,5 +1,7 @@
 package io.github.hellovie.snapvids.domain.auth.service;
 
+import io.github.hellovie.snapvids.common.exception.business.AuthException;
+import io.github.hellovie.snapvids.domain.auth.entity.SysUser;
 import io.github.hellovie.snapvids.domain.auth.strategy.LoginParams;
 import io.github.hellovie.snapvids.domain.auth.strategy.RegisterParams;
 import io.github.hellovie.snapvids.domain.auth.vo.LoginInfo;
@@ -53,4 +55,12 @@ public interface AuthService {
      * 退出登录。
      */
     void logout();
+
+    /**
+     * 认证用户，认证成功返回当前请求的系统用户。
+     *
+     * @return 系统用户
+     * @throws AuthException 认证失败后抛出
+     */
+    SysUser auth() throws AuthException;
 }

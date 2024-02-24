@@ -200,6 +200,21 @@ public enum UserExceptionType implements ExceptionCode {
      */
     UPDATE_USER_LOGIN_INFO_ERROR(SYSTEM, 37, "更新用户登录信息失败", false),
 
+    /**
+     * 用户身份认证失败
+     */
+    USER_AUTH_EXCEPTION(BUSINESS, 38, "用户身份认证失败", false),
+
+    /**
+     * 访问令牌已过期
+     */
+    ACCESS_TOKEN_HAS_EXPIRED(BUSINESS, 9998, "令牌已过期", true),
+
+    /**
+     * 刷新令牌已过期
+     */
+    REFRESH_TOKEN_HAS_EXPIRED(BUSINESS, 9999, "账号信息已过期, 请重新登录", false),
+
     ;
 
     /**
