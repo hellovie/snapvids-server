@@ -3,9 +3,7 @@ package io.github.hellovie.snapvids.infrastructure.persistence.entity;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 /**
@@ -21,6 +19,7 @@ public abstract class BaseEntity {
      * ID
      */
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
     /**
