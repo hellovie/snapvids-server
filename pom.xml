@@ -98,6 +98,11 @@
                 <artifactId>ksuid</artifactId>
                 <version>1.1.1</version>
             </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-starter</artifactId>
+                <version>1.2.14</version>
+            </dependency>
             <!-- 本项目的依赖 -->
             <dependency>
                 <groupId>io.github.hellovie</groupId>

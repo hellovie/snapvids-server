@@ -62,6 +62,10 @@
             <groupId>com.querydsl</groupId>
             <artifactId>querydsl-jpa</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+        </dependency>
         <!-- 本项目的依赖 -->
         <dependency>
             <groupId>io.github.hellovie</groupId>
