@@ -220,6 +220,63 @@ public class RedisJwtAuthService implements AuthService {
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @see AuthService#refreshToken()
+     */
+    @Override
+    public TokenInfo refreshToken() throws AuthException {
+        Context context = ContextHolder.getContext();
+        if (context == null || StringUtils.isBlank(context.getAuthorization()) ||
+                !context.getAuthorization().startsWith(AUTHORIZATION_PREFIX)) {
+
+            LOG.warn("[Failed to obtain an refresh token]>>> Authorization={}",
+                    context == null ? "Error: context is null" : context.getAuthorization());
+            throw new AuthException(UserExceptionType.USER_AUTH_EXCEPTION);
+        }
+
+        // JWT token 校验
+        String token = context.getAuthorization().replaceFirst(AUTHORIZATION_PREFIX, "");
+        long userId;
+        String tokenId;
+        String type;
+        try {
+            Map<String, String> payload = jwtTokenService.getPayload(jwtProperties.getSecret(), token);
+            userId = Long.parseLong(payload.get(JWT_UID_CLAIM_KEY));
+            tokenId = payload.get(JWT_TOKEN_ID_CLAIM_KEY);
+            type = payload.get(JWT_TOKEN_TYPE_CLAIM_KEY);
+        } catch (Exception ex) {
+            LOG.error("[Authentication token exception]>>> {}", ex.getMessage(), ex);
+            throw new AuthException(UserExceptionType.USER_AUTH_EXCEPTION, ex);
+        }
+        // 刷新令牌才能进行刷新操作
+        if (!TokenType.REFRESH_TOKEN.getKey().equals(type) || "".equals(tokenId) || userId <= 0L) {
+            LOG.warn("[Failed to get the authentication token payload]>>> userId={}, tokenId={}, type={}",
+                    userId, tokenId, tokenId);
+            throw new AuthException(UserExceptionType.USER_AUTH_EXCEPTION);
+        }
+
+        // Redis token 校验
+        Long expiredTime = repository.getRefreshTokenExpiredTime(userId, tokenId);
+        if (expiredTime == null) {
+            throw new AuthException(UserExceptionType.REFRESH_TOKEN_HAS_EXPIRED);
+        }
+
+        long now = new Date().getTime() / 1000;
+        // 令牌已经过期，移除令牌
+        if (expiredTime <= now) {
+            repository.removeAccessToken(userId, tokenId);
+            repository.removeRefreshToken(userId, tokenId);
+            throw new AuthException(UserExceptionType.REFRESH_TOKEN_HAS_EXPIRED);
+        }
+
+        // 刷新令牌未过期，生成新的令牌
+        TokenInfo tokenInfo = createTokenInfo(new Id(userId));
+        LOG.info("[The refresh token was successful]>>> userId={}, tokenInfo={}", userId, tokenInfo);
+        return tokenInfo;
+    }
+
+    /**
      * 检查用户账号状态是否健康。
      *
      * @param account 用户账号

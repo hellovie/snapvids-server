@@ -5,6 +5,7 @@ import io.github.hellovie.snapvids.domain.auth.entity.SysUser;
 import io.github.hellovie.snapvids.domain.auth.strategy.LoginParams;
 import io.github.hellovie.snapvids.domain.auth.strategy.RegisterParams;
 import io.github.hellovie.snapvids.domain.auth.vo.LoginInfo;
+import io.github.hellovie.snapvids.domain.auth.vo.TokenInfo;
 
 /**
  * 用户认证服务接口。
@@ -63,4 +64,12 @@ public interface AuthService {
      * @throws AuthException 认证失败后抛出
      */
     SysUser auth() throws AuthException;
+
+    /**
+     * 刷新令牌。
+     *
+     * @return 新的令牌
+     * @throws AuthException 刷新失败后抛出
+     */
+    TokenInfo refreshToken() throws AuthException;
 }
