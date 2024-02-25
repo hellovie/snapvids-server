@@ -167,27 +167,31 @@ public class RedisJwtAuthService implements AuthService {
         Context context = ContextHolder.getContext();
         if (context == null || StringUtils.isBlank(context.getAuthorization()) ||
                 !context.getAuthorization().startsWith(AUTHORIZATION_PREFIX)) {
-            LOG.warn("[Failed to obtain an authentication token]>>> Authorization={}", context.getAuthorization());
+
+            LOG.warn("[Failed to obtain an authentication token]>>> Authorization={}",
+                    context == null ? "Error: context is null" : context.getAuthorization());
             throw new AuthException(UserExceptionType.USER_AUTH_EXCEPTION);
         }
 
         // JWT token 校验
         String token = context.getAuthorization().replaceFirst(AUTHORIZATION_PREFIX, "");
-        long userId = 0L;
-        String tokenId = "";
+        long userId;
+        String tokenId;
         String type;
         try {
             Map<String, String> payload = jwtTokenService.getPayload(jwtProperties.getSecret(), token);
             userId = Long.parseLong(payload.get(JWT_UID_CLAIM_KEY));
             tokenId = payload.get(JWT_TOKEN_ID_CLAIM_KEY);
             type = payload.get(JWT_TOKEN_TYPE_CLAIM_KEY);
-            if (!TokenType.ACCESS_TOKEN.getKey().equals(type) || "".equals(tokenId) || userId <= 0L) {
-                LOG.warn("[Failed to get the authentication token payload]>>> userId={}, tokenId={}, type={}",
-                        userId, tokenId, tokenId);
-                throw new AuthException(UserExceptionType.USER_AUTH_EXCEPTION);
-            }
         } catch (Exception ex) {
             LOG.error("[Authentication token exception]>>> {}", ex.getMessage(), ex);
+            throw new AuthException(UserExceptionType.USER_AUTH_EXCEPTION, ex);
+        }
+        // 访问令牌才能进行访问操作接口
+        if (!TokenType.ACCESS_TOKEN.getKey().equals(type) || "".equals(tokenId) || userId <= 0L) {
+            LOG.warn("[Failed to get the authentication token payload]>>> userId={}, tokenId={}, type={}",
+                    userId, tokenId, tokenId);
+            throw new AuthException(UserExceptionType.USER_AUTH_EXCEPTION);
         }
 
         // Redis token 校验
