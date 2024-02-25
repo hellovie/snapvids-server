@@ -57,7 +57,7 @@ public class DefaultAuthRepository implements AuthRepository {
             return null;
         }
 
-        return new Account(user.getId(), user.getUsername(), user.getPassword(), user.getSalt(), user.getPhoneNumber(),
+        return new Account(user.getId(), user.getUsername(), user.getPassword(), user.getPhoneNumber(),
                 user.getLastLoginIp(), user.getLastLoginTime(), user.getRegisterIp(), user.getRegisterTime(),
                 user.getState());
     }
@@ -120,7 +120,6 @@ public class DefaultAuthRepository implements AuthRepository {
         }
         user.setUsername(sysUser.getUsername().getValue())
                 .setPassword(sysUser.getPassword().getCiphertext())
-                .setSalt(sysUser.getPassword().getSalt())
                 .setPhoneNumber(sysUser.getPhoneNumber().getNumber())
                 .setLastLoginIp(sysUser.getLastLoginIp().getIntAddress())
                 .setLastLoginTime(sysUser.getLastLoginTime())
@@ -257,9 +256,9 @@ public class DefaultAuthRepository implements AuthRepository {
             return null;
         }
 
-        return new SysUser(user.getId(), user.getUsername(), user.getPassword(), user.getSalt(),
-                user.getPhoneNumber(), user.getLastLoginIp(), user.getLastLoginTime(), user.getRegisterIp(),
-                user.getRegisterTime(), user.getState());
+        return new SysUser(user.getId(), user.getUsername(), user.getPassword(), user.getPhoneNumber(),
+                user.getLastLoginIp(), user.getLastLoginTime(), user.getRegisterIp(), user.getRegisterTime(),
+                user.getState());
     }
 
     /**
@@ -273,9 +272,9 @@ public class DefaultAuthRepository implements AuthRepository {
             return null;
         }
 
-        SysUser sysUser = new SysUser(user.getId(), user.getUsername(), user.getPassword(), user.getSalt(),
-                user.getPhoneNumber(), user.getLastLoginIp(), user.getLastLoginTime(), user.getRegisterIp(),
-                user.getRegisterTime(), user.getState());
+        SysUser sysUser = new SysUser(user.getId(), user.getUsername(), user.getPassword(), user.getPhoneNumber(),
+                user.getLastLoginIp(), user.getLastLoginTime(), user.getRegisterIp(), user.getRegisterTime(),
+                user.getState());
 
         List<Role> roles = user.getRoles() != null ? user.getRoles() : new ArrayList<>();
         List<SysRole> sysRoles = roles.stream()

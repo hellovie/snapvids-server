@@ -3,7 +3,6 @@ CREATE TABLE `user`
     `id`              BIGINT UNSIGNED AUTO_INCREMENT NOT NULL COMMENT 'ID',
     `username`        VARCHAR(32)                    NOT NULL COMMENT '用户名',
     `password`        VARCHAR(256)                   NOT NULL COMMENT '密码(加密)',
-    `salt`            VARCHAR(32)                    NOT NULL COMMENT '盐值',
     `phone_number`    VARCHAR(64)                    NOT NULL COMMENT '手机号码',
     `last_login_ip`   INT UNSIGNED                   NOT NULL COMMENT '最后登录IP',
     `last_login_time` DATETIME(6)                    NOT NULL COMMENT '最后登录时间',

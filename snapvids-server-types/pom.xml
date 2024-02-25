@@ -12,10 +12,6 @@
     <description>基础类型层：用于存放 Domain Primitive</description>
 
     <dependencies>
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-        </dependency>
         <!-- 本项目的依赖 -->
         <dependency>
             <groupId>io.github.hellovie</groupId>

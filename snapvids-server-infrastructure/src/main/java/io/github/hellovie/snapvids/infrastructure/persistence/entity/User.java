@@ -28,11 +28,6 @@ public class User extends BaseEntity {
     private String password;
 
     /**
-     * 盐值
-     */
-    private String salt;
-
-    /**
      * 手机号码
      */
     private String phoneNumber;
@@ -100,15 +95,6 @@ public class User extends BaseEntity {
 
     public User setPassword(String password) {
         this.password = password;
-        return this;
-    }
-
-    public String getSalt() {
-        return salt;
-    }
-
-    public User setSalt(String salt) {
-        this.salt = salt;
         return this;
     }
 

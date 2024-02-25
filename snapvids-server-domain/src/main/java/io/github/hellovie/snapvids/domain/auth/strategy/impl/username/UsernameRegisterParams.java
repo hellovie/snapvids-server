@@ -31,12 +31,12 @@ public class UsernameRegisterParams {
      * 构造合理的 {@link UsernameRegisterParams} 对象。
      *
      * @param username    用户名
-     * @param password    密码
+     * @param plaintext   密码明文
      * @param phoneNumber 手机号码
      */
-    public UsernameRegisterParams(String username, String password, String phoneNumber) {
+    public UsernameRegisterParams(String username, String plaintext, String phoneNumber) {
         this.username = new Username(username);
-        this.password = Password.buildCiphertext(password);
+        this.password = Password.ofPlaintext(plaintext);
         this.phoneNumber = new PhoneNumber(phoneNumber);
     }
 

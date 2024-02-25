@@ -69,12 +69,12 @@ public class SysUser {
      */
     private final List<SysRole> roles = new ArrayList<>();
 
-    public SysUser(String username, String ciphertext, String salt, String phoneNumber, int lastLoginIp,
+    public SysUser(String username, String ciphertext, String phoneNumber, int lastLoginIp,
                    Timestamp lastLoginTime, int registerIp, Timestamp registerTime, UserState state) {
 
         this.id = null;
         this.username = new Username(username);
-        this.password = Password.buildCiphertext(ciphertext, salt);
+        this.password = Password.ofCiphertext(ciphertext);
         this.phoneNumber = new PhoneNumber(phoneNumber);
         this.lastLoginIp = new Ip(lastLoginIp);
         this.lastLoginTime = lastLoginTime;
@@ -83,12 +83,12 @@ public class SysUser {
         this.state = state;
     }
 
-    public SysUser(long id, String username, String ciphertext, String salt, String phoneNumber, int lastLoginIp,
+    public SysUser(long id, String username, String ciphertext, String phoneNumber, int lastLoginIp,
                    Timestamp lastLoginTime, int registerIp, Timestamp registerTime, UserState state) {
 
         this.id = new Id(id);
         this.username = new Username(username);
-        this.password = Password.buildCiphertext(ciphertext, salt);
+        this.password = Password.ofCiphertext(ciphertext);
         this.phoneNumber = new PhoneNumber(phoneNumber);
         this.lastLoginIp = new Ip(lastLoginIp);
         this.lastLoginTime = lastLoginTime;

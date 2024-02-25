@@ -43,8 +43,6 @@ public class QUser extends EntityPathBase<User> {
 
     public final ListPath<Role, QRole> roles = this.<Role, QRole>createList("roles", Role.class, QRole.class, PathInits.DIRECT2);
 
-    public final StringPath salt = createString("salt");
-
     public final EnumPath<io.github.hellovie.snapvids.infrastructure.persistence.enums.UserState> state = createEnum("state", io.github.hellovie.snapvids.infrastructure.persistence.enums.UserState.class);
 
     public final StringPath username = createString("username");

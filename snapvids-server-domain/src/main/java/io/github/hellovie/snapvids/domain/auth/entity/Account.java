@@ -62,12 +62,12 @@ public class Account {
      */
     private final UserState state;
 
-    public Account(long id, String username, String ciphertext, String salt, String phoneNumber, int lastLoginIp,
+    public Account(long id, String username, String ciphertext, String phoneNumber, int lastLoginIp,
                    Timestamp lastLoginTime, int registerIp, Timestamp registerTime, UserState state) {
 
         this.id = new Id(id);
         this.username = new Username(username);
-        this.password = Password.buildCiphertext(ciphertext, salt);
+        this.password = Password.ofCiphertext(ciphertext);
         this.phoneNumber = new PhoneNumber(phoneNumber);
         this.lastLoginIp = new Ip(lastLoginIp);
         this.lastLoginTime = lastLoginTime;
