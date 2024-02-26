@@ -123,7 +123,8 @@ public class ExceptionNotifyInfo {
      * @return 格式化的异常通知信息
      */
     public String format() {
-        return "[Date           ]: " + date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss '['VV']'")) + '\n' +
+        return "[Date           ]: " + (date == null ? "null" :
+                date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss '['VV']'"))) + '\n' +
                 "[Project Name   ]: " + projectName + '\n' +
                 "[Server Address ]: " + serverIp + '\n' +
                 "[Thread Id      ]: " + threadId + '\n' +

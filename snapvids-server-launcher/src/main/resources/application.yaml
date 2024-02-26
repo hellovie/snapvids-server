@@ -1,4 +1,7 @@
 # 通用配置
+server:
+  servlet:
+    context-path: /api
 spring:
   profiles:
     active: @profileActive@

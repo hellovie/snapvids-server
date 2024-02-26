@@ -76,6 +76,30 @@ public class Account {
         this.state = state;
     }
 
+    /**
+     * {@link SysUser} to {@link Account}.
+     *
+     * @param sysUser {@link SysUser}
+     * @return {@link Account}
+     */
+    public static Account toAccount(SysUser sysUser) {
+        if (sysUser == null) {
+            return null;
+        }
+
+        return new Account(
+                sysUser.getId().getValue(),
+                sysUser.getUsername().getValue(),
+                sysUser.getPassword().getCiphertext(),
+                sysUser.getPhoneNumber().getNumber(),
+                sysUser.getLastLoginIp().getIntAddress(),
+                sysUser.getLastLoginTime(),
+                sysUser.getRegisterIp().getIntAddress(),
+                sysUser.getRegisterTime(),
+                sysUser.getState()
+        );
+    }
+
     public Id getId() {
         return id;
     }

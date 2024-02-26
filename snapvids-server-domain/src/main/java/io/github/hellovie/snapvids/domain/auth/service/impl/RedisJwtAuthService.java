@@ -168,9 +168,9 @@ public class RedisJwtAuthService implements AuthService {
         if (context == null || StringUtils.isBlank(context.getAuthorization()) ||
                 !context.getAuthorization().startsWith(AUTHORIZATION_PREFIX)) {
 
-            LOG.warn("[Failed to obtain an authentication token]>>> Authorization={}",
+            LOG.info("[Failed to obtain an authentication token]>>> Authorization={}",
                     context == null ? "Error: context is null" : context.getAuthorization());
-            throw new AuthException(UserExceptionType.USER_AUTH_EXCEPTION);
+            throw new AuthException(UserExceptionType.UNAUTHORIZED);
         }
 
         // JWT token 校验
@@ -184,14 +184,14 @@ public class RedisJwtAuthService implements AuthService {
             tokenId = payload.get(JWT_TOKEN_ID_CLAIM_KEY);
             type = payload.get(JWT_TOKEN_TYPE_CLAIM_KEY);
         } catch (Exception ex) {
-            LOG.error("[Authentication token exception]>>> {}", ex.getMessage(), ex);
-            throw new AuthException(UserExceptionType.USER_AUTH_EXCEPTION, ex);
+            LOG.info("[JWT token resolution failed]>>> {}", ex.getMessage(), ex);
+            throw new AuthException(UserExceptionType.UNAUTHORIZED);
         }
         // 访问令牌才能进行访问操作接口
         if (!TokenType.ACCESS_TOKEN.getKey().equals(type) || "".equals(tokenId) || userId <= 0L) {
-            LOG.warn("[Failed to get the authentication token payload]>>> userId={}, tokenId={}, type={}",
+            LOG.info("[Failed to get the access token payload]>>> userId={}, tokenId={}, type={}",
                     userId, tokenId, tokenId);
-            throw new AuthException(UserExceptionType.USER_AUTH_EXCEPTION);
+            throw new AuthException(UserExceptionType.UNAUTHORIZED);
         }
 
         // Redis token 校验
@@ -212,6 +212,8 @@ public class RedisJwtAuthService implements AuthService {
             LOG.error("[There is an incorrect user ID in the access token]>>> userId={}", userId);
             throw new AuthException(UserExceptionType.USER_NOT_FOUND);
         }
+        // 校验用户状态
+        checkUserState(Account.toAccount(sysUser));
         List<String> roles = sysUser.getRoles().stream()
                 .map(role -> role.getRoleKey().getValue())
                 .collect(Collectors.toList());

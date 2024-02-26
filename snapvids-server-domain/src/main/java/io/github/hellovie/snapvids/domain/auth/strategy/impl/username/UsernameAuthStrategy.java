@@ -57,17 +57,7 @@ public class UsernameAuthStrategy implements AuthStrategy {
         sysUser.addAllRole(getBaseSysRole());
 
         SysUser saveUser = repository.saveSysUser(sysUser);
-        return new Account(
-                saveUser.getId().getValue(),
-                saveUser.getUsername().getValue(),
-                saveUser.getPassword().getCiphertext(),
-                saveUser.getPhoneNumber().getNumber(),
-                saveUser.getLastLoginIp().getIntAddress(),
-                saveUser.getLastLoginTime(),
-                saveUser.getRegisterIp().getIntAddress(),
-                saveUser.getRegisterTime(),
-                saveUser.getState()
-        );
+        return Account.toAccount(saveUser);
     }
 
     /**

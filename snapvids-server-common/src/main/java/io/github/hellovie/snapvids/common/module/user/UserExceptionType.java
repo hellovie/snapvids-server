@@ -206,6 +206,16 @@ public enum UserExceptionType implements ExceptionCode {
     USER_AUTH_EXCEPTION(BUSINESS, 38, "用户身份认证失败", false),
 
     /**
+     * 用户未登录
+     */
+    UNAUTHORIZED(BUSINESS, 9996, "用户未登录", false),
+
+    /**
+     * 无权限访问
+     */
+    FORBIDDEN(BUSINESS, 9997, "无权限访问", false),
+
+    /**
      * 访问令牌已过期
      */
     ACCESS_TOKEN_HAS_EXPIRED(BUSINESS, 9998, "令牌已过期", true),
