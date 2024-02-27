@@ -206,6 +206,16 @@ public enum UserExceptionType implements ExceptionCode {
     USER_AUTH_EXCEPTION(BUSINESS, 38, "用户身份认证失败", false),
 
     /**
+     * Account 不能为 null
+     */
+    ACCOUNT_CANNOT_BE_NULL(SYSTEM, 39, "Account不能为null", false),
+
+    /**
+     * TokenInfo 不能为 null
+     */
+    TOKEN_INFO_CANNOT_BE_NULL(SYSTEM, 40, "TokenInfo不能为null", false),
+
+    /**
      * 用户未登录
      */
     UNAUTHORIZED(BUSINESS, 9996, "用户未登录", false),

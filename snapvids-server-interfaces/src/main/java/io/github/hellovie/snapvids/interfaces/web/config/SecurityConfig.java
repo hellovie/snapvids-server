@@ -55,7 +55,8 @@ public class SecurityConfig {
     public static final String[] ALLOWED_INTERFACES = {
             "/login/**",
             "/register/**",
-            "/logout/**"
+            "/logout/**",
+            "/tokens/refresh"
     };
 
     /**

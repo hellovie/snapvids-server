@@ -1,5 +1,7 @@
 package io.github.hellovie.snapvids.domain.auth.vo;
 
+import io.github.hellovie.snapvids.common.exception.system.CodeException;
+import io.github.hellovie.snapvids.common.module.user.UserExceptionType;
 import io.github.hellovie.snapvids.domain.auth.entity.Account;
 
 /**
@@ -21,6 +23,12 @@ public class LoginInfo {
     private final TokenInfo tokenInfo;
 
     public LoginInfo(Account account, TokenInfo tokenInfo) {
+        if (account == null) {
+            throw new CodeException(UserExceptionType.ACCOUNT_CANNOT_BE_NULL);
+        }
+        if (tokenInfo == null) {
+            throw new CodeException(UserExceptionType.TOKEN_INFO_CANNOT_BE_NULL);
+        }
         this.account = account;
         this.tokenInfo = tokenInfo;
     }
