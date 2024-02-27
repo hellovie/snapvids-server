@@ -43,8 +43,8 @@ public class Context {
         this.traceId = traceId == null ? "" : traceId;
         this.authorization = authorization == null ? "" : authorization;
         this.method = method == null ? "" : method;
-        String query = queryString == null ? "" : queryString;
-        this.url = url == null ? new StringBuffer() : url.append("?").append(query);
+        String query = queryString == null ? "" : "?" + queryString;
+        this.url = url == null ? new StringBuffer() : url.append(query);
         this.api = api == null ? "" : api;
         this.remoteIp = remoteIp == null ? "" : remoteIp;
     }
@@ -59,7 +59,22 @@ public class Context {
                 "[Request URL     ]: " + method + " " + url + "\n" +
                 "[Request Mapping ]: " + api + "\n" +
                 "[Remote Host     ]: " + remoteIp + "\n" +
-                "[Authorization   ]: " + authorization + "\n";
+                "[Authorization   ]: " + authorization;
+    }
+
+    /**
+     * 简单输出上下文。
+     *
+     * @return 简单拼接的上下文字符串
+     */
+    public String simpleFormat() {
+        return "{" +
+                "[TraceID: " + traceId + "], " +
+                "[RequestURL: " + method + " " + url + "], " +
+                "[RequestMapping: " + api + "], " +
+                "[RemoteHost: " + remoteIp + "], " +
+                "[Authorization: " + authorization + "]" +
+                "}";
     }
 
     public String getTraceId() {

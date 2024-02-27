@@ -28,20 +28,20 @@ public class ConsoleNotifyService implements NotifyService {
     public void notifyMessage(ExceptionNotifyInfo notifyInfo) {
         switch (notifyInfo.getExceptionType()) {
             case BUSINESS:
-                LOG.warn("[ConsoleNotifyService print]>>> level={} \n{}",
-                        BUSINESS.name().toLowerCase(), notifyInfo.format());
+                LOG.warn("[ConsoleNotifyService print]>>> level={}, notifyInfo={}",
+                        BUSINESS.name().toLowerCase(), notifyInfo.simpleFormat());
                 break;
             case SYSTEM:
-                LOG.error("[ConsoleNotifyService print]>>> level={} \n{}",
+                LOG.error("[ConsoleNotifyService print]>>> level={}, notifyInfo=⤵\n{}",
                         SYSTEM.name().toLowerCase(), notifyInfo.format());
                 break;
             case UNKNOWN:
-                LOG.error("[ConsoleNotifyService print]>>> level={} \n{}",
+                LOG.error("[ConsoleNotifyService print]>>> level={}, notifyInfo=⤵\n{}",
                         UNKNOWN.name().toLowerCase(), notifyInfo.format());
                 break;
             default:
-                LOG.error("[ConsoleNotifyService print]>>> level={} \n{}",
-                        notifyInfo.getExceptionType().name().toLowerCase(), notifyInfo.format());
+                LOG.error("[ConsoleNotifyService print]>>> level={}, notifyInfo={}",
+                        notifyInfo.getExceptionType().name().toLowerCase(), notifyInfo.simpleFormat());
         }
     }
 }

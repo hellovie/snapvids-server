@@ -5,6 +5,8 @@ import io.github.hellovie.snapvids.common.exception.business.BusinessException;
 import io.github.hellovie.snapvids.common.exception.manager.ExceptionManager;
 import io.github.hellovie.snapvids.common.exception.model.ExceptionType;
 import io.github.hellovie.snapvids.common.exception.notify.ExceptionNotifyInfo;
+import io.github.hellovie.snapvids.common.exception.notify.NotifyServiceManager;
+import io.github.hellovie.snapvids.common.exception.notify.NotifyServiceType;
 import io.github.hellovie.snapvids.common.exception.system.SystemException;
 import io.github.hellovie.snapvids.common.exception.util.ExceptionUtils;
 import io.github.hellovie.snapvids.common.module.common.CommonExceptionType;
@@ -16,16 +18,40 @@ import javax.annotation.Resource;
 import java.time.ZonedDateTime;
 
 /**
- * 异常信息处理器。
+ * 异常通知处理器。
  *
  * @author hellovie
  * @since 1.0.0
  */
 @Component("exceptionInfoHandler")
-public class ExceptionInfoHandler {
+public class ExceptionNotifyHandler {
 
     @Resource(name = "exceptionManager")
     private ExceptionManager exceptionManager;
+
+    @Resource(name = "notifyServiceManager")
+    private NotifyServiceManager notifyServiceManager;
+
+    /**
+     * 发布警告级别的通知。
+     *
+     * @param ex 异常信息
+     */
+    public void notifyWarning(Exception ex) {
+        ExceptionNotifyInfo notifyInfo = buildExceptionNotifyInfo(ex);
+        notifyServiceManager.notify(NotifyServiceType.CONSOLE.name(), notifyInfo);
+    }
+
+    /**
+     * 发布错误级别的通知。
+     *
+     * @param ex 异常信息
+     */
+    public void notifyError(Exception ex) {
+        ExceptionNotifyInfo notifyInfo = buildExceptionNotifyInfo(ex);
+        notifyServiceManager.notify(NotifyServiceType.DEFAULT.name(), notifyInfo);
+        notifyServiceManager.notify(NotifyServiceType.CONSOLE.name(), notifyInfo);
+    }
 
     /**
      * 分三种情况构建异常通知信息。
@@ -38,7 +64,7 @@ public class ExceptionInfoHandler {
      * @param ex 异常
      * @return 异常通知信息
      */
-    public ExceptionNotifyInfo buildExceptionNotifyInfo(final Exception ex) {
+    private ExceptionNotifyInfo buildExceptionNotifyInfo(final Exception ex) {
         ExceptionType exceptionType;
         String code;
         final Context context = ContextHolder.getContext();

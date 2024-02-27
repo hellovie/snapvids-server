@@ -2,9 +2,6 @@ package io.github.hellovie.snapvids.interfaces.web.handler;
 
 import io.github.hellovie.snapvids.common.exception.business.BusinessException;
 import io.github.hellovie.snapvids.common.exception.manager.ExceptionManager;
-import io.github.hellovie.snapvids.common.exception.notify.ExceptionNotifyInfo;
-import io.github.hellovie.snapvids.common.exception.notify.NotifyServiceManager;
-import io.github.hellovie.snapvids.common.exception.notify.NotifyServiceType;
 import io.github.hellovie.snapvids.common.exception.system.SystemException;
 import io.github.hellovie.snapvids.common.module.common.CommonExceptionType;
 import io.github.hellovie.snapvids.common.module.user.UserExceptionType;
@@ -32,10 +29,7 @@ public class GlobalExceptionHandler {
     private ExceptionManager exceptionManager;
 
     @Resource(name = "exceptionInfoHandler")
-    private ExceptionInfoHandler exceptionInfoHandler;
-
-    @Resource(name = "notifyServiceManager")
-    private NotifyServiceManager notifyServiceManager;
+    private ExceptionNotifyHandler exceptionNotifyHandler;
 
     /**
      * 无权限访问异常处理。
@@ -54,8 +48,7 @@ public class GlobalExceptionHandler {
         final String message = UserExceptionType.FORBIDDEN.getMessage();
 
         // 异常告警
-        ExceptionNotifyInfo notifyInfo = exceptionInfoHandler.buildExceptionNotifyInfo(ex);
-        notifyServiceManager.notify(NotifyServiceType.CONSOLE.name(), notifyInfo);
+        exceptionNotifyHandler.notifyWarning(ex);
 
         return ResultResponse.fail(canRetry, code, message);
     }
@@ -75,8 +68,7 @@ public class GlobalExceptionHandler {
         final String message = ex.getExceptionCode().getMessage();
 
         // 异常告警
-        ExceptionNotifyInfo notifyInfo = exceptionInfoHandler.buildExceptionNotifyInfo(ex);
-        notifyServiceManager.notify(NotifyServiceType.CONSOLE.name(), notifyInfo);
+        exceptionNotifyHandler.notifyWarning(ex);
 
         return ResultResponse.fail(canRetry, code, message);
     }
@@ -92,10 +84,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SystemException.class)
     public ResultResponse.TrackResult systemExceptionHandler(final SystemException ex) {
         String traceId = ContextHolder.getContext() == null ? "" : ContextHolder.getContext().getTraceId();
+
         // 异常告警
-        ExceptionNotifyInfo notifyInfo = exceptionInfoHandler.buildExceptionNotifyInfo(ex);
-        notifyServiceManager.notify(NotifyServiceType.DEFAULT.name(), notifyInfo);
-        notifyServiceManager.notify(NotifyServiceType.CONSOLE.name(), notifyInfo);
+        exceptionNotifyHandler.notifyError(ex);
 
         return ResultResponse.track(
                 traceId,
@@ -115,10 +106,9 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResultResponse.TrackResult unknownExceptionHandler(final Exception ex) {
         String traceId = ContextHolder.getContext() == null ? "" : ContextHolder.getContext().getTraceId();
+
         // 异常告警
-        ExceptionNotifyInfo notifyInfo = exceptionInfoHandler.buildExceptionNotifyInfo(ex);
-        notifyServiceManager.notify(NotifyServiceType.DEFAULT.name(), notifyInfo);
-        notifyServiceManager.notify(NotifyServiceType.CONSOLE.name(), notifyInfo);
+        exceptionNotifyHandler.notifyError(ex);
 
         return ResultResponse.track(
                 traceId,

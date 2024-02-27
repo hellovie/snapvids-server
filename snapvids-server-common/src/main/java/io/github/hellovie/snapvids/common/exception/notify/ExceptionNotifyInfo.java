@@ -140,6 +140,18 @@ public class ExceptionNotifyInfo {
                 "[Cause          ]: " + ExceptionUtils.getStackTrace(cause);
     }
 
+    /**
+     * 格式化异常通知信息。
+     *
+     * @return 格式化的异常通知信息
+     */
+    public String simpleFormat() {
+        return "{" +
+                "[Code: " + code + "], " +
+                "[Message: " + message + "]" +
+                "}";
+    }
+
     public ZonedDateTime getDate() {
         return date;
     }

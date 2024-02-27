@@ -31,7 +31,8 @@ public class ContextManagerFilter implements Filter {
 
         long start = System.currentTimeMillis();
         Context context = parseRequest((HttpServletRequest) servletRequest);
-        LOG.info("[The request begins]>>> Context format\n{}", context.format());
+        //LOG.info("[The request begins]>>> context=⤵\n{}", context.format());
+        LOG.info("[The request begins]>>> context={}", context.simpleFormat());
         ContextHolder.setContext(context);
 
         // 跳转下一个过滤链

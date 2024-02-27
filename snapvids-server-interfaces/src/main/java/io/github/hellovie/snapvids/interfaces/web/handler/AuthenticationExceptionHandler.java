@@ -4,9 +4,6 @@ import com.alibaba.fastjson.JSON;
 import io.github.hellovie.snapvids.common.exception.business.BusinessException;
 import io.github.hellovie.snapvids.common.exception.manager.ExceptionCode;
 import io.github.hellovie.snapvids.common.exception.manager.ExceptionManager;
-import io.github.hellovie.snapvids.common.exception.notify.ExceptionNotifyInfo;
-import io.github.hellovie.snapvids.common.exception.notify.NotifyServiceManager;
-import io.github.hellovie.snapvids.common.exception.notify.NotifyServiceType;
 import io.github.hellovie.snapvids.common.module.user.UserExceptionType;
 import io.github.hellovie.snapvids.common.util.ResultResponse;
 import org.springframework.http.HttpStatus;
@@ -45,10 +42,7 @@ public class AuthenticationExceptionHandler implements AuthenticationEntryPoint 
     private ExceptionManager exceptionManager;
 
     @Resource(name = "exceptionInfoHandler")
-    private ExceptionInfoHandler exceptionInfoHandler;
-
-    @Resource(name = "notifyServiceManager")
-    private NotifyServiceManager notifyServiceManager;
+    private ExceptionNotifyHandler exceptionNotifyHandler;
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
@@ -79,8 +73,7 @@ public class AuthenticationExceptionHandler implements AuthenticationEntryPoint 
         }
 
         // 异常告警
-        ExceptionNotifyInfo notifyInfo = exceptionInfoHandler.buildExceptionNotifyInfo(exception);
-        notifyServiceManager.notify(NotifyServiceType.CONSOLE.name(), notifyInfo);
+        exceptionNotifyHandler.notifyWarning(exception);
 
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Cache-Control", "no-cache");
