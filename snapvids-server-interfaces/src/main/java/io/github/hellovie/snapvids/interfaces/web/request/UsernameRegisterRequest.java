@@ -23,6 +23,11 @@ public class UsernameRegisterRequest {
      */
     private String phoneNumber;
 
+    /**
+     * 验证码值
+     */
+    private String captcha;
+
     public String getUsername() {
         return username;
     }
@@ -45,5 +50,13 @@ public class UsernameRegisterRequest {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getCaptcha() {
+        return captcha;
+    }
+
+    public void setCaptcha(String captcha) {
+        this.captcha = captcha;
     }
 }

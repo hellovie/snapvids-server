@@ -1,5 +1,6 @@
 package io.github.hellovie.snapvids.application.auth.event;
 
+import io.github.hellovie.snapvids.types.common.Captcha;
 import io.github.hellovie.snapvids.types.user.Password;
 import io.github.hellovie.snapvids.types.user.Username;
 
@@ -21,9 +22,15 @@ public class UsernameLoginCommand {
      */
     private final Password password;
 
-    public UsernameLoginCommand(String username, String password) {
+    /**
+     * 验证码
+     */
+    private final Captcha captcha;
+
+    public UsernameLoginCommand(String username, String password, String captchaId, String captcha) {
         this.username = new Username(username);
         this.password = Password.ofPlaintext(password);
+        this.captcha = new Captcha(captchaId, captcha);
     }
 
     public Username getUsername() {
@@ -32,5 +39,9 @@ public class UsernameLoginCommand {
 
     public Password getPassword() {
         return password;
+    }
+
+    public Captcha getCaptcha() {
+        return captcha;
     }
 }

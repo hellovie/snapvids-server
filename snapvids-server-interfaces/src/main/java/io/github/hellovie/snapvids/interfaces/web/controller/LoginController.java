@@ -1,5 +1,6 @@
 package io.github.hellovie.snapvids.interfaces.web.controller;
 
+import io.github.hellovie.snapvids.application.auth.dto.GraphicalCaptchaDTO;
 import io.github.hellovie.snapvids.application.auth.dto.LoginUserDTO;
 import io.github.hellovie.snapvids.application.auth.event.UsernameLoginCommand;
 import io.github.hellovie.snapvids.application.auth.service.UserAuthService;
@@ -7,10 +8,7 @@ import io.github.hellovie.snapvids.common.util.ResultResponse;
 import io.github.hellovie.snapvids.interfaces.web.request.UsernameLoginRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -37,9 +35,26 @@ public class LoginController {
      */
     @PostMapping("/username")
     public ResultResponse.SuccessResult<LoginUserDTO> usernameLogin(@RequestBody UsernameLoginRequest request) {
-        LOG.info("[LoginController#usernameLogin params]>>> username={}", request.getUsername());
-        UsernameLoginCommand cmd = new UsernameLoginCommand(request.getUsername(), request.getPassword());
+        LOG.info("[LoginController#usernameLogin params]>>> username={}, captchaId={}, captcha={}",
+                request.getUsername(), request.getCaptchaId(), request.getCaptcha());
+        UsernameLoginCommand cmd = new UsernameLoginCommand(
+                request.getUsername(),
+                request.getPassword(),
+                request.getCaptchaId(),
+                request.getCaptcha()
+        );
         LoginUserDTO loginUserDTO = userAuthService.loginByUsername(cmd);
         return ResultResponse.success(loginUserDTO);
+    }
+
+    /**
+     * 「Base64」生成用户名登录的图形验证码。
+     *
+     * @return {@link ResultResponse.SuccessResult} data: Base64 的图形验证码
+     */
+    @GetMapping("/username/captcha")
+    public ResultResponse.SuccessResult<GraphicalCaptchaDTO> createCaptchaForUsernameLogin() {
+        GraphicalCaptchaDTO captcha = userAuthService.createCaptchaForUsernameLogin();
+        return ResultResponse.success(captcha);
     }
 }

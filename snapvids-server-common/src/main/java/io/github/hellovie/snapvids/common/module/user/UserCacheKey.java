@@ -30,4 +30,13 @@ public class UserCacheKey {
      */
     public static final String USER_REFRESH_TOKEN = PREFIX + "refresh-token:";
 
+    /**
+     * 用户名注册时短信验证码
+     */
+    public static final String USER_REGISTER_SMS_CAPTCHA = PREFIX + "captcha:register:sms:";
+
+    /**
+     * 用户名登录图片验证码
+     */
+    public static final String USER_LOGIN_GRAPHICAL_CAPTCHA = PREFIX + "captcha:login:graphical:";
 }

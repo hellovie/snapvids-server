@@ -59,6 +59,31 @@ public enum CommonExceptionType implements ExceptionCode {
     DECRYPT_JWT_TOKEN_FAILURE(SYSTEM, 7, "JWT Token解密失败", false),
 
     /**
+     * 验证码 id 不能为空
+     */
+    CAPTCHA_ID_CANNOT_BE_EMPTY(BUSINESS, 8, "验证码id不能为空", true),
+
+    /**
+     * 验证码不能为空
+     */
+    CAPTCHA_CANNOT_BE_EMPTY(BUSINESS, 9, "验证码不能为空", true),
+
+    /**
+     * 验证码长度不符合要求
+     */
+    CAPTCHA_LEN_NOT_MATCH(BUSINESS, 10, "验证码长度应该在4到6之间", true),
+
+    /**
+     * 验证码格式不符合要求
+     */
+    CAPTCHA_FORMAT_NOT_MATCH(BUSINESS, 11, "验证码只能包含字母和数字", true),
+
+    /**
+     * 验证码错误
+     */
+    CAPTCHA_ERROR(BUSINESS, 12, "验证码错误", true),
+
+    /**
      * 未知异常
      */
     UNKNOWN_EXCEPTION(UNKNOWN, 9999, "服务器繁忙，请稍后再试", false),

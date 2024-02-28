@@ -2,11 +2,14 @@ package io.github.hellovie.snapvids.application.auth.service.impl;
 
 import io.github.hellovie.snapvids.application.auth.convertor.LoginUserDTOConvertor;
 import io.github.hellovie.snapvids.application.auth.convertor.TokenDTOConvertor;
+import io.github.hellovie.snapvids.application.auth.dto.GraphicalCaptchaDTO;
 import io.github.hellovie.snapvids.application.auth.dto.LoginUserDTO;
 import io.github.hellovie.snapvids.application.auth.dto.TokenDTO;
+import io.github.hellovie.snapvids.application.auth.event.SendSmsEvent;
 import io.github.hellovie.snapvids.application.auth.event.UsernameLoginCommand;
 import io.github.hellovie.snapvids.application.auth.event.UsernameRegisterCommand;
 import io.github.hellovie.snapvids.application.auth.service.UserAuthService;
+import io.github.hellovie.snapvids.common.service.DrawService;
 import io.github.hellovie.snapvids.domain.auth.service.AuthService;
 import io.github.hellovie.snapvids.domain.auth.strategy.LoginParams;
 import io.github.hellovie.snapvids.domain.auth.strategy.RegisterParams;
@@ -14,6 +17,12 @@ import io.github.hellovie.snapvids.domain.auth.strategy.impl.username.UsernameLo
 import io.github.hellovie.snapvids.domain.auth.strategy.impl.username.UsernameRegisterParams;
 import io.github.hellovie.snapvids.domain.auth.vo.LoginInfo;
 import io.github.hellovie.snapvids.domain.auth.vo.TokenInfo;
+import io.github.hellovie.snapvids.domain.captcha.event.CheckCaptchaEvent;
+import io.github.hellovie.snapvids.domain.captcha.event.GenerateCaptchaCommand;
+import io.github.hellovie.snapvids.domain.captcha.service.CaptchaService;
+import io.github.hellovie.snapvids.types.common.Captcha;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -27,6 +36,8 @@ import javax.annotation.Resource;
 @Service("userAuthService")
 public class DefaultUserAuthService implements UserAuthService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultUserAuthService.class);
+
     @Resource(name = "loginUserDTOConvertor")
     private LoginUserDTOConvertor loginUserDTOConvertor;
 
@@ -36,10 +47,16 @@ public class DefaultUserAuthService implements UserAuthService {
     @Resource(name = "redisJwtAuthService")
     private AuthService authService;
 
+    @Resource(name = "captchaService")
+    private CaptchaService captchaService;
+
+    @Resource(name = "captchaDrawService")
+    private DrawService captchaDrawService;
+
     /**
      * {@inheritDoc}
      *
-     * @see UserAuthService#registerByUsername
+     * @see UserAuthService#registerByUsername(UsernameRegisterCommand)
      */
     @Override
     public LoginUserDTO registerByUsername(UsernameRegisterCommand command) {
@@ -48,8 +65,9 @@ public class DefaultUserAuthService implements UserAuthService {
                 command.getPassword().getPlaintext(),
                 command.getPhoneNumber().getNumber()
         );
+        CheckCaptchaEvent checkCaptchaEvent = CheckCaptchaEvent.buildForRegisterSms(command.getCaptcha());
 
-        // Todo：需要短信验证码
+        captchaService.check(checkCaptchaEvent);
         LoginInfo loginInfo = authService.register(RegisterParams.Builder.buildByUsername(params));
         return loginUserDTOConvertor.toLoginUserDTO(loginInfo);
     }
@@ -57,7 +75,7 @@ public class DefaultUserAuthService implements UserAuthService {
     /**
      * {@inheritDoc}
      *
-     * @see UserAuthService#loginByUsername
+     * @see UserAuthService#loginByUsername(UsernameLoginCommand)
      */
     @Override
     public LoginUserDTO loginByUsername(UsernameLoginCommand command) {
@@ -65,8 +83,9 @@ public class DefaultUserAuthService implements UserAuthService {
                 command.getUsername().getValue(),
                 command.getPassword().getPlaintext()
         );
+        CheckCaptchaEvent checkCaptchaEvent = CheckCaptchaEvent.buildForLoginGraphical(command.getCaptcha());
 
-        // Todo：需要图片验证码
+        captchaService.check(checkCaptchaEvent);
         LoginInfo loginInfo = authService.login(LoginParams.Builder.buildByUsername(params));
         return loginUserDTOConvertor.toLoginUserDTO(loginInfo);
     }
@@ -74,7 +93,7 @@ public class DefaultUserAuthService implements UserAuthService {
     /**
      * {@inheritDoc}
      *
-     * @see UserAuthService#logout
+     * @see UserAuthService#logout()
      */
     @Override
     public void logout() {
@@ -84,11 +103,39 @@ public class DefaultUserAuthService implements UserAuthService {
     /**
      * {@inheritDoc}
      *
-     * @see UserAuthService#refreshToken
+     * @see UserAuthService#refreshToken()
      */
     @Override
     public TokenDTO refreshToken() {
         TokenInfo tokenInfo = authService.refreshToken();
         return tokenDTOConvertor.toTokenDTO(tokenInfo);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see UserAuthService#createCaptchaForUsernameLogin()
+     */
+    @Override
+    public GraphicalCaptchaDTO createCaptchaForUsernameLogin() {
+        GenerateCaptchaCommand cmd = GenerateCaptchaCommand.buildForLoginGraphical();
+        Captcha captcha = captchaService.generate(cmd);
+        StringBuffer base64 = new StringBuffer();
+        captchaDrawService.drawToBase64(base64, captcha.getValue());
+        return new GraphicalCaptchaDTO(captcha.getId(), base64.toString());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see UserAuthService#sendSmsForUsernameRegister(SendSmsEvent)
+     */
+    @Override
+    public void sendSmsForUsernameRegister(SendSmsEvent event) {
+        GenerateCaptchaCommand cmd = GenerateCaptchaCommand.buildForRegisterSms(event.getPhoneNumber().getNumber());
+        Captcha captcha = captchaService.generate(cmd);
+        // Todo：需要去发送短信
+        LOG.info("Todo: SMS verification code {} was sent to mobile phone number {}",
+                captcha.getValue(), captcha.getId());
     }
 }
