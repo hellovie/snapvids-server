@@ -48,7 +48,7 @@ public class AuthenticationExceptionHandler implements AuthenticationEntryPoint 
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         // Http Code: 401
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        // 如果抛出的是自定义异常，则按照自定义异常的异常信息返回给前端。
+        // 如果抛出的是自定义业务异常，则按照自定义异常的异常信息返回给前端。
         ExceptionCode exceptionCode = UserExceptionType.UNAUTHORIZED;
         boolean canRetry = exceptionCode.canRetry();
         String code = exceptionManager.formatCode(exceptionCode);
@@ -56,10 +56,11 @@ public class AuthenticationExceptionHandler implements AuthenticationEntryPoint 
 
         Exception exception = (Exception) request.getAttribute(RequestDispatcher.ERROR_EXCEPTION);
         if (exception instanceof BusinessException) {
-            exceptionCode = ((BusinessException) exception).getExceptionCode();
+            BusinessException be = (BusinessException) exception;
+            exceptionCode = be.getExceptionCode();
             canRetry = exceptionCode.canRetry();
             code = exceptionManager.formatCode(exceptionCode);
-            message = exceptionCode.getMessage();
+            message = be.getWhetherCustomMessage() ? be.getMessage() : exceptionCode.getMessage();
 
             // {@link io.github.hellovie.snapvids.domain.auth.service.AuthService#auth()}
             // {@link UserExceptionType.ACCESS_TOKEN_HAS_EXPIRED}

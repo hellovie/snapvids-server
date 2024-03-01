@@ -26,6 +26,16 @@ public class AuthException extends BusinessException {
      * 主动抛出的异常。
      *
      * @param exceptionCode 开发者自定义的异常信息
+     * @param message       自定义返回的消息
+     */
+    public AuthException(ExceptionCode exceptionCode, String message) {
+        super(exceptionCode, message);
+    }
+
+    /**
+     * 主动抛出的异常。
+     *
+     * @param exceptionCode 开发者自定义的异常信息
      */
     public AuthException(ExceptionCode exceptionCode) {
         super(exceptionCode);

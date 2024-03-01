@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.annotation.Resource;
 
+import static io.github.hellovie.snapvids.common.module.common.CommonExceptionType.UNKNOWN_EXCEPTION;
+
 /**
  * 全局异常处理。
  *
@@ -65,7 +67,7 @@ public class GlobalExceptionHandler {
     public ResultResponse.FailResult businessExceptionHandler(final BusinessException ex) {
         final boolean canRetry = ex.getExceptionCode().canRetry();
         final String code = exceptionManager.formatCode(ex.getExceptionCode());
-        final String message = ex.getExceptionCode().getMessage();
+        final String message = ex.getWhetherCustomMessage() ? ex.getMessage() : ex.getExceptionCode().getMessage();
 
         // 异常告警
         exceptionNotifyHandler.notifyWarning(ex);
@@ -88,10 +90,11 @@ public class GlobalExceptionHandler {
         // 异常告警
         exceptionNotifyHandler.notifyError(ex);
 
+        final String message = ex.getWhetherCustomMessage() ? ex.getMessage() : UNKNOWN_EXCEPTION.getMessage();
         return ResultResponse.track(
                 traceId,
-                exceptionManager.formatCode(CommonExceptionType.UNKNOWN_EXCEPTION),
-                CommonExceptionType.UNKNOWN_EXCEPTION.getMessage()
+                exceptionManager.formatCode(UNKNOWN_EXCEPTION),
+                message
         );
     }
 
@@ -112,8 +115,8 @@ public class GlobalExceptionHandler {
 
         return ResultResponse.track(
                 traceId,
-                exceptionManager.formatCode(CommonExceptionType.UNKNOWN_EXCEPTION),
-                CommonExceptionType.UNKNOWN_EXCEPTION.getMessage()
+                exceptionManager.formatCode(UNKNOWN_EXCEPTION),
+                UNKNOWN_EXCEPTION.getMessage()
         );
     }
 }
