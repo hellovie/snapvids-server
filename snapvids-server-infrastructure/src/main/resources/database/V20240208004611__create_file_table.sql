@@ -20,8 +20,8 @@ CREATE TABLE `file`
     `is_deleted`       TINYINT UNSIGNED DEFAULT 0     NOT NULL COMMENT '是否删除(1-删除)',
     PRIMARY KEY `PK_File_On_Id` (`id`),
     UNIQUE `UK_File_On_StorageName` (`storage_name`(16)),
-    FOREIGN KEY `FK_File_User_On_CreatedById` (`created_by_id`) REFERENCES `user` (`id`),
-    FOREIGN KEY `FK_File_User_On_ModifiedById` (`modified_by_id`) REFERENCES `user` (`id`)
+    CONSTRAINT `FK_File_User_On_CreatedById` FOREIGN KEY (`created_by_id`) REFERENCES `user` (`id`),
+    CONSTRAINT `FK_File_User_On_ModifiedById` FOREIGN KEY (`modified_by_id`) REFERENCES `user` (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci COMMENT '文件表';

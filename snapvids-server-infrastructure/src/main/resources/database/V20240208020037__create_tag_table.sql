@@ -12,7 +12,7 @@ CREATE TABLE `tag`
     `is_deleted`       TINYINT UNSIGNED DEFAULT 0     NOT NULL COMMENT '是否删除(1-删除)',
     PRIMARY KEY `PK_Tag_On_Id` (`id`),
     UNIQUE `UK_Tag_On_Name` (`name`(8)),
-    FOREIGN KEY `FK_Tag_User_On_AuthorId` (`author_id`) REFERENCES `user` (`id`)
+    CONSTRAINT `FK_Tag_User_On_AuthorId` FOREIGN KEY (`author_id`) REFERENCES `user` (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci COMMENT '作品标签表';

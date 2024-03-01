@@ -11,9 +11,9 @@ CREATE TABLE `like`
     `utc_modified` DATETIME(6)                    NOT NULL COMMENT '更新时间(UTC)',
     `is_deleted`   TINYINT UNSIGNED DEFAULT 0     NOT NULL COMMENT '是否删除(1-删除)',
     PRIMARY KEY `PK_Like_On_Id` (`id`),
-    FOREIGN KEY `FK_Like_User_On_UserId` (`user_id`) REFERENCES `user` (`id`),
-    FOREIGN KEY `FK_Like_Creation_On_CreationId` (`creation_id`) REFERENCES `creation` (`id`),
-    FOREIGN KEY `FK_Like_Comment_On_CommentId` (`comment_id`) REFERENCES `comment` (`id`)
+    CONSTRAINT `FK_Like_User_On_UserId` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+    CONSTRAINT `FK_Like_Creation_On_CreationId` FOREIGN KEY (`creation_id`) REFERENCES `creation` (`id`),
+    CONSTRAINT `FK_Like_Comment_On_CommentId` FOREIGN KEY (`comment_id`) REFERENCES `comment` (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci COMMENT '点赞表';

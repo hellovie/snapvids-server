@@ -15,7 +15,7 @@ CREATE TABLE `permission`
     `is_deleted`   TINYINT UNSIGNED DEFAULT 0     NOT NULL COMMENT '是否删除(1-删除)',
     PRIMARY KEY `PK_Permission_On_Id` (`id`),
     UNIQUE `UK_Permission_On_Code` (`code`(16)),
-    FOREIGN KEY `FK_Permission_On_Pid` (`pid`) REFERENCES `permission` (`id`)
+    CONSTRAINT `FK_Permission_On_Pid` FOREIGN KEY (`pid`) REFERENCES `permission` (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci COMMENT '权限表';

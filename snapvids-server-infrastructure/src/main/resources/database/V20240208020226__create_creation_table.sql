@@ -19,9 +19,9 @@ CREATE TABLE `creation`
     `utc_modified`     DATETIME(6)                    NOT NULL COMMENT '更新时间(UTC)',
     `is_deleted`       TINYINT UNSIGNED DEFAULT 0     NOT NULL COMMENT '是否删除(1-删除)',
     PRIMARY KEY `PK_Creation_On_Id` (`id`),
-    FOREIGN KEY `FK_Creation_File_On_CoverId` (`cover_id`) REFERENCES `file` (`id`),
-    FOREIGN KEY `FK_Creation_Bgm_On_BgmId` (`bgm_id`) REFERENCES `bgm` (`id`),
-    FOREIGN KEY `FK_Creation_User_On_AuthorId` (`author_id`) REFERENCES `user` (`id`)
+    CONSTRAINT `FK_Creation_File_On_CoverId` FOREIGN KEY (`cover_id`) REFERENCES `file` (`id`),
+    CONSTRAINT `FK_Creation_Bgm_On_BgmId` FOREIGN KEY (`bgm_id`) REFERENCES `bgm` (`id`),
+    CONSTRAINT `FK_Creation_User_On_AuthorId` FOREIGN KEY (`author_id`) REFERENCES `user` (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci COMMENT '作品表';
