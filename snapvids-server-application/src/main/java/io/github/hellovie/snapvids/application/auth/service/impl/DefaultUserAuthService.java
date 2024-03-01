@@ -1,7 +1,5 @@
 package io.github.hellovie.snapvids.application.auth.service.impl;
 
-import io.github.hellovie.snapvids.application.auth.convertor.LoginUserDTOConvertor;
-import io.github.hellovie.snapvids.application.auth.convertor.TokenDTOConvertor;
 import io.github.hellovie.snapvids.application.auth.dto.GraphicalCaptchaDTO;
 import io.github.hellovie.snapvids.application.auth.dto.LoginUserDTO;
 import io.github.hellovie.snapvids.application.auth.dto.TokenDTO;
@@ -38,12 +36,6 @@ public class DefaultUserAuthService implements UserAuthService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultUserAuthService.class);
 
-    @Resource(name = "loginUserDTOConvertor")
-    private LoginUserDTOConvertor loginUserDTOConvertor;
-
-    @Resource(name = "tokenDTOConvertor")
-    private TokenDTOConvertor tokenDTOConvertor;
-
     @Resource(name = "redisJwtAuthService")
     private AuthService authService;
 
@@ -69,7 +61,7 @@ public class DefaultUserAuthService implements UserAuthService {
 
         captchaService.check(checkCaptchaEvent);
         LoginInfo loginInfo = authService.register(RegisterParams.Builder.buildByUsername(params));
-        return loginUserDTOConvertor.toLoginUserDTO(loginInfo);
+        return LoginUserDTO.Convertor.toLoginUserDTO(loginInfo);
     }
 
     /**
@@ -87,7 +79,7 @@ public class DefaultUserAuthService implements UserAuthService {
 
         captchaService.check(checkCaptchaEvent);
         LoginInfo loginInfo = authService.login(LoginParams.Builder.buildByUsername(params));
-        return loginUserDTOConvertor.toLoginUserDTO(loginInfo);
+        return LoginUserDTO.Convertor.toLoginUserDTO(loginInfo);
     }
 
     /**
@@ -108,7 +100,7 @@ public class DefaultUserAuthService implements UserAuthService {
     @Override
     public TokenDTO refreshToken() {
         TokenInfo tokenInfo = authService.refreshToken();
-        return tokenDTOConvertor.toTokenDTO(tokenInfo);
+        return TokenDTO.Convertor.toTokenDTO(tokenInfo);
     }
 
     /**

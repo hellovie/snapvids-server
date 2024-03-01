@@ -1,5 +1,7 @@
 package io.github.hellovie.snapvids.application.auth.dto;
 
+import io.github.hellovie.snapvids.domain.auth.vo.TokenInfo;
+
 /**
  * Token DTO.
  *
@@ -39,5 +41,21 @@ public class TokenDTO {
 
     public Long getExpiresInSeconds() {
         return expiresInSeconds;
+    }
+
+    /**
+     * 转换器
+     */
+    public static class Convertor {
+
+        private Convertor() {}
+
+        public static TokenDTO toTokenDTO(TokenInfo tokenInfo) {
+            if (tokenInfo == null) {
+                return null;
+            }
+
+            return new TokenDTO(tokenInfo.getAccessToken(), tokenInfo.getRefreshToken(), tokenInfo.getExpiresInSeconds());
+        }
     }
 }
