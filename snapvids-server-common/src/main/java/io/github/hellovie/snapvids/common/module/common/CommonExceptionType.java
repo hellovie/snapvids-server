@@ -99,6 +99,11 @@ public enum CommonExceptionType implements ExceptionCode {
     GET_CURRENT_USER_FAIL(SYSTEM, 15, "获取请求用户失败", false),
 
     /**
+     * 类型转换失败
+     */
+    TYPE_CONVERSION_FAILED(SYSTEM, 16, "类型转换失败", false),
+
+    /**
      * 未知异常
      */
     UNKNOWN_EXCEPTION(UNKNOWN, 9999, "服务器繁忙，请稍后再试", false),
