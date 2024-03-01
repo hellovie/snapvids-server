@@ -9,6 +9,7 @@ import io.github.hellovie.snapvids.domain.auth.repository.AuthRepository;
 import io.github.hellovie.snapvids.domain.auth.strategy.AuthStrategy;
 import io.github.hellovie.snapvids.domain.auth.strategy.LoginParams;
 import io.github.hellovie.snapvids.domain.auth.strategy.RegisterParams;
+import io.github.hellovie.snapvids.domain.auth.strategy.annotation.AuthStrategyMark;
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.UserState;
 import io.github.hellovie.snapvids.types.common.Ip;
 import io.github.hellovie.snapvids.types.user.Password;
@@ -25,7 +26,8 @@ import java.sql.Timestamp;
  * @author hellovie
  * @since 1.0.0
  */
-@Component("USERNAME_AUTH_STRATEGY")
+@Component("usernameAuthStrategy")
+@AuthStrategyMark(type = AuthStrategy.AuthType.USERNAME_AUTH_STRATEGY)
 public class UsernameAuthStrategy implements AuthStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(UsernameAuthStrategy.class);

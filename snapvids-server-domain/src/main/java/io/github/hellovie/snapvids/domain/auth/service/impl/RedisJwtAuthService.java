@@ -19,6 +19,7 @@ import io.github.hellovie.snapvids.domain.auth.service.AuthService;
 import io.github.hellovie.snapvids.domain.auth.strategy.AuthStrategy;
 import io.github.hellovie.snapvids.domain.auth.strategy.LoginParams;
 import io.github.hellovie.snapvids.domain.auth.strategy.RegisterParams;
+import io.github.hellovie.snapvids.domain.auth.strategy.annotation.AuthStrategyMark;
 import io.github.hellovie.snapvids.domain.auth.vo.LoginInfo;
 import io.github.hellovie.snapvids.domain.auth.vo.TokenInfo;
 import io.github.hellovie.snapvids.domain.util.ContextHolder;
@@ -27,10 +28,12 @@ import io.github.hellovie.snapvids.types.common.Id;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -83,14 +86,30 @@ public class RedisJwtAuthService implements AuthService {
     @Resource(name = "ksuidGenerator")
     private IdGenerateService<String> ksuidGenerator;
 
-    @Resource
-    private Map<String, AuthStrategy> strategyMap;
+    private final Map<String, AuthStrategy> strategyMap = new ConcurrentHashMap<>(AuthStrategy.AuthType.values().length);
 
     @Resource(name = "authRepository")
     private AuthRepository repository;
 
     @Resource(name = "redisCacheService")
     private CacheService cacheService;
+
+    /**
+     * 自动装配所有认证策略。
+     *
+     * @param strategies 认证策略列表
+     */
+    public RedisJwtAuthService(List<AuthStrategy> strategies) {
+        StringBuffer registerStrategy = new StringBuffer();
+        strategies.forEach(authStrategy -> {
+            AuthStrategyMark strategy = AnnotationUtils.findAnnotation(authStrategy.getClass(), AuthStrategyMark.class);
+            if (null != strategy) {
+                strategyMap.put(strategy.type().name(), authStrategy);
+                registerStrategy.append(strategy.type().name()).append(" ");
+            }
+        });
+        LOG.info("[These authentication strategy is registered]>>> [{}]{}", strategyMap.size(), registerStrategy);
+    }
 
     /**
      * {@inheritDoc}
@@ -493,11 +512,6 @@ public class RedisJwtAuthService implements AuthService {
      * @throws ConfigException 找不到认证策略实现类抛出
      */
     private AuthStrategy getAuthStrategy(final AuthStrategy.AuthType type) throws ConfigException {
-        if (strategyMap == null) {
-            LOG.error("[Get auth strategy failed]>>> strategyMap=null");
-            throw new ConfigException(UserExceptionType.AUTH_STRATEGY_NOT_FOUND);
-        }
-
         if (strategyMap.isEmpty()) {
             LOG.error("[Get auth strategy failed]>>> strategyMap.size=0");
             throw new ConfigException(UserExceptionType.AUTH_STRATEGY_NOT_FOUND);
