@@ -84,6 +84,11 @@ public enum CommonExceptionType implements ExceptionCode {
     CAPTCHA_ERROR(BUSINESS, 12, "验证码错误", true),
 
     /**
+     * 字符串不能为空
+     */
+    STRING_CANNOT_BE_EMPTY(BUSINESS, 13, "字符串不能为空", true),
+
+    /**
      * 未知异常
      */
     UNKNOWN_EXCEPTION(UNKNOWN, 9999, "服务器繁忙，请稍后再试", false),
