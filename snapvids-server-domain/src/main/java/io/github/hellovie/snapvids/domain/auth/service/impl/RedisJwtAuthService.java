@@ -108,7 +108,7 @@ public class RedisJwtAuthService implements AuthService {
                 registerStrategy.append(strategy.type().name()).append(" ");
             }
         });
-        LOG.info("[These authentication strategy is registered]>>> [{}]{}", strategyMap.size(), registerStrategy);
+        LOG.info("[These auth strategy are already registered]>>> [{}]{}", strategyMap.size(), registerStrategy);
     }
 
     /**

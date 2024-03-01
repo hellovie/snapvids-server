@@ -1,5 +1,6 @@
 package io.github.hellovie.snapvids.domain.auth.strategy.impl.username;
 
+import io.github.hellovie.snapvids.common.context.Context;
 import io.github.hellovie.snapvids.common.exception.business.DataException;
 import io.github.hellovie.snapvids.common.exception.business.ServiceException;
 import io.github.hellovie.snapvids.common.module.user.UserExceptionType;
@@ -10,6 +11,7 @@ import io.github.hellovie.snapvids.domain.auth.strategy.AuthStrategy;
 import io.github.hellovie.snapvids.domain.auth.strategy.LoginParams;
 import io.github.hellovie.snapvids.domain.auth.strategy.RegisterParams;
 import io.github.hellovie.snapvids.domain.auth.strategy.annotation.AuthStrategyMark;
+import io.github.hellovie.snapvids.domain.util.ContextHolder;
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.UserState;
 import io.github.hellovie.snapvids.types.common.Ip;
 import io.github.hellovie.snapvids.types.user.Password;
@@ -51,8 +53,9 @@ public class UsernameAuthStrategy implements AuthStrategy {
             throw new ServiceException(UserExceptionType.USER_ALREADY_EXIST);
         }
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        // Todo: get ip from request context
-        int ip = 16777343;
+
+        Context context = ContextHolder.getContext();
+        int ip = context != null ? Ip.ip2Int(context.getRemoteIp()) : 0;
         SysUser sysUser = new SysUser(
                 params.getUsername().getValue(), params.getPassword().getCiphertext(),
                 params.getPhoneNumber().getNumber(), ip, now, ip, now, UserState.ENABLE);
@@ -86,12 +89,22 @@ public class UsernameAuthStrategy implements AuthStrategy {
         account.getPassword().verifyPassword(rowPassword.getPlaintext());
 
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        // Todo: get ip from request context
-        int ip = 16777343;
+        Context context = ContextHolder.getContext();
+        int ip = context != null ? Ip.ip2Int(context.getRemoteIp()) : 0;
 
         // 更新用户登录信息
         repository.updateLoginInfoByUsername(account.getUsername(), new Ip(ip), now);
 
-        return account;
+        return new Account(
+                account.getId().getValue(),
+                account.getUsername().getValue(),
+                account.getPassword().getCiphertext(),
+                account.getPhoneNumber().getNumber(),
+                ip,
+                now,
+                account.getRegisterIp().getIntAddress(),
+                account.getLastLoginTime(),
+                account.getState()
+        );
     }
 }
