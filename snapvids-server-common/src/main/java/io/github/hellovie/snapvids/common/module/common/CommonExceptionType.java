@@ -51,12 +51,12 @@ public enum CommonExceptionType implements ExceptionCode {
     /**
      * JWT Token 生成失败
      */
-    CREATE_JWT_TOKEN_FAILURE(SYSTEM, 6, "JWT Token生成失败", false),
+    CREATE_JWT_TOKEN_FAILED(SYSTEM, 6, "JWT Token生成失败", false),
 
     /**
      * 解密 JWT Token 失败
      */
-    DECRYPT_JWT_TOKEN_FAILURE(SYSTEM, 7, "JWT Token解密失败", false),
+    DECRYPT_JWT_TOKEN_FAILED(SYSTEM, 7, "JWT Token解密失败", false),
 
     /**
      * 验证码 id 不能为空
@@ -81,7 +81,7 @@ public enum CommonExceptionType implements ExceptionCode {
     /**
      * 验证码错误
      */
-    CAPTCHA_ERROR(BUSINESS, 12, "验证码错误", true),
+    WRONG_CAPTCHA(BUSINESS, 12, "验证码错误", true),
 
     /**
      * 字符串不能为空
@@ -91,12 +91,12 @@ public enum CommonExceptionType implements ExceptionCode {
     /**
      * 获取请求上下文失败
      */
-    GET_CONTEXT_FAIL(SYSTEM, 14, "获取请求上下文失败", false),
+    GET_CONTEXT_FAILED(SYSTEM, 14, "获取请求上下文失败", false),
 
     /**
      * 获取请求用户失败
      */
-    GET_CURRENT_USER_FAIL(SYSTEM, 15, "获取请求用户失败", false),
+    GET_CURRENT_USER_FAILED(SYSTEM, 15, "获取请求用户失败", false),
 
     /**
      * 类型转换失败

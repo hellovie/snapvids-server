@@ -20,17 +20,17 @@ public class ChunkFile extends BaseEntity {
     private Long fileId;
 
     /**
-     * 当前分块编号（从1开始）
+     * 当前分片编号（从1开始）
      */
     private Integer currentNum;
 
     /**
-     * 当前分块实际大小（Byte）
+     * 当前分片实际大小（Byte）
      */
     private Long currentSize;
 
     /**
-     * 分块大小（Byte）
+     * 分片大小（Byte）
      */
     private Long chunkSize;
 
@@ -40,7 +40,7 @@ public class ChunkFile extends BaseEntity {
     private Long totalSize;
 
     /**
-     * 文件总块数（Byte）
+     * 文件总块数
      */
     private Integer totalChunks;
 

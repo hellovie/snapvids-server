@@ -36,7 +36,7 @@ public class ContextHolder {
     public static Context getContextOrElseThrow() throws UtilException {
         Context context = CONTEXT_THREAD_LOCAL.get();
         if (context == null) {
-            throw new UtilException(CommonExceptionType.GET_CONTEXT_FAIL);
+            throw new UtilException(CommonExceptionType.GET_CONTEXT_FAILED);
         }
         return context;
     }
@@ -58,7 +58,7 @@ public class ContextHolder {
     public static SysUser getUserOrElseThrow() throws UtilException {
         SysUser sysUser = USER_THREAD_LOCAL.get();
         if (sysUser == null) {
-            throw new UtilException(CommonExceptionType.GET_CURRENT_USER_FAIL);
+            throw new UtilException(CommonExceptionType.GET_CURRENT_USER_FAILED);
         }
         return sysUser;
     }

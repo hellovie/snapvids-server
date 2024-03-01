@@ -50,7 +50,7 @@ public class JwtTokenService implements TokenService {
 
         } catch (Exception ex) {
             LOG.error("[Create JWT token failed]>>> payload={}, expiredInSeconds={}", payload, expiredInSeconds);
-            throw new UtilException(CommonExceptionType.CREATE_JWT_TOKEN_FAILURE, ex);
+            throw new UtilException(CommonExceptionType.CREATE_JWT_TOKEN_FAILED, ex);
         }
     }
 
@@ -97,7 +97,7 @@ public class JwtTokenService implements TokenService {
 
         } catch (Exception ex) {
             LOG.info("[Get JWT token payload failed]>>> token={}", token);
-            throw new UtilException(CommonExceptionType.DECRYPT_JWT_TOKEN_FAILURE, ex);
+            throw new UtilException(CommonExceptionType.DECRYPT_JWT_TOKEN_FAILED, ex);
         }
 
         return payload;

@@ -198,7 +198,7 @@ public enum UserExceptionType implements ExceptionCode {
     /**
      * 更新用户登录信息失败
      */
-    UPDATE_USER_LOGIN_INFO_ERROR(SYSTEM, 37, "更新用户登录信息失败", false),
+    UPDATE_USER_LOGIN_INFO_FAILED(SYSTEM, 37, "更新用户登录信息失败", false),
 
     /**
      * 用户身份认证失败

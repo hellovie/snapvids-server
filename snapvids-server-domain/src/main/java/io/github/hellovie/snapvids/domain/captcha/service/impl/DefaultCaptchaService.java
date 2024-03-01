@@ -54,7 +54,7 @@ public class DefaultCaptchaService implements CaptchaService {
     public void check(CheckCaptchaEvent event) throws DataException {
         String value = repository.getCaptchaFromCache(event.getKey());
         if (!event.getCaptcha().equalsIgnoreCase(value)) {
-            throw new DataException(CommonExceptionType.CAPTCHA_ERROR);
+            throw new DataException(CommonExceptionType.WRONG_CAPTCHA);
         }
         // 验证成功，删除缓存
         repository.removeCaptchaFromCache(event.getKey());

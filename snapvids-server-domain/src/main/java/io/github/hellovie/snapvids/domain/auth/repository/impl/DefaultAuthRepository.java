@@ -162,7 +162,7 @@ public class DefaultAuthRepository implements AuthRepository {
         if (updateRows != 1) {
             LOG.error("[Failed to update user login information]>>> updateRows={}, username={}, lastLoginIp={}, lastLoginTime={}",
                     updateRows, username.getValue(), lastLoginIp.getIntAddress(), lastLoginTime);
-            throw new DataException(UserExceptionType.UPDATE_USER_LOGIN_INFO_ERROR);
+            throw new DataException(UserExceptionType.UPDATE_USER_LOGIN_INFO_FAILED);
         }
     }
 
