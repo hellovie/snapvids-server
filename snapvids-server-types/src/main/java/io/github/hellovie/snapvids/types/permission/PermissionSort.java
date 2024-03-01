@@ -38,4 +38,9 @@ public class PermissionSort implements Verifiable {
     public Integer getValue() {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return Integer.toString(value);
+    }
 }

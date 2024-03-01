@@ -55,4 +55,9 @@ public class PhoneNumber implements Verifiable {
 
         return String.join("", Collections.nCopies(number.trim().length(), "*"));
     }
+
+    @Override
+    public String toString() {
+        return getMaskedNumber();
+    }
 }

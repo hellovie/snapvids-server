@@ -156,6 +156,11 @@ public class Password implements Verifiable {
         return from;
     }
 
+    @Override
+    public String toString() {
+        return ciphertext;
+    }
+
     /**
      * 密码对象构造来源。
      */

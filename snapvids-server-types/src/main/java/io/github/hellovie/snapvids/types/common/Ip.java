@@ -91,4 +91,9 @@ public class Ip implements Verifiable {
         }
         return rs;
     }
+
+    @Override
+    public String toString() {
+        return address;
+    }
 }

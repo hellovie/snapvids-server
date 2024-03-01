@@ -71,4 +71,9 @@ public class AuditResult implements Verifiable {
     public String getDescription() {
         return description;
     }
+
+    @Override
+    public String toString() {
+        return isSuccess + "#" + description;
+    }
 }

@@ -79,4 +79,9 @@ public class ValueString implements Verifiable {
     public String getErrorMessage() {
         return errorMessage;
     }
+
+    @Override
+    public String toString() {
+        return value + "#" + errorMessage;
+    }
 }

@@ -40,4 +40,9 @@ public class RoleKey implements Verifiable {
     public String getValue() {
         return "ROLE_" + value;
     }
+
+    @Override
+    public String toString() {
+        return getValue();
+    }
 }

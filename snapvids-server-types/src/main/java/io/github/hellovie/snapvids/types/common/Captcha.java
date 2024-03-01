@@ -53,4 +53,9 @@ public class Captcha implements Verifiable {
     public String getValue() {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return id + "#" + value;
+    }
 }

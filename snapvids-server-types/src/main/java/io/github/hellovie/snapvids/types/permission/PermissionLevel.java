@@ -38,4 +38,9 @@ public class PermissionLevel implements Verifiable {
     public Integer getValue() {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return Integer.toString(value);
+    }
 }
