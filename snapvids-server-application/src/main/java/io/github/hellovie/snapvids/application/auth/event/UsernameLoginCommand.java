@@ -27,10 +27,10 @@ public class UsernameLoginCommand {
      */
     private final Captcha captcha;
 
-    public UsernameLoginCommand(String username, String password, String captchaId, String captcha) {
-        this.username = new Username(username);
-        this.password = Password.ofPlaintext(password);
-        this.captcha = new Captcha(captchaId, captcha);
+    public UsernameLoginCommand(Username username, Password password, Captcha captcha) {
+        this.username = username;
+        this.password = password;
+        this.captcha = captcha;
     }
 
     public Username getUsername() {

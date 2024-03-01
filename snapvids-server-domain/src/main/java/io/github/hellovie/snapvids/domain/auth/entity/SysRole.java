@@ -18,39 +18,54 @@ public class SysRole {
     /**
      * id
      */
-    private final Id id;
+    private Id id;
 
     /**
      * 角色标识
      */
-    private final RoleKey roleKey;
+    private RoleKey roleKey;
 
     /**
      * 用户角色
      */
-    private final RoleName roleName;
+    private RoleName roleName;
 
     /**
      * 角色权限
      */
     private final List<SysPermission> permissions = new ArrayList<>();
 
-    public SysRole(Long id, String roleKey, String roleName) {
-        this.id = new Id(id);
-        this.roleKey = new RoleKey(roleKey);
-        this.roleName = new RoleName(roleName);
+    public SysRole(Id id, RoleKey roleKey, RoleName roleName) {
+        this.id = id;
+        this.roleKey = roleKey;
+        this.roleName = roleName;
     }
 
     public Id getId() {
         return id;
     }
 
+    public SysRole setId(Id id) {
+        this.id = id;
+        return this;
+    }
+
     public RoleKey getRoleKey() {
         return roleKey;
     }
 
+    public SysRole setRoleKey(RoleKey roleKey) {
+        this.roleKey = roleKey;
+        return this;
+    }
+
     public RoleName getRoleName() {
         return roleName;
+    }
+
+    public SysRole setRoleName(RoleName roleName) {
+        this.roleName = roleName;
+        return this;
     }
 
     public List<SysPermission> getPermissions() {
@@ -68,9 +83,9 @@ public class SysRole {
     @Override
     public String toString() {
         return "SysRole{" +
-                "id=" + id.getValue() +
-                ", roleKey=" + roleKey.getValue() +
-                ", roleName=" + roleName.getValue() +
+                "id=" + id +
+                ", roleKey=" + roleKey +
+                ", roleName=" + roleName +
                 ", permissions=" + permissions +
                 '}';
     }

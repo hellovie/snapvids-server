@@ -14,6 +14,11 @@ import io.github.hellovie.snapvids.infrastructure.persistence.entity.Role;
 import io.github.hellovie.snapvids.infrastructure.persistence.entity.User;
 import io.github.hellovie.snapvids.types.common.Id;
 import io.github.hellovie.snapvids.types.common.Ip;
+import io.github.hellovie.snapvids.types.common.PhoneNumber;
+import io.github.hellovie.snapvids.types.permission.*;
+import io.github.hellovie.snapvids.types.role.RoleKey;
+import io.github.hellovie.snapvids.types.role.RoleName;
+import io.github.hellovie.snapvids.types.user.Password;
 import io.github.hellovie.snapvids.types.user.Username;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,9 +62,17 @@ public class DefaultAuthRepository implements AuthRepository {
             return null;
         }
 
-        return new Account(user.getId(), user.getUsername(), user.getPassword(), user.getPhoneNumber(),
-                user.getLastLoginIp(), user.getLastLoginTime(), user.getRegisterIp(), user.getRegisterTime(),
-                user.getState());
+        return new Account(
+                new Id(user.getId()),
+                new Username(user.getUsername()),
+                Password.ofCiphertext(user.getPassword()),
+                new PhoneNumber(user.getPhoneNumber()),
+                new Ip(user.getLastLoginIp()),
+                user.getLastLoginTime(),
+                new Ip(user.getRegisterIp()),
+                user.getRegisterTime(),
+                user.getState()
+        );
     }
 
     /**
@@ -256,9 +269,17 @@ public class DefaultAuthRepository implements AuthRepository {
             return null;
         }
 
-        return new SysUser(user.getId(), user.getUsername(), user.getPassword(), user.getPhoneNumber(),
-                user.getLastLoginIp(), user.getLastLoginTime(), user.getRegisterIp(), user.getRegisterTime(),
-                user.getState());
+        return new SysUser(
+                new Id(user.getId()),
+                new Username(user.getUsername()),
+                Password.ofCiphertext(user.getPassword()),
+                new PhoneNumber(user.getPhoneNumber()),
+                new Ip(user.getLastLoginIp()),
+                user.getLastLoginTime(),
+                new Ip(user.getRegisterIp()),
+                user.getRegisterTime(),
+                user.getState()
+        );
     }
 
     /**
@@ -272,9 +293,17 @@ public class DefaultAuthRepository implements AuthRepository {
             return null;
         }
 
-        SysUser sysUser = new SysUser(user.getId(), user.getUsername(), user.getPassword(), user.getPhoneNumber(),
-                user.getLastLoginIp(), user.getLastLoginTime(), user.getRegisterIp(), user.getRegisterTime(),
-                user.getState());
+        SysUser sysUser = new SysUser(
+                new Id(user.getId()),
+                new Username(user.getUsername()),
+                Password.ofCiphertext(user.getPassword()),
+                new PhoneNumber(user.getPhoneNumber()),
+                new Ip(user.getLastLoginIp()),
+                user.getLastLoginTime(),
+                new Ip(user.getRegisterIp()),
+                user.getRegisterTime(),
+                user.getState()
+        );
 
         List<Role> roles = user.getRoles() != null ? user.getRoles() : new ArrayList<>();
         List<SysRole> sysRoles = roles.stream()
@@ -296,7 +325,7 @@ public class DefaultAuthRepository implements AuthRepository {
             return null;
         }
 
-        SysRole sysRole = new SysRole(role.getId(), role.getRoleKey(), role.getName());
+        SysRole sysRole = new SysRole(new Id(role.getId()), new RoleKey(role.getRoleKey()), new RoleName(role.getName()));
         List<Permission> permissions = role.getPermissions() != null ? role.getPermissions() : new ArrayList<>();
         List<SysPermission> sysPermissions = permissions.stream()
                 .map(this::toSysPermission)
@@ -317,9 +346,18 @@ public class DefaultAuthRepository implements AuthRepository {
             return null;
         }
 
-        return new SysPermission(permission.getId(), permission.getCode(), permission.getPid(), permission.getIcon(),
-                permission.getName(), permission.getUrl(), permission.getType(), permission.getPath(),
-                permission.getLevel(), permission.getSort());
+        return new SysPermission(
+                new Id(permission.getId()),
+                new PermissionCode(permission.getCode()),
+                new Id(permission.getPid()),
+                new PermissionIcon(permission.getIcon()),
+                new PermissionName(permission.getName()),
+                new PermissionUrl(permission.getUrl()),
+                permission.getType(),
+                new PermissionPath(permission.getPath()),
+                new PermissionLevel(permission.getLevel()),
+                new PermissionSort(permission.getSort())
+        );
     }
 
     /**

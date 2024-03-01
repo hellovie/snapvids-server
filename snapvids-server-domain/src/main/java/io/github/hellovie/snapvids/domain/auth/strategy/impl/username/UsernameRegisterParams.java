@@ -31,13 +31,13 @@ public class UsernameRegisterParams {
      * 构造合理的 {@link UsernameRegisterParams} 对象。
      *
      * @param username    用户名
-     * @param plaintext   密码明文
+     * @param password    密码
      * @param phoneNumber 手机号码
      */
-    public UsernameRegisterParams(String username, String plaintext, String phoneNumber) {
-        this.username = new Username(username);
-        this.password = Password.ofPlaintext(plaintext);
-        this.phoneNumber = new PhoneNumber(phoneNumber);
+    public UsernameRegisterParams(Username username, Password password, PhoneNumber phoneNumber) {
+        this.username = username;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
     }
 
     public Username getUsername() {
@@ -55,9 +55,9 @@ public class UsernameRegisterParams {
     @Override
     public String toString() {
         return "UsernameRegisterParams{" +
-                "username=" + username.getValue() +
-                ", password=" + password.getCiphertext() +
-                ", phoneNumber=" + phoneNumber.getMaskedNumber() +
+                "username=" + username +
+                ", password=" + password +
+                ", phoneNumber=" + phoneNumber +
                 '}';
     }
 }

@@ -6,6 +6,9 @@ import io.github.hellovie.snapvids.application.auth.event.UsernameLoginCommand;
 import io.github.hellovie.snapvids.application.auth.service.UserAuthService;
 import io.github.hellovie.snapvids.common.util.ResultResponse;
 import io.github.hellovie.snapvids.interfaces.web.request.UsernameLoginRequest;
+import io.github.hellovie.snapvids.types.common.Captcha;
+import io.github.hellovie.snapvids.types.user.Password;
+import io.github.hellovie.snapvids.types.user.Username;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -38,10 +41,9 @@ public class LoginController {
         LOG.info("[LoginController#usernameLogin params]>>> username={}, captchaId={}, captcha={}",
                 request.getUsername(), request.getCaptchaId(), request.getCaptcha());
         UsernameLoginCommand cmd = new UsernameLoginCommand(
-                request.getUsername(),
-                request.getPassword(),
-                request.getCaptchaId(),
-                request.getCaptcha()
+                new Username(request.getUsername()),
+                Password.ofPlaintext(request.getPassword()),
+                new Captcha(request.getCaptchaId(), request.getCaptcha())
         );
         LoginUserDTO loginUserDTO = userAuthService.loginByUsername(cmd);
         return ResultResponse.success(loginUserDTO);

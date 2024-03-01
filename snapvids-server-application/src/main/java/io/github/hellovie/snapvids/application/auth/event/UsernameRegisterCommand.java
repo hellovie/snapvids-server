@@ -33,11 +33,11 @@ public class UsernameRegisterCommand {
      */
     private final Captcha captcha;
 
-    public UsernameRegisterCommand(String username, String password, String phoneNumber, String captcha) {
-        this.username = new Username(username);
-        this.password = Password.ofPlaintext(password);
-        this.phoneNumber = new PhoneNumber(phoneNumber);
-        this.captcha = new Captcha(phoneNumber, captcha);
+    public UsernameRegisterCommand(Username username, Password password, PhoneNumber phoneNumber, Captcha captcha) {
+        this.username = username;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.captcha = captcha;
     }
 
     public Username getUsername() {

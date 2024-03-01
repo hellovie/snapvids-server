@@ -15,8 +15,8 @@ public class SendSmsEvent {
      */
     private final PhoneNumber phoneNumber;
 
-    public SendSmsEvent(String phoneNumber) {
-        this.phoneNumber = new PhoneNumber(phoneNumber);
+    public SendSmsEvent(PhoneNumber phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public PhoneNumber getPhoneNumber() {

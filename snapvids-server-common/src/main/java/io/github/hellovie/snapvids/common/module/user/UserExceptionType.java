@@ -171,9 +171,9 @@ public enum UserExceptionType implements ExceptionCode {
     USER_LOGGING_IN_TRY_AGAIN_LATER(BUSINESS, 31, "该用户正在登录中，请稍后再试", false),
 
     /**
-     * 用户已存在
+     * 用户名已存在
      */
-    USER_ALREADY_EXIST(BUSINESS, 32, "用户已存在", true),
+    USERNAME_ALREADY_EXIST(BUSINESS, 32, "用户名已存在", true),
 
     /**
      * 用户不存在

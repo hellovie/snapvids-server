@@ -53,9 +53,9 @@ public class DefaultUserAuthService implements UserAuthService {
     @Override
     public LoginUserDTO registerByUsername(UsernameRegisterCommand command) {
         UsernameRegisterParams params = new UsernameRegisterParams(
-                command.getUsername().getValue(),
-                command.getPassword().getPlaintext(),
-                command.getPhoneNumber().getNumber()
+                command.getUsername(),
+                command.getPassword(),
+                command.getPhoneNumber()
         );
         CheckCaptchaEvent checkCaptchaEvent = CheckCaptchaEvent.buildForRegisterSms(command.getCaptcha());
 
@@ -72,8 +72,8 @@ public class DefaultUserAuthService implements UserAuthService {
     @Override
     public LoginUserDTO loginByUsername(UsernameLoginCommand command) {
         UsernameLoginParams params = new UsernameLoginParams(
-                command.getUsername().getValue(),
-                command.getPassword().getPlaintext()
+                command.getUsername(),
+                command.getPassword()
         );
         CheckCaptchaEvent checkCaptchaEvent = CheckCaptchaEvent.buildForLoginGraphical(command.getCaptcha());
 

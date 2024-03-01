@@ -7,6 +7,10 @@ import io.github.hellovie.snapvids.application.auth.service.UserAuthService;
 import io.github.hellovie.snapvids.common.util.ResultResponse;
 import io.github.hellovie.snapvids.interfaces.web.request.SendSmsRequest;
 import io.github.hellovie.snapvids.interfaces.web.request.UsernameRegisterRequest;
+import io.github.hellovie.snapvids.types.common.Captcha;
+import io.github.hellovie.snapvids.types.common.PhoneNumber;
+import io.github.hellovie.snapvids.types.user.Password;
+import io.github.hellovie.snapvids.types.user.Username;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -38,10 +42,10 @@ public class RegisterController {
     public ResultResponse.SuccessResult<LoginUserDTO> usernameRegister(@RequestBody UsernameRegisterRequest request) {
         LOG.info("[RegisterController#usernameRegister params]>>> username={}", request.getUsername());
         UsernameRegisterCommand cmd = new UsernameRegisterCommand(
-                request.getUsername(),
-                request.getPassword(),
-                request.getPhoneNumber(),
-                request.getCaptcha()
+                new Username(request.getUsername()),
+                Password.ofPlaintext(request.getPassword()),
+                new PhoneNumber(request.getPhoneNumber()),
+                new Captcha(request.getPhoneNumber(), request.getCaptcha())
         );
         LoginUserDTO loginUserDTO = userAuthService.registerByUsername(cmd);
         return ResultResponse.success(loginUserDTO);
@@ -54,7 +58,7 @@ public class RegisterController {
      */
     @GetMapping("/username/sms")
     public ResultResponse.SuccessResult<Void> sendSmsForUsernameRegister(@RequestBody SendSmsRequest request) {
-        SendSmsEvent event = new SendSmsEvent(request.getPhoneNumber());
+        SendSmsEvent event = new SendSmsEvent(new PhoneNumber(request.getPhoneNumber()));
         userAuthService.sendSmsForUsernameRegister(event);
         return ResultResponse.success(null);
     }

@@ -50,15 +50,14 @@ public class UsernameAuthStrategy implements AuthStrategy {
 
         Account account = repository.findAccountByUsername(params.getUsername());
         if (account != null) {
-            throw new ServiceException(UserExceptionType.USER_ALREADY_EXIST);
+            throw new ServiceException(UserExceptionType.USERNAME_ALREADY_EXIST);
         }
         Timestamp now = new Timestamp(System.currentTimeMillis());
 
         Context context = ContextHolder.getContext();
         int ip = context != null ? Ip.ip2Int(context.getRemoteIp()) : 0;
-        SysUser sysUser = new SysUser(
-                params.getUsername().getValue(), params.getPassword().getCiphertext(),
-                params.getPhoneNumber().getNumber(), ip, now, ip, now, UserState.ENABLE);
+        SysUser sysUser = new SysUser(params.getUsername(), params.getPassword(), params.getPhoneNumber(),
+                new Ip(ip), now, new Ip(ip), now, UserState.ENABLE);
         sysUser.addAllRole(getBaseSysRole());
 
         SysUser saveUser = repository.saveSysUser(sysUser);
@@ -95,16 +94,8 @@ public class UsernameAuthStrategy implements AuthStrategy {
         // 更新用户登录信息
         repository.updateLoginInfoByUsername(account.getUsername(), new Ip(ip), now);
 
-        return new Account(
-                account.getId().getValue(),
-                account.getUsername().getValue(),
-                account.getPassword().getCiphertext(),
-                account.getPhoneNumber().getNumber(),
-                ip,
-                now,
-                account.getRegisterIp().getIntAddress(),
-                account.getLastLoginTime(),
-                account.getState()
+        return new Account(account.getId(), account.getUsername(), account.getPassword(), account.getPhoneNumber(),
+                new Ip(ip), now, account.getRegisterIp(), account.getLastLoginTime(), account.getState()
         );
     }
 }

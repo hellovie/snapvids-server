@@ -22,77 +22,74 @@ public class SysUser {
     /**
      * id
      */
-    private final Id id;
+    private Id id;
 
     /**
      * 用户名
      */
-    private final Username username;
+    private Username username;
 
     /**
      * 密码
      */
-    private final Password password;
+    private Password password;
 
     /**
      * 手机号码
      */
-    private final PhoneNumber phoneNumber;
+    private PhoneNumber phoneNumber;
 
     /**
      * 最后登录 ip
      */
-    private final Ip lastLoginIp;
+    private Ip lastLoginIp;
 
     /**
      * 最后登录时间
      */
-    private final Timestamp lastLoginTime;
+    private Timestamp lastLoginTime;
 
     /**
      * 注册 ip
      */
-    private final Ip registerIp;
+    private Ip registerIp;
 
     /**
      * 注册时间
      */
-    private final Timestamp registerTime;
+    private Timestamp registerTime;
 
     /**
      * 用户状态
      */
-    private final UserState state;
+    private UserState state;
 
     /**
      * 用户角色
      */
     private final List<SysRole> roles = new ArrayList<>();
 
-    public SysUser(String username, String ciphertext, String phoneNumber, int lastLoginIp,
-                   Timestamp lastLoginTime, int registerIp, Timestamp registerTime, UserState state) {
-
-        this.id = null;
-        this.username = new Username(username);
-        this.password = Password.ofCiphertext(ciphertext);
-        this.phoneNumber = new PhoneNumber(phoneNumber);
-        this.lastLoginIp = new Ip(lastLoginIp);
+    public SysUser(Username username, Password password, PhoneNumber phoneNumber, Ip lastLoginIp,
+                   Timestamp lastLoginTime, Ip registerIp, Timestamp registerTime, UserState state) {
+        this.username = username;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.lastLoginIp = lastLoginIp;
         this.lastLoginTime = lastLoginTime;
-        this.registerIp = new Ip(registerIp);
+        this.registerIp = registerIp;
         this.registerTime = registerTime;
         this.state = state;
     }
 
-    public SysUser(long id, String username, String ciphertext, String phoneNumber, int lastLoginIp,
-                   Timestamp lastLoginTime, int registerIp, Timestamp registerTime, UserState state) {
-
-        this.id = new Id(id);
-        this.username = new Username(username);
-        this.password = Password.ofCiphertext(ciphertext);
-        this.phoneNumber = new PhoneNumber(phoneNumber);
-        this.lastLoginIp = new Ip(lastLoginIp);
+    public SysUser(Id id, Username username, Password password, PhoneNumber phoneNumber, Ip lastLoginIp,
+                   Timestamp lastLoginTime, Ip registerIp, Timestamp registerTime, UserState state) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.lastLoginIp = lastLoginIp;
         this.lastLoginTime = lastLoginTime;
-        this.registerIp = new Ip(registerIp);
+        this.registerIp = registerIp;
         this.registerTime = registerTime;
         this.state = state;
     }
@@ -101,36 +98,81 @@ public class SysUser {
         return id;
     }
 
+    public SysUser setId(Id id) {
+        this.id = id;
+        return this;
+    }
+
     public Username getUsername() {
         return username;
+    }
+
+    public SysUser setUsername(Username username) {
+        this.username = username;
+        return this;
     }
 
     public Password getPassword() {
         return password;
     }
 
+    public SysUser setPassword(Password password) {
+        this.password = password;
+        return this;
+    }
+
     public PhoneNumber getPhoneNumber() {
         return phoneNumber;
+    }
+
+    public SysUser setPhoneNumber(PhoneNumber phoneNumber) {
+        this.phoneNumber = phoneNumber;
+        return this;
     }
 
     public Ip getLastLoginIp() {
         return lastLoginIp;
     }
 
+    public SysUser setLastLoginIp(Ip lastLoginIp) {
+        this.lastLoginIp = lastLoginIp;
+        return this;
+    }
+
     public Timestamp getLastLoginTime() {
         return lastLoginTime;
+    }
+
+    public SysUser setLastLoginTime(Timestamp lastLoginTime) {
+        this.lastLoginTime = lastLoginTime;
+        return this;
     }
 
     public Ip getRegisterIp() {
         return registerIp;
     }
 
+    public SysUser setRegisterIp(Ip registerIp) {
+        this.registerIp = registerIp;
+        return this;
+    }
+
     public Timestamp getRegisterTime() {
         return registerTime;
     }
 
+    public SysUser setRegisterTime(Timestamp registerTime) {
+        this.registerTime = registerTime;
+        return this;
+    }
+
     public UserState getState() {
         return state;
+    }
+
+    public SysUser setState(UserState state) {
+        this.state = state;
+        return this;
     }
 
     public List<SysRole> getRoles() {
@@ -148,13 +190,13 @@ public class SysUser {
     @Override
     public String toString() {
         return "SysUser{" +
-                "id=" + id.getValue() +
-                ", username=" + username.getValue() +
-                ", password=" + password.getCiphertext() +
-                ", phoneNumber=" + phoneNumber.getMaskedNumber() +
-                ", lastLoginIp=" + lastLoginIp.getAddress() +
+                "id=" + id +
+                ", username=" + username +
+                ", password=" + password +
+                ", phoneNumber=" + phoneNumber +
+                ", lastLoginIp=" + lastLoginIp +
                 ", lastLoginTime=" + lastLoginTime +
-                ", registerIp=" + registerIp.getAddress() +
+                ", registerIp=" + registerIp +
                 ", registerTime=" + registerTime +
                 ", state=" + state +
                 ", roles=" + roles +

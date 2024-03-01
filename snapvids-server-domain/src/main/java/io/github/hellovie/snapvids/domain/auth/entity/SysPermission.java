@@ -15,121 +15,171 @@ public class SysPermission {
     /**
      * id
      */
-    private final Id id;
+    private Id id;
 
     /**
      * 权限编码
      */
-    private final PermissionCode code;
+    private PermissionCode code;
 
     /**
      * 父权限 ID
      */
-    private final Id pid;
+    private Id pid;
 
     /**
      * 权限图标（资源图标）
      */
-    private final PermissionIcon icon;
+    private PermissionIcon icon;
 
     /**
      * 权限名称
      */
-    private final PermissionName name;
+    private PermissionName name;
 
     /**
      * 权限路径（资源地址）
      */
-    private final PermissionUrl url;
+    private PermissionUrl url;
 
     /**
      * 权限类型
      */
-    private final PermissionType type;
+    private PermissionType type;
 
     /**
      * 权限树路径（根节点到当前节点的父节点的路径，英文逗号分割）
      */
-    private final PermissionPath path;
+    private PermissionPath path;
 
     /**
      * 权限树层次
      */
-    private final PermissionLevel level;
+    private PermissionLevel level;
 
     /**
      * 权限排序（同层次节点的排序号）
      */
-    private final PermissionSort sort;
+    private PermissionSort sort;
 
-    public SysPermission(Long id, String code, Long pid, String icon, String name, String url, PermissionType type,
-                         String path, Integer level, Integer sort) {
-
-        this.id = new Id(id);
-        this.code = new PermissionCode(code);
-        this.pid = new Id(pid);
-        this.icon = new PermissionIcon(icon);
-        this.name = new PermissionName(name);
-        this.url = new PermissionUrl(url);
+    public SysPermission(Id id, PermissionCode code, Id pid, PermissionIcon icon, PermissionName name,
+                         PermissionUrl url, PermissionType type, PermissionPath path, PermissionLevel level,
+                         PermissionSort sort) {
+        this.id = id;
+        this.code = code;
+        this.pid = pid;
+        this.icon = icon;
+        this.name = name;
+        this.url = url;
         this.type = type;
-        this.path = new PermissionPath(path);
-        this.level = new PermissionLevel(level);
-        this.sort = new PermissionSort(sort);
+        this.path = path;
+        this.level = level;
+        this.sort = sort;
     }
 
     public Id getId() {
         return id;
     }
 
+    public SysPermission setId(Id id) {
+        this.id = id;
+        return this;
+    }
+
     public PermissionCode getCode() {
         return code;
+    }
+
+    public SysPermission setCode(PermissionCode code) {
+        this.code = code;
+        return this;
     }
 
     public Id getPid() {
         return pid;
     }
 
+    public SysPermission setPid(Id pid) {
+        this.pid = pid;
+        return this;
+    }
+
     public PermissionIcon getIcon() {
         return icon;
+    }
+
+    public SysPermission setIcon(PermissionIcon icon) {
+        this.icon = icon;
+        return this;
     }
 
     public PermissionName getName() {
         return name;
     }
 
+    public SysPermission setName(PermissionName name) {
+        this.name = name;
+        return this;
+    }
+
     public PermissionUrl getUrl() {
         return url;
+    }
+
+    public SysPermission setUrl(PermissionUrl url) {
+        this.url = url;
+        return this;
     }
 
     public PermissionType getType() {
         return type;
     }
 
+    public SysPermission setType(PermissionType type) {
+        this.type = type;
+        return this;
+    }
+
     public PermissionPath getPath() {
         return path;
+    }
+
+    public SysPermission setPath(PermissionPath path) {
+        this.path = path;
+        return this;
     }
 
     public PermissionLevel getLevel() {
         return level;
     }
 
+    public SysPermission setLevel(PermissionLevel level) {
+        this.level = level;
+        return this;
+    }
+
     public PermissionSort getSort() {
         return sort;
+    }
+
+    public SysPermission setSort(PermissionSort sort) {
+        this.sort = sort;
+        return this;
     }
 
     @Override
     public String toString() {
         return "SysPermission{" +
-                "id=" + id.getValue() +
-                ", code=" + code.getValue() +
-                ", pid=" + pid.getValue() +
-                ", icon=" + icon.getName() +
-                ", name=" + name.getValue() +
-                ", url=" + url.getValue() +
+                "id=" + id +
+                ", code=" + code +
+                ", pid=" + pid +
+                ", icon=" + icon +
+                ", name=" + name +
+                ", url=" + url +
                 ", type=" + type +
-                ", path=" + path.getValue() +
-                ", level=" + level.getValue() +
-                ", sort=" + sort.getValue() +
+                ", path=" + path +
+                ", level=" + level +
+                ", sort=" + sort +
                 '}';
     }
 }

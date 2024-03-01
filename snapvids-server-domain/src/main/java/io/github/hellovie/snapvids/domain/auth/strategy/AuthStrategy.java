@@ -2,7 +2,6 @@ package io.github.hellovie.snapvids.domain.auth.strategy;
 
 import io.github.hellovie.snapvids.domain.auth.entity.Account;
 import io.github.hellovie.snapvids.domain.auth.entity.SysRole;
-import io.github.hellovie.snapvids.domain.auth.entity.SysUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,9 +40,9 @@ public interface AuthStrategy {
     default List<SysRole> getBaseSysRole() {
         List<SysRole> roles = new ArrayList<>(1);
         roles.add(new SysRole(
-                NORMAL_USER.getId().getValue(),
-                NORMAL_USER.getRoleKey().getValue(),
-                NORMAL_USER.getRoleName().getValue()
+                NORMAL_USER.getId(),
+                NORMAL_USER.getRoleKey(),
+                NORMAL_USER.getRoleName()
         ));
         return roles;
     }

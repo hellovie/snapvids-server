@@ -24,12 +24,12 @@ public class UsernameLoginParams {
     /**
      * 构造合理的 {@link UsernameLoginParams} 对象。
      *
-     * @param username  用户名
-     * @param plaintext 密码明文
+     * @param username 用户名
+     * @param password 密码
      */
-    public UsernameLoginParams(String username, String plaintext) {
-        this.username = new Username(username);
-        this.password = Password.ofPlaintext(plaintext);
+    public UsernameLoginParams(Username username, Password password) {
+        this.username = username;
+        this.password = password;
     }
 
     public Username getUsername() {
@@ -43,8 +43,8 @@ public class UsernameLoginParams {
     @Override
     public String toString() {
         return "UsernameLoginParams{" +
-                "username=" + username.getValue() +
-                ", password=" + password.getCiphertext() +
+                "username=" + username +
+                ", password=" + password +
                 '}';
     }
 }
