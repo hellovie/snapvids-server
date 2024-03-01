@@ -1,6 +1,8 @@
 package io.github.hellovie.snapvids.domain.util;
 
 import io.github.hellovie.snapvids.common.context.Context;
+import io.github.hellovie.snapvids.common.exception.system.UtilException;
+import io.github.hellovie.snapvids.common.module.common.CommonExceptionType;
 import io.github.hellovie.snapvids.domain.auth.entity.SysUser;
 
 /**
@@ -25,12 +27,40 @@ public class ContextHolder {
         return CONTEXT_THREAD_LOCAL.get();
     }
 
+    /**
+     * 获取上下文，获取失败抛出异常。
+     *
+     * @return {@link Context}
+     * @throws UtilException 获取失败抛出
+     */
+    public static Context getContextOrElseThrow() throws UtilException {
+        Context context = CONTEXT_THREAD_LOCAL.get();
+        if (context == null) {
+            throw new UtilException(CommonExceptionType.GET_CONTEXT_FAIL);
+        }
+        return context;
+    }
+
     public static void setUser(SysUser sysUser) {
         USER_THREAD_LOCAL.set(sysUser);
     }
 
     public static SysUser getUser() {
         return USER_THREAD_LOCAL.get();
+    }
+
+    /**
+     * 获取当前用户，获取失败抛出异常。
+     *
+     * @return {@link SysUser}
+     * @throws UtilException 获取失败抛出
+     */
+    public static SysUser getUserOrElseThrow() throws UtilException {
+        SysUser sysUser = USER_THREAD_LOCAL.get();
+        if (sysUser == null) {
+            throw new UtilException(CommonExceptionType.GET_CURRENT_USER_FAIL);
+        }
+        return sysUser;
     }
 
     public static void clear() {

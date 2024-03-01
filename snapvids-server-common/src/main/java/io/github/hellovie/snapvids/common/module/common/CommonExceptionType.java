@@ -89,6 +89,16 @@ public enum CommonExceptionType implements ExceptionCode {
     STRING_CANNOT_BE_EMPTY(BUSINESS, 13, "字符串不能为空", true),
 
     /**
+     * 获取请求上下文失败
+     */
+    GET_CONTEXT_FAIL(SYSTEM, 14, "获取请求上下文失败", false),
+
+    /**
+     * 获取请求用户失败
+     */
+    GET_CURRENT_USER_FAIL(SYSTEM, 15, "获取请求用户失败", false),
+
+    /**
      * 未知异常
      */
     UNKNOWN_EXCEPTION(UNKNOWN, 9999, "服务器繁忙，请稍后再试", false),
