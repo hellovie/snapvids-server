@@ -178,4 +178,34 @@ public class Validation {
             throw new InvalidParamException(exceptionCode);
         }
     }
+
+    /**
+     * 判断字符串是否是枚举名，不是则抛出异常。
+     *
+     * @param enumName      枚举名
+     * @param enumClazz     枚举类
+     * @param exceptionCode 字符串不是枚举名抛出
+     */
+    public static void isEnumNameOrElseThrow(String enumName, Class<? extends Enum<?>> enumClazz,
+                                             ExceptionCode exceptionCode) {
+
+        if (enumName == null || "".equals(enumName) || enumClazz == null) {
+            throw new InvalidParamException(exceptionCode);
+        }
+
+        boolean isMatch = false;
+        Enum<?>[] enums = enumClazz.getEnumConstants();
+        if (enums != null) {
+            for (Enum<?> e : enums) {
+                if (e.name().equalsIgnoreCase(enumName)) {
+                    isMatch = true;
+                    break;
+                }
+            }
+        }
+
+        if (!isMatch) {
+            throw new InvalidParamException(exceptionCode);
+        }
+    }
 }
