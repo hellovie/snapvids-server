@@ -36,6 +36,7 @@ public interface ExceptionCode {
      */
     String getMessage();
 
+    // Todo：需要重新调整异常状态码是否能重试
     /**
      * 是否能重试。
      *

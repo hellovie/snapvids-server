@@ -216,6 +216,11 @@ public enum UserExceptionType implements ExceptionCode {
     TOKEN_INFO_CANNOT_BE_NULL(SYSTEM, 40, "TokenInfo不能为null", false),
 
     /**
+     * 用户无权限操作
+     */
+    USER_NOT_PERMISSION_TO_OPERATE(BUSINESS, 41, "你无权限操作", false),
+
+    /**
      * 用户未登录
      */
     UNAUTHORIZED(BUSINESS, 9996, "用户未登录", false),

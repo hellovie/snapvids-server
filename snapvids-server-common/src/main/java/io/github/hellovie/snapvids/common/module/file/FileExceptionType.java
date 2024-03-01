@@ -55,6 +55,32 @@ public enum FileExceptionType implements ExceptionCode {
      * 文件大小异常
      */
     FILE_SIZE_EXCEPTION(BUSINESS, 8, "文件大小异常", true),
+
+    /**
+     * 找不到存储服务
+     */
+    STORAGE_SERVICE_NOT_FOUND(SYSTEM, 9, "找不到存储服务", false),
+
+    /**
+     * 找不到默认存储服务
+     */
+    DEFAULT_STORAGE_SERVICE_NOT_FOUND(SYSTEM, 10, "找不到默认存储服务", false),
+
+    /**
+     * 找不到文件
+     */
+    FILE_NOT_FOUNT(BUSINESS, 11, "找不到文件", true),
+
+    /**
+     * 更新文件状态失败
+     */
+    UPDATE_FILE_STATE_FAILED(BUSINESS, 12, "更新文件状态失败", false),
+
+    /**
+     * 错误的文件状态
+     */
+    WRONG_FILE_STATE(BUSINESS, 13, "错误的文件状态", true),
+
     ;
 
     /**
