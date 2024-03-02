@@ -35,12 +35,12 @@ public class DefaultCaptchaService implements CaptchaService {
     @Override
     public Captcha generate(GenerateCaptchaCommand command) {
         String value = createCaptchaValue(command.getType());
-        LOG.info("[Create captcha value success]>>> value={}", value);
+        LOG.info("[生成验证码成功]>>> 验证码={}", value);
         repository.cacheCaptcha(command.getKey(), value, command.getTime(), command.getUnit());
         try {
             return new Captcha(command.getId(), value);
         } catch (Exception ex) {
-            LOG.warn("[Failed to generate a verification code]>>> id={}, value={}", command.getId(), value);
+            LOG.warn("[生成验证码失败]>>> 验证码ID={}，验证码值={}", command.getId(), value);
             return null;
         }
     }

@@ -127,7 +127,6 @@ public class DefaultUserAuthService implements UserAuthService {
         GenerateCaptchaCommand cmd = GenerateCaptchaCommand.buildForRegisterSms(event.getPhoneNumber().getNumber());
         Captcha captcha = captchaService.generate(cmd);
         // Todo：需要去发送短信
-        LOG.info("Todo: SMS verification code {} was sent to mobile phone number {}",
-                captcha.getValue(), captcha.getId());
+        LOG.info("Todo: 向 {} 发送短信验证码 {}", captcha.getId(), captcha.getValue());
     }
 }

@@ -56,11 +56,10 @@ public class FileIdentifier implements Verifiable {
 
         try {
             String hash = DigestUtils.sha256Hex(file.getInputStream());
-            LOG.info("[Calculation file hash success]>>> filename={}, hash={}", file.getOriginalFilename(), hash);
+            LOG.info("[计算文件哈希值成功]>>> 文件名={}，文件哈希值={}", file.getOriginalFilename(), hash);
             return hash;
         } catch (IOException ex) {
-            LOG.error("[Calculation file hash fail]>>> filename={}, fileSize={}",
-                    file.getOriginalFilename(), file.getSize());
+            LOG.error("[计算文件哈希值失败]>>> 文件名={}，文件哈希值={}", file.getOriginalFilename(), file.getSize());
             throw new UtilException(CALCULATE_FILE_MD5HEX_EXCEPTION, ex);
         }
     }

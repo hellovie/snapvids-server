@@ -44,7 +44,7 @@ public class DefaultStorageFactory implements StorageFactory {
                 registerService.append(service.type().name()).append(" ");
             }
         });
-        LOG.info("[These storage services are already registered]>>> [{}]{}", storageServiceMap.size(), registerService);
+        LOG.info("[文件存储服务已成功注册]>>> [{}]{}", storageServiceMap.size(), registerService);
     }
 
     /**
@@ -69,12 +69,12 @@ public class DefaultStorageFactory implements StorageFactory {
     @Override
     public StorageService getStorageService(FileStorage fileStorage) {
         if (storageServiceMap.isEmpty()) {
-            LOG.error("[Get storage service failed]>>> storageServiceMap.size=0");
+            LOG.error("[获取文件存储服务失败]>>> 文件存储服务数量=0");
             throw new ConfigException(FileExceptionType.STORAGE_SERVICE_NOT_FOUND);
         }
 
         if (fileStorage == null || !storageServiceMap.containsKey(fileStorage.name())) {
-            LOG.error("[Get storage service failed]>>> fileStorage={}", fileStorage);
+            LOG.error("[找不到文件存储服务]>>> 文件存储服务类型={}", fileStorage);
             throw new ConfigException(FileExceptionType.STORAGE_SERVICE_NOT_FOUND);
         }
 

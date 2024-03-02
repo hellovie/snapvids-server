@@ -45,11 +45,11 @@ public class JwtTokenService implements TokenService {
             builder.withExpiresAt(expireDate);
 
             String token = builder.sign(Algorithm.HMAC512(secret));
-            LOG.info("[Create JWT token success]>>> token={}, expiredInSeconds={}s", token, expiredInSeconds);
+            LOG.info("[生成JWT令牌成功]>>> 令牌={}，有效时间={}s", token, expiredInSeconds);
             return token;
 
         } catch (Exception ex) {
-            LOG.error("[Create JWT token failed]>>> payload={}, expiredInSeconds={}", payload, expiredInSeconds);
+            LOG.error("[生成JWT令牌失败]>>> 载荷={}，有效时间={}s", payload, expiredInSeconds);
             throw new UtilException(CommonExceptionType.CREATE_JWT_TOKEN_FAILED, ex);
         }
     }
@@ -64,9 +64,8 @@ public class JwtTokenService implements TokenService {
         try {
             JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC512(secret)).build();
             jwtVerifier.verify(token);
-
         } catch (Exception ex) {
-            LOG.warn("[Validation JWT token failed]>>> message={}, token={}", ex.getMessage(), token);
+            LOG.warn("[解密JWT令牌失败]>>> 异常信息={}，令牌={}", ex.getMessage(), token);
             return false;
         }
 
@@ -93,10 +92,10 @@ public class JwtTokenService implements TokenService {
 
                 payload.put(key, claims.get(key).asString());
             }
-            LOG.info("[Get JWT token payload success]>>> payload={}", payload);
+            LOG.info("[获取JWT载荷成功]>>> 载荷={}", payload);
 
         } catch (Exception ex) {
-            LOG.info("[Get JWT token payload failed]>>> token={}", token);
+            LOG.info("[获取JWT载荷失败]>>> 载荷={}", token);
             throw new UtilException(CommonExceptionType.DECRYPT_JWT_TOKEN_FAILED, ex);
         }
 

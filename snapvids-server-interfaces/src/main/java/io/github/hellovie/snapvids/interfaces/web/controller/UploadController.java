@@ -48,7 +48,7 @@ public class UploadController {
      */
     @PostMapping("/upload/init")
     public ResultResponse.SuccessResult<UploadTokenDTO> initUpload(@RequestBody InitUploadRequest request) {
-        LOG.info("[UploadController#initUpload params]>>> originalName={}, identifier={}, ext={} size={}",
+        LOG.info("[UploadController#initUpload入参]>>> originalName={}, identifier={}, ext={} size={}",
                 request.getOriginalName(), request.getIdentifier(), request.getExt(), request.getSize());
 
         Validation.isEnumNameOrElseThrow(request.getExt(), FileExt.class, WRONG_FILE_STATE);
@@ -70,7 +70,7 @@ public class UploadController {
      */
     @PostMapping("/upload/finish")
     public ResultResponse.SuccessResult<FileInfoDTO> finishUpload(@RequestBody FinishUploadRequest request) {
-        LOG.info("[UploadController#finishUpload params]>>> identifier={}", request.getIdentifier());
+        LOG.info("[UploadController#finishUpload入参]>>> identifier={}", request.getIdentifier());
         FinishUploadCommand cmd = new FinishUploadCommand(new FileIdentifier(request.getIdentifier()));
         FileInfoDTO fileInfoDTO = fileUploadService.finishUpload(cmd);
         return ResultResponse.success(fileInfoDTO);

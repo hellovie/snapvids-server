@@ -112,7 +112,7 @@ public class CaptchaDrawService implements DrawService {
             String base64Image = new BASE64Encoder().encode(outputStream.toByteArray());
             base64.append(base64Image);
         } catch (IOException e) {
-            LOG.error("[Draw Base64 error]>>> message={}", e.getMessage(), e);
+            LOG.error("[将文本转换为Base64图片失败]>>> 异常信息={}", e.getMessage(), e);
         }
     }
 

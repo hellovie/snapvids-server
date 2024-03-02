@@ -85,7 +85,7 @@ public class TokenAuthorizationFilter extends BasicAuthenticationFilter {
         ContextHolder.setUser(curUser);
         // 将认证信息存储在 SecurityContextHolder 中
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        LOG.info("[The user authentication is successful]>>> username={}", username);
+        LOG.info("[将当前请求用户信息存储在上下文中]>>> 用户名={}", username);
         chain.doFilter(request, response);
     }
 }

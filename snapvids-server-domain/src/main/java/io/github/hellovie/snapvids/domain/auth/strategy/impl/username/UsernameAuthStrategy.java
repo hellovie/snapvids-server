@@ -45,7 +45,7 @@ public class UsernameAuthStrategy implements AuthStrategy {
     @Override
     public Account register(RegisterParams<?> registerParams) {
         UsernameRegisterParams params = (UsernameRegisterParams) registerParams.getParams();
-        LOG.info("[register by username]>>> username={}, password={}, phoneNumber={}", params.getUsername().getValue(),
+        LOG.info("[通过用户名和密码注册账号]>>> 用户名={}，密码={}，手机号码={}", params.getUsername().getValue(),
                 params.getPassword().getCiphertext(), params.getPhoneNumber().getMaskedNumber());
 
         Account account = repository.findAccountByUsername(params.getUsername());
@@ -72,7 +72,7 @@ public class UsernameAuthStrategy implements AuthStrategy {
     @Override
     public Account login(LoginParams<?> loginParams) {
         UsernameLoginParams params = (UsernameLoginParams) loginParams.getParams();
-        LOG.info("[login by username]>>> username={}, password={}",
+        LOG.info("[通过用户名和密码登录账号]>>> 用户名={}，密码={}",
                 params.getUsername().getValue(), params.getPassword().getCiphertext());
 
         Account account = repository.findAccountByUsername(params.getUsername());

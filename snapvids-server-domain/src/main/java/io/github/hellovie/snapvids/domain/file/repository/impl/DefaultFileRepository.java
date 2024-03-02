@@ -77,7 +77,7 @@ public class DefaultFileRepository implements FileRepository {
     public void updateFileState(Id fileId, FileState fileState, Id userId) {
         long updateRows = fileDao.updateState(fileId.getValue(), fileState, userId.getValue());
         if (updateRows != 1) {
-            LOG.error("[Failed to update file state]>>> updateRows={}, fileId={}, fileState={}, userId={}",
+            LOG.error("[更新文件状态失败]>>> 影响行数={}，文件ID={}，文件状态={}，用户ID={}",
                     updateRows, fileId, fileState, userId);
             throw new DataException(FileExceptionType.UPDATE_FILE_STATE_FAILED);
         }

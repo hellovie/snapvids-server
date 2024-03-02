@@ -28,19 +28,19 @@ public class ConsoleNotifyService implements NotifyService {
     public void notifyMessage(ExceptionNotifyInfo notifyInfo) {
         switch (notifyInfo.getExceptionType()) {
             case BUSINESS:
-                LOG.warn("[ConsoleNotifyService print]>>> level={}, notifyInfo={}",
+                LOG.warn("[控制台异常打印]>>> 异常级别={}，异常信息={}",
                         BUSINESS.name().toLowerCase(), notifyInfo.simpleFormat());
                 break;
             case SYSTEM:
-                LOG.error("[ConsoleNotifyService print]>>> level={}, notifyInfo=⤵\n{}",
+                LOG.error("[控制台异常打印]>>> 异常级别={}，异常信息=⤵\n{}",
                         SYSTEM.name().toLowerCase(), notifyInfo.format());
                 break;
             case UNKNOWN:
-                LOG.error("[ConsoleNotifyService print]>>> level={}, notifyInfo=⤵\n{}",
+                LOG.error("[控制台异常打印]>>> 异常级别={}，异常信息=⤵\n{}",
                         UNKNOWN.name().toLowerCase(), notifyInfo.format());
                 break;
             default:
-                LOG.error("[ConsoleNotifyService print]>>> level={}, notifyInfo={}",
+                LOG.error("[控制台异常打印]>>> 异常级别={}，异常信息={}",
                         notifyInfo.getExceptionType().name().toLowerCase(), notifyInfo.simpleFormat());
         }
     }

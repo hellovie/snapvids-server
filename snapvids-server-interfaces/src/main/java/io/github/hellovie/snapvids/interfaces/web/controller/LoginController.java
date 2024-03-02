@@ -38,7 +38,7 @@ public class LoginController {
      */
     @PostMapping("/username")
     public ResultResponse.SuccessResult<LoginUserDTO> usernameLogin(@RequestBody UsernameLoginRequest request) {
-        LOG.info("[LoginController#usernameLogin params]>>> username={}, captchaId={}, captcha={}",
+        LOG.info("[LoginController#usernameLogin入参]>>> username={}, captchaId={}, captcha={}",
                 request.getUsername(), request.getCaptchaId(), request.getCaptcha());
         UsernameLoginCommand cmd = new UsernameLoginCommand(
                 new Username(request.getUsername()),

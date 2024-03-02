@@ -31,8 +31,8 @@ public class ContextManagerFilter implements Filter {
 
         long start = System.currentTimeMillis();
         Context context = parseRequest((HttpServletRequest) servletRequest);
-        //LOG.info("[The request begins]>>> context=⤵\n{}", context.format());
-        LOG.info("[The request begins]>>> context={}", context.simpleFormat());
+        //LOG.info("[请求开始]>>> 请求上下文=⤵\n{}", context.format());
+        LOG.info("[请求开始]>>> 请求上下文={}", context.simpleFormat());
         ContextHolder.setContext(context);
 
         // 跳转下一个过滤链
@@ -41,7 +41,7 @@ public class ContextManagerFilter implements Filter {
         // 请求结束
         long end = System.currentTimeMillis();
         long time = end - start;
-        LOG.info("[The request has been closed]>>> api={}, time={}ms", context.getApi(), time);
+        LOG.info("[请求结束]>>> 请求接口={}，请求持续时间={}ms", context.getApi(), time);
         ContextHolder.clear();
     }
 

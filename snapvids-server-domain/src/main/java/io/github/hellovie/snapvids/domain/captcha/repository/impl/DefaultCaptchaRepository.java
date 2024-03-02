@@ -33,7 +33,7 @@ public class DefaultCaptchaRepository implements CaptchaRepository {
     public void cacheCaptcha(String key, String value, long time, TimeUnit unit) {
         boolean isCacheSuccess = cacheService.setValue(key, value, time, unit);
         if (!isCacheSuccess) {
-            LOG.warn("[Caching the captcha failed]>>> key={}, value={}, time={}, unit={}",
+            LOG.warn("[缓存验证码失败]>>> 缓存Key={}，缓存值={}，缓存时间={}，时间单位={}",
                     key, value, time, unit);
         }
     }

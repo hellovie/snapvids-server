@@ -40,7 +40,7 @@ public class RegisterController {
      */
     @PostMapping("/username")
     public ResultResponse.SuccessResult<LoginUserDTO> usernameRegister(@RequestBody UsernameRegisterRequest request) {
-        LOG.info("[RegisterController#usernameRegister params]>>> username={}", request.getUsername());
+        LOG.info("[RegisterController#usernameRegister入参]>>> username={}", request.getUsername());
         UsernameRegisterCommand cmd = new UsernameRegisterCommand(
                 new Username(request.getUsername()),
                 Password.ofPlaintext(request.getPassword()),

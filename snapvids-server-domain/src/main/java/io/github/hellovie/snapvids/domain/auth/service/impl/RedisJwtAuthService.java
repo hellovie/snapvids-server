@@ -108,7 +108,7 @@ public class RedisJwtAuthService implements AuthService {
                 registerStrategy.append(strategy.type().name()).append(" ");
             }
         });
-        LOG.info("[These auth strategy are already registered]>>> [{}]{}", strategyMap.size(), registerStrategy);
+        LOG.info("[认证策略已成功注册]>>> [{}]{}", strategyMap.size(), registerStrategy);
     }
 
     /**
@@ -118,13 +118,13 @@ public class RedisJwtAuthService implements AuthService {
      */
     @Override
     public LoginInfo register(final RegisterParams<?> registerParams) {
-        LOG.info("[Register params]>>> type={}, params={}", registerParams.getAuthType(), registerParams.getParams());
+        LOG.info("[用户注册入参]>>> 认证类型={}，注册参数={}", registerParams.getAuthType(), registerParams.getParams());
         AuthStrategy strategy = getAuthStrategy(registerParams.getAuthType());
         Account account = strategy.register(registerParams);
         checkUserState(account);
         TokenInfo tokenInfo = createTokenInfo(account.getId());
         LoginInfo loginInfo = new LoginInfo(account, tokenInfo);
-        LOG.info("[Register result]>>> loginInfo={}", loginInfo);
+        LOG.info("[用户注册返回值]>>> 登录信息={}", loginInfo);
         return loginInfo;
     }
 
@@ -135,13 +135,13 @@ public class RedisJwtAuthService implements AuthService {
      */
     @Override
     public LoginInfo login(final LoginParams<?> loginParams) {
-        LOG.info("[Login params]>>> type={}, params={}", loginParams.getAuthType(), loginParams.getParams());
+        LOG.info("[用户登录入参]>>> 认证类型={}，登录参数={}", loginParams.getAuthType(), loginParams.getParams());
         AuthStrategy strategy = getAuthStrategy(loginParams.getAuthType());
         Account account = strategy.login(loginParams);
         checkUserState(account);
         TokenInfo tokenInfo = createTokenInfo(account.getId());
         LoginInfo loginInfo = new LoginInfo(account, tokenInfo);
-        LOG.info("[Login result]>>> loginInfo={}", loginInfo);
+        LOG.info("[用户登录返回值]>>> 登录信息={}", loginInfo);
         return loginInfo;
     }
 
@@ -172,7 +172,7 @@ public class RedisJwtAuthService implements AuthService {
 
             repository.removeToken(userId, tokenId);
         } catch (Exception ex) {
-            LOG.error("[Logout exception]>>> {}", ex.getMessage(), ex);
+            LOG.error("[退出登录发生异常]>>> {}", ex.getMessage(), ex);
         }
     }
 
@@ -187,8 +187,8 @@ public class RedisJwtAuthService implements AuthService {
         if (context == null || StringUtils.isBlank(context.getAuthorization()) ||
                 !context.getAuthorization().startsWith(AUTHORIZATION_PREFIX)) {
 
-            LOG.info("[Failed to obtain an authentication token]>>> Authorization={}",
-                    context == null ? "Error: context is null" : context.getAuthorization());
+            LOG.info("[获取当前请求的Authorization失败]>>> Authorization={}",
+                    context == null ? "上下文为Null" : context.getAuthorization());
             throw new AuthException(UserExceptionType.UNAUTHORIZED);
         }
 
@@ -203,13 +203,12 @@ public class RedisJwtAuthService implements AuthService {
             tokenId = payload.get(JWT_TOKEN_ID_CLAIM_KEY);
             type = payload.get(JWT_TOKEN_TYPE_CLAIM_KEY);
         } catch (Exception ex) {
-            LOG.info("[JWT token resolution failed]>>> {}", ex.getMessage(), ex);
+            LOG.info("[JWT解析失败]>>> {}", ex.getMessage(), ex);
             throw new AuthException(UserExceptionType.UNAUTHORIZED);
         }
         // 访问令牌才能进行访问操作接口
         if (!TokenType.ACCESS_TOKEN.getKey().equals(type) || "".equals(tokenId) || userId <= 0L) {
-            LOG.info("[Failed to get the access token payload]>>> userId={}, tokenId={}, type={}",
-                    userId, tokenId, tokenId);
+            LOG.warn("[获取访问令牌载荷失败]>>> 用户ID={}，令牌ID={}，令牌类型={}", userId, tokenId, type);
             throw new AuthException(UserExceptionType.UNAUTHORIZED);
         }
 
@@ -228,7 +227,7 @@ public class RedisJwtAuthService implements AuthService {
         // 获取当前请求的系统用户
         SysUser sysUser = repository.findSysUserById(new Id(userId));
         if (sysUser == null) {
-            LOG.error("[There is an incorrect user ID in the access token]>>> userId={}", userId);
+            LOG.error("[访问令牌中获取的用户ID有误]>>> 用户ID={}", userId);
             throw new AuthException(UserExceptionType.USER_NOT_FOUND);
         }
         // 校验用户状态
@@ -236,7 +235,7 @@ public class RedisJwtAuthService implements AuthService {
         List<String> roles = sysUser.getRoles().stream()
                 .map(role -> role.getRoleKey().getValue())
                 .collect(Collectors.toList());
-        LOG.info("[The user is authenticating]>>> username={}, roles={}", sysUser.getUsername().getValue(), roles);
+        LOG.info("[用户认证成功]>>> 用户名={}，用户角色={}", sysUser.getUsername().getValue(), roles);
         return sysUser;
     }
 
@@ -251,8 +250,8 @@ public class RedisJwtAuthService implements AuthService {
         if (context == null || StringUtils.isBlank(context.getAuthorization()) ||
                 !context.getAuthorization().startsWith(AUTHORIZATION_PREFIX)) {
 
-            LOG.warn("[Failed to obtain an refresh token]>>> Authorization={}",
-                    context == null ? "Error: context is null" : context.getAuthorization());
+            LOG.info("[获取当前请求的Authorization失败]>>> Authorization={}",
+                    context == null ? "上下文为Null" : context.getAuthorization());
             throw new AuthException(UserExceptionType.USER_AUTH_EXCEPTION);
         }
 
@@ -267,13 +266,12 @@ public class RedisJwtAuthService implements AuthService {
             tokenId = payload.get(JWT_TOKEN_ID_CLAIM_KEY);
             type = payload.get(JWT_TOKEN_TYPE_CLAIM_KEY);
         } catch (Exception ex) {
-            LOG.error("[Authentication token exception]>>> {}", ex.getMessage(), ex);
+            LOG.info("[JWT解析失败]>>> {}", ex.getMessage(), ex);
             throw new AuthException(UserExceptionType.USER_AUTH_EXCEPTION, ex);
         }
         // 刷新令牌才能进行刷新操作
         if (!TokenType.REFRESH_TOKEN.getKey().equals(type) || "".equals(tokenId) || userId <= 0L) {
-            LOG.warn("[Failed to get the authentication token payload]>>> userId={}, tokenId={}, type={}",
-                    userId, tokenId, tokenId);
+            LOG.warn("[获取刷新令牌载荷失败]>>> 用户ID={}，令牌ID={}，令牌类型={}", userId, tokenId, type);
             throw new AuthException(UserExceptionType.USER_AUTH_EXCEPTION);
         }
 
@@ -293,7 +291,7 @@ public class RedisJwtAuthService implements AuthService {
 
         // 刷新令牌未过期，生成新的令牌
         TokenInfo tokenInfo = createTokenInfo(new Id(userId));
-        LOG.info("[The refresh token was successful]>>> userId={}, tokenInfo={}", userId, tokenInfo);
+        LOG.info("[刷新令牌成功]>>> 用户ID={}，令牌信息={}", userId, tokenInfo);
         return tokenInfo;
     }
 
@@ -312,10 +310,10 @@ public class RedisJwtAuthService implements AuthService {
             case ENABLE:
                 return;
             case DISABLE:
-                LOG.info("[The user has been disabled]>>> username={}", account.getUsername().getValue());
+                LOG.warn("[用户已被禁用]>>> 用户名={}", account.getUsername().getValue());
                 throw new AuthException(UserExceptionType.USER_STATE_DISABLE);
             case LOCK:
-                LOG.info("[The user is locked out]>>> username={}", account.getUsername().getValue());
+                LOG.warn("[用户已被锁定]>>> 用户名={}", account.getUsername().getValue());
                 throw new AuthException(UserExceptionType.USER_STATE_LOCK);
             default:
                 throw new AuthException(UserExceptionType.USER_STATE_EXCEPTION);
@@ -357,7 +355,7 @@ public class RedisJwtAuthService implements AuthService {
 
                 // 满足条件，生成 JWT Token
                 String tokenId = ksuidGenerator.genId();
-                LOG.info("[Create token id]>>> tokenId={}", tokenId);
+                LOG.info("[生成令牌ID]>>> 令牌ID={}", tokenId);
                 String jwtAccessToken = createJwtToken(identifier, tokenId, TokenType.ACCESS_TOKEN);
                 String jwtRefreshToken = createJwtToken(identifier, tokenId, TokenType.REFRESH_TOKEN);
 
@@ -366,13 +364,13 @@ public class RedisJwtAuthService implements AuthService {
                 accessTokens.put(tokenId, now + AuthService.ACCESS_TOKEN_EXPIRED_IN_SECONDS);
                 refreshTokens.put(tokenId, now + AuthService.REFRESH_TOKEN_EXPIRED_IN_SECONDS);
                 repository.saveOnlineToken(identifier, accessTokens, refreshTokens);
-                LOG.info("[Save online token]>>> accessToken=[{}, {}], refreshToken=[{}, {}]",
+                LOG.info("[缓存在线令牌成功]>>> 访问令牌=[{}, {}]，刷新令牌=[{}, {}]",
                         tokenId, accessTokens.get(tokenId), tokenId, refreshTokens.get(tokenId));
-                LOG.info("[The number of tokens currently online]>>> accessTokens.size={}, refreshTokens.size={}",
+                LOG.info("[当前在线令牌的数量]>>> 访问令牌的数量={}，刷新令牌的数量={}",
                         accessTokens.size(), refreshTokens.size());
 
                 TokenInfo tokenInfo = new TokenInfo(jwtAccessToken, jwtRefreshToken, REFRESH_TOKEN_EXPIRED_IN_SECONDS);
-                LOG.info("[Create token info]>>> tokenInfo={}", tokenInfo);
+                LOG.info("[生成令牌信息成功]>>> 令牌信息={}", tokenInfo);
                 return tokenInfo;
             } finally {
                 cacheService.unlock(lockKey);
@@ -406,8 +404,7 @@ public class RedisJwtAuthService implements AuthService {
      * @param refreshTokens 刷新令牌集合
      */
     private void clearExcessQuantityTokens(Map<String, Long> accessTokens, Map<String, Long> refreshTokens) {
-        LOG.info("[ClearExcessQuantityTokens params]>>> accessTokens.size={}, refreshTokens.size={}",
-                accessTokens.size(), refreshTokens.size());
+        LOG.info("[清除超出数量的令牌执行前]>>> 访问令牌数量={}，刷新令牌数量={}", accessTokens.size(), refreshTokens.size());
 
         // 保留一个空位
         int clearSize = refreshTokens.size() - AuthService.MAXIMUM_LOGIN_TOKEN_ID + 1;
@@ -430,8 +427,7 @@ public class RedisJwtAuthService implements AuthService {
             clearNum++;
         }
 
-        LOG.info("[ClearExcessQuantityTokens result]>>> accessTokens.size={}, refreshTokens.size={}",
-                accessTokens.size(), refreshTokens.size());
+        LOG.info("[清除超出数量的令牌执行后]>>> 访问令牌数量={}，刷新令牌数量={}", accessTokens.size(), refreshTokens.size());
     }
 
     /**
@@ -441,8 +437,7 @@ public class RedisJwtAuthService implements AuthService {
      * @param refreshTokens 刷新令牌集合
      */
     private void clearExpiredTokens(Map<String, Long> accessTokens, Map<String, Long> refreshTokens) {
-        LOG.info("[ClearExpiredTokens params]>>> accessTokens.size={}, refreshTokens.size={}", accessTokens.size(),
-                refreshTokens.size());
+        LOG.info("[清除过期的令牌执行前]>>> 访问令牌数量={}，刷新令牌数量={}", accessTokens.size(), refreshTokens.size());
 
         // 使用副本遍历，这样 remove 就不会影响原 Map。
         // 解决 java.util.ConcurrentModificationException 问题。
@@ -467,8 +462,7 @@ public class RedisJwtAuthService implements AuthService {
             }
         }
 
-        LOG.info("[ClearExpiredTokens result]>>> accessTokens.size={}, refreshTokens.size={}", accessTokens.size(),
-                refreshTokens.size());
+        LOG.info("[清除过期的令牌执行后]>>> 访问令牌数量={}，刷新令牌数量={}", accessTokens.size(), refreshTokens.size());
     }
 
     /**
@@ -513,12 +507,12 @@ public class RedisJwtAuthService implements AuthService {
      */
     private AuthStrategy getAuthStrategy(final AuthStrategy.AuthType type) throws ConfigException {
         if (strategyMap.isEmpty()) {
-            LOG.error("[Get auth strategy failed]>>> strategyMap.size=0");
+            LOG.error("[获取认证策略失败]>>> 认证策略数量=0");
             throw new ConfigException(UserExceptionType.AUTH_STRATEGY_NOT_FOUND);
         }
 
         if (type == null || !strategyMap.containsKey(type.name())) {
-            LOG.error("[Get auth strategy failed]>>> type={}", type);
+            LOG.error("[找不到认证策略]>>> 认证策略类型={}", type);
             throw new ConfigException(UserExceptionType.AUTH_STRATEGY_NOT_FOUND);
         }
 

@@ -124,7 +124,7 @@ public class Password implements Verifiable {
         }
 
         if (StringUtils.isBlank(ciphertext)) {
-            LOG.warn("[Ciphertext error]>>> ciphertext={}", ciphertext);
+            LOG.warn("[密码错误]>>> 密码={}", ciphertext);
             throw new DataException(WRONG_PASSWORD);
         }
 

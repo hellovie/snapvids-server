@@ -37,11 +37,11 @@ public class JwtProperties {
                          @Value("${snapvids.jwt.expired-in-seconds}") Long expiredInSeconds) {
 
         if (StringUtils.isBlank(secret) || expiredInSeconds == null || expiredInSeconds <= 0) {
-            LOG.error("[Failed to inject JWT secret]>>> secret={}", secret);
-            LOG.error("[Failed to inject JWT expiredInSeconds]>>> expiredInSeconds={}s", expiredInSeconds);
+            LOG.error("[注入JWT密钥失败]>>> 密钥={}", secret);
+            LOG.error("[注册JWT过期时间失败]>>> 过期时间={}s", expiredInSeconds);
             throw new RuntimeException("Failed to inject JWT properties.");
         }
-        LOG.info("[Inject JWT properties success]>>> secret=***, expiredInSeconds={}s", expiredInSeconds);
+        LOG.info("[注入JWT变量成功]>>> 密钥=***，过期时间={}s", expiredInSeconds);
         this.secret = secret;
         this.expiredInSeconds = expiredInSeconds;
     }

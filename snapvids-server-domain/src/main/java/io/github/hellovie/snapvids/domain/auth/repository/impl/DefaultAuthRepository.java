@@ -173,7 +173,7 @@ public class DefaultAuthRepository implements AuthRepository {
                 username.getValue(), lastLoginIp.getIntAddress(), lastLoginTime);
 
         if (updateRows != 1) {
-            LOG.error("[Failed to update user login information]>>> updateRows={}, username={}, lastLoginIp={}, lastLoginTime={}",
+            LOG.error("[更新用户登录信息失败]>>> 更新行数={}，用户名={}，最后登录IP={}，最后登录时间={}",
                     updateRows, username.getValue(), lastLoginIp.getIntAddress(), lastLoginTime);
             throw new DataException(UserExceptionType.UPDATE_USER_LOGIN_INFO_FAILED);
         }

@@ -56,9 +56,9 @@ public class DefaultFileService implements FileService {
             // 出现 Hash 碰撞，不同用户上传同一个文件
             Id createdById = dbFileInfo.getCreatedBy().getId();
             if (!Objects.equals(createdById.getValue(), curUserId.getValue())) {
-                LOG.error("[File hash collisions]>>> curUserId={}, createdById={}, fileIdentifier={}",
+                LOG.error("[文件发生哈希碰撞，不同用户上传同一文件]>>> 当前请求用户ID={}，文件创建者ID={}，文件哈希={}",
                         curUserId, createdById, command.getIdentifier());
-                throw new DataException(FileExceptionType.FILE_HASH_COLLISIONS, "文件违规");
+                throw new DataException(FileExceptionType.FILE_HASH_COLLISIONS, "文件已违规");
             }
             return dbFileInfo;
         }
@@ -103,7 +103,7 @@ public class DefaultFileService implements FileService {
         FileState nextState = FileStateMachine.transform(command.getState(), command.getEvent());
         // 无下一状态，保持当前状态不变
         if (nextState == null) {
-            LOG.info("[There is no next state]>>> currentState={}, event={}, nextState={}",
+            LOG.info("[没有能够跃迁到的状态]>>> 当前状态={}，跃迁动作={}，下一状态={}",
                     command.getState(), command.getEvent(), nextState);
             nextState = fileInfo.getState();
         }
