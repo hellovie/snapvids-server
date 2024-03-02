@@ -3,7 +3,7 @@ CREATE TABLE `file`
     `id`               BIGINT UNSIGNED AUTO_INCREMENT NOT NULL COMMENT 'ID',
     `original_name`    VARCHAR(256)                   NOT NULL COMMENT '文件原始名',
     `storage_name`     VARCHAR(256)                   NOT NULL COMMENT '文件存储名',
-    `identifier`       VARCHAR(512)                   NOT NULL COMMENT '文件唯一标识',
+    `identifier`       VARCHAR(64)                    NOT NULL COMMENT '文件唯一标识(同一用户不允许重复)',
     `path`             VARCHAR(256)                   NOT NULL COMMENT '相对路径',
     `ext`              VARCHAR(15)                    NOT NULL COMMENT '文件后缀',
     `size`             BIGINT UNSIGNED  DEFAULT 0     NOT NULL COMMENT '文件大小(Byte)',
@@ -19,7 +19,8 @@ CREATE TABLE `file`
     `utc_modified`     DATETIME(6)                    NOT NULL COMMENT '更新时间(UTC)',
     `is_deleted`       TINYINT UNSIGNED DEFAULT 0     NOT NULL COMMENT '是否删除(1-删除)',
     PRIMARY KEY `PK_File_On_Id` (`id`),
-    UNIQUE `UK_File_On_Identifier` (`identifier`(64)),
+    INDEX `IDX_File_On_Identifier` (`identifier`(32)),
+    UNIQUE `UK_File_On_Identifier_CreatedById` (`identifier`(32), `created_by_id`),
     CONSTRAINT `FK_File_User_On_CreatedById` FOREIGN KEY (`created_by_id`) REFERENCES `user` (`id`),
     CONSTRAINT `FK_File_User_On_ModifiedById` FOREIGN KEY (`modified_by_id`) REFERENCES `user` (`id`)
 ) ENGINE = InnoDB

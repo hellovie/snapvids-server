@@ -17,10 +17,11 @@ import java.util.Optional;
 public interface FileDao extends JpaRepository<File, Long>, CustomFileDao {
 
     /**
-     * 根据文件唯一标识查询文件
+     * 根据文件唯一标识和创建者 id 查询文件
      *
-     * @param identifier 文件唯一标识
+     * @param identifier  文件唯一标识
+     * @param createdById 创建者 id
      * @return 文件
      */
-    Optional<File> findByIdentifier(String identifier);
+    Optional<File> findByIdentifierAndCreatedById(String identifier, Long createdById);
 }

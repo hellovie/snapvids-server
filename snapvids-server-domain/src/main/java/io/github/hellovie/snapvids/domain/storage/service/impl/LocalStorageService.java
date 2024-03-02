@@ -4,6 +4,7 @@ import io.github.hellovie.snapvids.common.exception.system.UtilException;
 import io.github.hellovie.snapvids.common.module.file.FileExceptionType;
 import io.github.hellovie.snapvids.common.service.TokenService;
 import io.github.hellovie.snapvids.common.util.ProjectUtils;
+import io.github.hellovie.snapvids.domain.auth.entity.SysUser;
 import io.github.hellovie.snapvids.domain.storage.annotation.StorageServiceMark;
 import io.github.hellovie.snapvids.domain.storage.entity.FileMetadata;
 import io.github.hellovie.snapvids.domain.storage.event.CheckUploadedCommand;
@@ -12,6 +13,7 @@ import io.github.hellovie.snapvids.domain.storage.event.GetUrlQuery;
 import io.github.hellovie.snapvids.domain.storage.repository.StorageRepository;
 import io.github.hellovie.snapvids.domain.storage.service.StorageService;
 import io.github.hellovie.snapvids.domain.storage.vo.UploadToken;
+import io.github.hellovie.snapvids.domain.util.ContextHolder;
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileExt;
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileStorage;
 import io.github.hellovie.snapvids.infrastructure.properties.JwtProperties;
@@ -100,7 +102,8 @@ public class LocalStorageService implements StorageService {
         }
 
         try {
-            FileMetadata fileMetadata = storageRepository.findByIdentifier(query.getIdentifier());
+            FileMetadata fileMetadata = storageRepository.findByIdentifierAndUserId(query.getIdentifier(),
+                    query.getCreatedById());
             FilePath path = fileMetadata.getPath();
             Filename storageName = fileMetadata.getStorageName();
             FileExt ext = fileMetadata.getExt();
@@ -123,7 +126,9 @@ public class LocalStorageService implements StorageService {
         // Todo：需要查询文件是否以上传到本地
         // 文件存储路径
         try {
-            FileMetadata fileMetadata = storageRepository.findByIdentifier(command.getIdentifier());
+            SysUser curUser = ContextHolder.getUserOrElseThrow();
+            FileMetadata fileMetadata = storageRepository.findByIdentifierAndUserId(command.getIdentifier(),
+                    curUser.getId());
             if (fileMetadata == null) {
                 return false;
             }

@@ -4,6 +4,7 @@ import io.github.hellovie.snapvids.domain.storage.entity.FileMetadata;
 import io.github.hellovie.snapvids.domain.storage.repository.StorageRepository;
 import io.github.hellovie.snapvids.infrastructure.persistence.dao.FileDao;
 import io.github.hellovie.snapvids.infrastructure.persistence.entity.File;
+import io.github.hellovie.snapvids.types.common.Id;
 import io.github.hellovie.snapvids.types.file.FileIdentifier;
 import io.github.hellovie.snapvids.types.file.FilePath;
 import io.github.hellovie.snapvids.types.file.FileSize;
@@ -28,11 +29,14 @@ public class DefaultStorageRepository implements StorageRepository {
     /**
      * {@inheritDoc}
      *
-     * @see StorageRepository#findByIdentifier(FileIdentifier)
+     * @see StorageRepository#findByIdentifierAndUserId(FileIdentifier, Id)
      */
     @Override
-    public FileMetadata findByIdentifier(FileIdentifier fileIdentifier) {
-        Optional<File> optional = fileDao.findByIdentifier(fileIdentifier.getValue());
+    public FileMetadata findByIdentifierAndUserId(FileIdentifier fileIdentifier, Id userId) {
+        if (fileIdentifier == null || userId == null) {
+            return null;
+        }
+        Optional<File> optional = fileDao.findByIdentifierAndCreatedById(fileIdentifier.getValue(), userId.getValue());
         return optional.map(this::toFileMetadata).orElse(null);
     }
 

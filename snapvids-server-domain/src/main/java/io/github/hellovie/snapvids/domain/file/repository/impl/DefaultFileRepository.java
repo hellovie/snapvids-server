@@ -97,11 +97,14 @@ public class DefaultFileRepository implements FileRepository {
     /**
      * {@inheritDoc}
      *
-     * @see FileRepository#findByIdentifier(FileIdentifier)
+     * @see FileRepository#findByIdentifierAndUserId(FileIdentifier, Id)
      */
     @Override
-    public FileInfo findByIdentifier(FileIdentifier fileIdentifier) {
-        Optional<File> optional = fileDao.findByIdentifier(fileIdentifier.getValue());
+    public FileInfo findByIdentifierAndUserId(FileIdentifier fileIdentifier, Id userId) {
+        if (fileIdentifier == null || userId == null) {
+            return null;
+        }
+        Optional<File> optional = fileDao.findByIdentifierAndCreatedById(fileIdentifier.getValue(), userId.getValue());
         return optional.map(this::toFileInfo).orElse(null);
     }
 

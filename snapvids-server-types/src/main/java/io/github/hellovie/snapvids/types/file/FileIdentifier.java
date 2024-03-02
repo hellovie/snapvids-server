@@ -55,7 +55,7 @@ public class FileIdentifier implements Verifiable {
         Validation.isNotNullOrElseThrow(file, UNABLE_TO_PARSE_NULL_FILE);
 
         try {
-            String hash = DigestUtils.sha256Hex(file.getInputStream());
+            String hash = DigestUtils.md5Hex(file.getInputStream());
             LOG.info("[计算文件哈希值成功]>>> 文件名={}，文件哈希值={}", file.getOriginalFilename(), hash);
             return hash;
         } catch (IOException ex) {

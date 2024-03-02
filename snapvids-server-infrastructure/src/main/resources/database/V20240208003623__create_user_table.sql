@@ -14,7 +14,7 @@ CREATE TABLE `user`
     `is_deleted`      TINYINT UNSIGNED DEFAULT 0     NOT NULL COMMENT '是否删除(1-删除)',
     PRIMARY KEY `PK_User_On_Id` (`id`),
     UNIQUE `UK_User_On_Username` (`username`(16)),
-    INDEX `UK_User_On_PhoneNumber` (`phone_number`(11))
+    INDEX `IDX_User_On_PhoneNumber` (`phone_number`(11))
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci COMMENT '用户表';

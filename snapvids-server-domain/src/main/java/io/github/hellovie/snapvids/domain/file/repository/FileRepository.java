@@ -39,10 +39,11 @@ public interface FileRepository {
     FileInfo findById(Id id);
 
     /**
-     * 根据文件唯一标识查询文件信息。
+     * 根据文件唯一标识和用户 id 查询文件信息。
      *
      * @param fileIdentifier 文件唯一标识
+     * @param userId         用户 id
      * @return 文件信息，文件不存在返回 null
      */
-    FileInfo findByIdentifier(FileIdentifier fileIdentifier);
+    FileInfo findByIdentifierAndUserId(FileIdentifier fileIdentifier, Id userId);
 }

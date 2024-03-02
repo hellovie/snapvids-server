@@ -91,9 +91,9 @@ public enum FileExceptionType implements ExceptionCode {
     FILE_HAS_NOT_YET_BEEN_UPLOADED(BUSINESS, 15, "文件还未上传成功", true),
 
     /**
-     * 出现文件 Hash 碰撞
+     * 文件已存在
      */
-    FILE_HASH_COLLISIONS(BUSINESS, 16, "出现文件Hash碰撞", false),
+    FILE_ALREADY_EXIST(BUSINESS, 16, "文件已存在", false),
 
     ;
 
