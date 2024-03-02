@@ -39,27 +39,27 @@ public class FileIdentifier implements Verifiable {
      * @return {@link FileIdentifier}
      */
     public static FileIdentifier buildByMultipartFile(MultipartFile file) {
-        String md5 = calculateMD5Hex(file);
-        return new FileIdentifier(md5);
+        String hash = calculateHash(file);
+        return new FileIdentifier(hash);
     }
 
     /**
-     * 计算文件的 MD5HEX。
+     * 计算文件的哈希值。
      *
      * @param file 文件
-     * @return 文件的 MD5HEX
+     * @return File Hash
      * @throws InvalidParamException 文件为 null 抛出
      * @throws UtilException         计算失败抛出
      */
-    public static String calculateMD5Hex(MultipartFile file) throws InvalidParamException, UtilException {
+    public static String calculateHash(MultipartFile file) throws InvalidParamException, UtilException {
         Validation.isNotNullOrElseThrow(file, UNABLE_TO_PARSE_NULL_FILE);
 
         try {
-            String md5 = DigestUtils.md5Hex(file.getInputStream());
-            LOG.info("[Calculation file md5Hex success]>>> filename={}, md5Hex={}", file.getOriginalFilename(), md5);
-            return md5;
+            String hash = DigestUtils.sha256Hex(file.getInputStream());
+            LOG.info("[Calculation file hash success]>>> filename={}, hash={}", file.getOriginalFilename(), hash);
+            return hash;
         } catch (IOException ex) {
-            LOG.error("[Calculation file md5Hex fail]>>> filename={}, fileSize={}",
+            LOG.error("[Calculation file hash fail]>>> filename={}, fileSize={}",
                     file.getOriginalFilename(), file.getSize());
             throw new UtilException(CALCULATE_FILE_MD5HEX_EXCEPTION, ex);
         }
