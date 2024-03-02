@@ -6,6 +6,7 @@ import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileState;
 import io.github.hellovie.snapvids.infrastructure.persistence.q.QFile;
 
 import javax.annotation.Resource;
+import java.sql.Timestamp;
 
 /**
  * 自定义文件仓储实现。
@@ -30,6 +31,7 @@ public class CustomFileDaoImpl implements CustomFileDao {
                 .update(qFile)
                 .set(qFile.state, state)
                 .set(qFile.modifiedById, userId)
+                .set(qFile.utcModified, new Timestamp(System.currentTimeMillis()))
                 .where(qFile.id.eq(id))
                 .execute();
     }
