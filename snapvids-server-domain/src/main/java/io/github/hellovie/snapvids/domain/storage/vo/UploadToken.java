@@ -4,8 +4,6 @@ import io.github.hellovie.snapvids.types.common.Id;
 import io.github.hellovie.snapvids.types.common.ValueString;
 import io.github.hellovie.snapvids.types.file.FileIdentifier;
 
-import java.util.Date;
-
 /**
  * 文件上传凭证。
  *
@@ -32,14 +30,14 @@ public class UploadToken {
     /**
      * 开始时间
      */
-    private final Date startTime;
+    private final Long startTime;
 
     /**
      * 结束时间
      */
-    private final Date expiredTime;
+    private final Long expiredTime;
 
-    public UploadToken(Id fileId, FileIdentifier identifier, ValueString token, Date startTime, Date expiredTime) {
+    public UploadToken(Id fileId, FileIdentifier identifier, ValueString token, Long startTime, Long expiredTime) {
         this.fileId = fileId;
         this.identifier = identifier;
         this.token = token;
@@ -59,11 +57,11 @@ public class UploadToken {
         return token;
     }
 
-    public Date getStartTime() {
+    public Long getStartTime() {
         return startTime;
     }
 
-    public Date getExpiredTime() {
+    public Long getExpiredTime() {
         return expiredTime;
     }
 

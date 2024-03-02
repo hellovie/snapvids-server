@@ -2,8 +2,6 @@ package io.github.hellovie.snapvids.application.upload.dto;
 
 import io.github.hellovie.snapvids.domain.storage.vo.UploadToken;
 
-import java.util.Date;
-
 /**
  * 上传文件凭证 DTO。
  *
@@ -30,14 +28,14 @@ public class UploadTokenDTO {
     /**
      * 开始时间
      */
-    private final Date startTime;
+    private final Long startTime;
 
     /**
      * 结束时间
      */
-    private final Date expiredTime;
+    private final Long expiredTime;
 
-    public UploadTokenDTO(Long fileId, String identifier, String token, Date startTime, Date expiredTime) {
+    public UploadTokenDTO(Long fileId, String identifier, String token, Long startTime, Long expiredTime) {
         this.fileId = fileId;
         this.identifier = identifier;
         this.token = token;
@@ -57,11 +55,11 @@ public class UploadTokenDTO {
         return token;
     }
 
-    public Date getStartTime() {
+    public Long getStartTime() {
         return startTime;
     }
 
-    public Date getExpiredTime() {
+    public Long getExpiredTime() {
         return expiredTime;
     }
 

@@ -5,6 +5,8 @@ import io.github.hellovie.snapvids.infrastructure.persistence.entity.File;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 /**
  * 文件仓储。
  *
@@ -13,4 +15,12 @@ import org.springframework.stereotype.Repository;
  */
 @Repository("fileDao")
 public interface FileDao extends JpaRepository<File, Long>, CustomFileDao {
+
+    /**
+     * 根据文件唯一标识查询文件
+     *
+     * @param identifier 文件唯一标识
+     * @return 文件
+     */
+    Optional<File> findByIdentifier(String identifier);
 }

@@ -95,6 +95,17 @@ public class DefaultFileRepository implements FileRepository {
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @see FileRepository#findByIdentifier(FileIdentifier)
+     */
+    @Override
+    public FileInfo findByIdentifier(FileIdentifier fileIdentifier) {
+        Optional<File> optional = fileDao.findByIdentifier(fileIdentifier.getValue());
+        return optional.map(this::toFileInfo).orElse(null);
+    }
+
+    /**
      * {@link File} to {@link FileInfo}.
      * <p>自动查询操作者信息。</p>
      *

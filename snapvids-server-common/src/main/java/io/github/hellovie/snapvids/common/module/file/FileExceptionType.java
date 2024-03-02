@@ -5,8 +5,7 @@ import io.github.hellovie.snapvids.common.exception.manager.ExceptionModule;
 import io.github.hellovie.snapvids.common.exception.manager.ExceptionSource;
 import io.github.hellovie.snapvids.common.module.ExceptionModuleType;
 
-import static io.github.hellovie.snapvids.common.exception.model.ExceptionSourceType.BUSINESS;
-import static io.github.hellovie.snapvids.common.exception.model.ExceptionSourceType.SYSTEM;
+import static io.github.hellovie.snapvids.common.exception.model.ExceptionSourceType.*;
 
 /**
  * 文件模块异常状态码枚举类。
@@ -74,12 +73,27 @@ public enum FileExceptionType implements ExceptionCode {
     /**
      * 更新文件状态失败
      */
-    UPDATE_FILE_STATE_FAILED(BUSINESS, 12, "更新文件状态失败", false),
+    UPDATE_FILE_STATE_FAILED(SYSTEM, 12, "更新文件状态失败", false),
 
     /**
      * 错误的文件状态
      */
     WRONG_FILE_STATE(BUSINESS, 13, "错误的文件状态", true),
+
+    /**
+     * 获取文件访问路径失败
+     */
+    GET_FILE_ACCESS_URL_FAILED(THIRD_PARTY_SERVICE, 14, "获取文件访问路径失败", false),
+
+    /**
+     * 文件还未上传成功
+     */
+    FILE_HAS_NOT_YET_BEEN_UPLOADED(BUSINESS, 15, "文件还未上传成功", true),
+
+    /**
+     * 出现文件 Hash 碰撞
+     */
+    FILE_HASH_COLLISIONS(BUSINESS, 16, "出现文件Hash碰撞", false),
 
     ;
 

@@ -1,6 +1,8 @@
 package io.github.hellovie.snapvids.application.upload.dto;
 
 import io.github.hellovie.snapvids.domain.file.entity.FileInfo;
+import io.github.hellovie.snapvids.domain.storage.event.GetUrlQuery;
+import io.github.hellovie.snapvids.domain.storage.service.StorageService;
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileExt;
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileState;
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileType;
@@ -35,6 +37,11 @@ public class FileInfoDTO {
     private final FileExt ext;
 
     /**
+     * 文件访问路径
+     */
+    private final String url;
+
+    /**
      * 文件大小（Byte）
      */
     private final Long size;
@@ -64,12 +71,14 @@ public class FileInfoDTO {
      */
     private final FileOperatorDTO modifiedBy;
 
-    public FileInfoDTO(Long id, String filename, String path, FileExt ext, Long size, FileType type, FileState state,
-                       FileVisibility visibility, FileOperatorDTO createdBy, FileOperatorDTO modifiedBy) {
+    public FileInfoDTO(Long id, String filename, String path, FileExt ext, String url, Long size, FileType type,
+                       FileState state, FileVisibility visibility, FileOperatorDTO createdBy,
+                       FileOperatorDTO modifiedBy) {
         this.id = id;
         this.filename = filename;
         this.path = path;
         this.ext = ext;
+        this.url = url;
         this.size = size;
         this.type = type;
         this.state = state;
@@ -92,6 +101,10 @@ public class FileInfoDTO {
 
     public FileExt getExt() {
         return ext;
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     public Long getSize() {
@@ -125,7 +138,7 @@ public class FileInfoDTO {
 
         private Convertor() {}
 
-        public static FileInfoDTO toFileInfoDTO(FileInfo fileInfo) {
+        public static FileInfoDTO toFileInfoDTO(FileInfo fileInfo, StorageService storageService) {
             if (fileInfo == null) {
                 return null;
             }
@@ -136,8 +149,10 @@ public class FileInfoDTO {
             long size = fileInfo.getSize() != null ? fileInfo.getSize().getValue() : 0L;
             FileOperatorDTO createdBy = FileOperatorDTO.Convertor.toFileOperatorDTO(fileInfo.getCreatedBy());
             FileOperatorDTO modifiedBy = FileOperatorDTO.Convertor.toFileOperatorDTO(fileInfo.getModifiedBy());
-
-            return new FileInfoDTO(id, filename, path, fileInfo.getExt(), size, fileInfo.getType(),
+            String url = storageService != null
+                    ? storageService.getUrl(new GetUrlQuery(fileInfo.getIdentifier())).getValue()
+                    : "no url";
+            return new FileInfoDTO(id, filename, path, fileInfo.getExt(), url, size, fileInfo.getType(),
                     fileInfo.getState(), fileInfo.getVisibility(), createdBy, modifiedBy);
         }
     }

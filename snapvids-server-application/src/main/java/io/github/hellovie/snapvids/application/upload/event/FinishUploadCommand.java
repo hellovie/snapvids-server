@@ -1,6 +1,6 @@
 package io.github.hellovie.snapvids.application.upload.event;
 
-import io.github.hellovie.snapvids.types.common.Id;
+import io.github.hellovie.snapvids.types.file.FileIdentifier;
 
 /**
  * 完成文件上传命令。
@@ -11,15 +11,15 @@ import io.github.hellovie.snapvids.types.common.Id;
 public class FinishUploadCommand {
 
     /**
-     * id
+     * 文件唯一标识
      */
-    private final Id id;
+    private final FileIdentifier fileIdentifier;
 
-    public FinishUploadCommand(Id id) {
-        this.id = id;
+    public FinishUploadCommand(FileIdentifier fileIdentifier) {
+        this.fileIdentifier = fileIdentifier;
     }
 
-    public Id getId() {
-        return id;
+    public FileIdentifier getFileIdentifier() {
+        return fileIdentifier;
     }
 }

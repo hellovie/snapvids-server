@@ -9,14 +9,17 @@ import io.github.hellovie.snapvids.common.types.Validation;
 import io.github.hellovie.snapvids.common.util.ResultResponse;
 import io.github.hellovie.snapvids.common.util.TypeConvertor;
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileExt;
+import io.github.hellovie.snapvids.interfaces.web.request.FinishUploadRequest;
 import io.github.hellovie.snapvids.interfaces.web.request.InitUploadRequest;
-import io.github.hellovie.snapvids.types.common.Id;
 import io.github.hellovie.snapvids.types.file.FileIdentifier;
 import io.github.hellovie.snapvids.types.file.FileSize;
 import io.github.hellovie.snapvids.types.file.Filename;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 
@@ -62,13 +65,13 @@ public class UploadController {
     /**
      * 完成上传，更新文件状态。
      *
-     * @param id 文件 id
+     * @param request 完成文件上传表单
      * @return {@link ResultResponse.SuccessResult} data: {@link FileInfoDTO}
      */
-    @PostMapping("/upload/{id}/finish")
-    public ResultResponse.SuccessResult<FileInfoDTO> finishUpload(@PathVariable("id") Long id) {
-        LOG.info("[UploadController#finishUpload params]>>> id={}", id);
-        FinishUploadCommand cmd = new FinishUploadCommand(new Id(id));
+    @PostMapping("/upload/finish")
+    public ResultResponse.SuccessResult<FileInfoDTO> finishUpload(@RequestBody FinishUploadRequest request) {
+        LOG.info("[UploadController#finishUpload params]>>> identifier={}", request.getIdentifier());
+        FinishUploadCommand cmd = new FinishUploadCommand(new FileIdentifier(request.getIdentifier()));
         FileInfoDTO fileInfoDTO = fileUploadService.finishUpload(cmd);
         return ResultResponse.success(fileInfoDTO);
     }
