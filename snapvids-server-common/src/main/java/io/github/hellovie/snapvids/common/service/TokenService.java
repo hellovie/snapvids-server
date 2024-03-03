@@ -37,7 +37,7 @@ public interface TokenService {
      * @param secret 密钥
      * @param token  Token 令牌
      * @return 载荷 Map
-     * @throws UtilException 获取载荷失败抛出
+     * @throws UtilException 验证失败或获取载荷失败抛出
      */
     Map<String, String> getPayload(String secret, String token) throws UtilException;
 }

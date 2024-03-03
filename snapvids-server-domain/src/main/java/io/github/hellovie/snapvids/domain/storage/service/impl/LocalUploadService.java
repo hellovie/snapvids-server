@@ -65,6 +65,16 @@ public class LocalUploadService implements UploadService {
     public static final String TOKEN_KEY_USER_ID = "user_id";
 
     /**
+     * 令牌生成时间
+     */
+    public static final String TOKEN_KEY_START_TIME = "start_time";
+
+    /**
+     * 令牌过期时间
+     */
+    public static final String TOKEN_KEY_EXPIRED_TIME = "expired_time";
+
+    /**
      * 本地上传文件的根路径
      */
     public static final String FILE_ROOT_PATH = "H:/snapvids-file-server";
@@ -97,6 +107,8 @@ public class LocalUploadService implements UploadService {
             HashMap<String, String> payload = new HashMap<>(3);
             payload.put(TOKEN_KEY_USER_ID, Long.toString(ContextHolder.getUserOrElseThrow().getId().getValue()));
             payload.put(TOKEN_KEY_FILE_ID, Long.toString(fileId.getValue()));
+            payload.put(TOKEN_KEY_START_TIME, Long.toString(nowTimestamp));
+            payload.put(TOKEN_KEY_EXPIRED_TIME, Long.toString(expiredTimestamp));
             payload.put(TOKEN_KEY_FILE_HASH, fileHash.getValue());
             String jwtToken = jwtTokenService.create(payload, TOKEN_EXPIRED_IN_SECONDS, jwtProperties.getSecret());
             UploadToken token = new UploadToken(
@@ -136,11 +148,15 @@ public class LocalUploadService implements UploadService {
             Map<String, String> payload = jwtTokenService.getPayload(jwtProperties.getSecret(), token.getToken().getValue());
             long userId = Long.parseLong(payload.get(TOKEN_KEY_USER_ID));
             long fileId = Long.parseLong(payload.get(TOKEN_KEY_FILE_ID));
+            long startTime = Long.parseLong(payload.get(TOKEN_KEY_START_TIME));
+            long expiredTime = Long.parseLong(payload.get(TOKEN_KEY_EXPIRED_TIME));
             String fileHash = payload.get(TOKEN_KEY_FILE_HASH);
             if (userId != curUser.getId().getValue() || fileId != token.getFileId().getValue() ||
+                    startTime != token.getStartTime() || expiredTime != token.getExpiredTime() ||
                     !token.getFileKey().getValue().equals(fileHash)) {
-                LOG.info("[上传令牌参数与JWT载荷的数据不符]>>> 上传令牌=[{}, {}, {}]，载荷=[{}, {}, {}]",
-                        curUser.getId(), token.getFileId(), token.getFileKey(), userId, fileId, fileHash);
+                LOG.info("[上传令牌参数与JWT载荷的数据不符]>>> 上传令牌=[{}, {}, {}->{}, {}]，载荷=[{}, {}, {}->{}, {}]",
+                        curUser.getId(), token.getFileId(), token.getStartTime(), token.getExpiredTime(), token.getFileKey(),
+                        userId, fileId, startTime, expiredTime, fileHash);
                 throw new AuthException(FileExceptionType.INVALID_UPLOAD_TOKEN);
             }
         } catch (Exception ex) {
