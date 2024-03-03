@@ -2,9 +2,7 @@ package io.github.hellovie.snapvids.domain.storage.service.impl;
 
 import io.github.hellovie.snapvids.common.exception.system.UtilException;
 import io.github.hellovie.snapvids.common.module.file.FileExceptionType;
-import io.github.hellovie.snapvids.common.service.TokenService;
 import io.github.hellovie.snapvids.common.util.ProjectUtils;
-import io.github.hellovie.snapvids.domain.auth.entity.SysUser;
 import io.github.hellovie.snapvids.domain.storage.annotation.StorageServiceMark;
 import io.github.hellovie.snapvids.domain.storage.entity.FileMetadata;
 import io.github.hellovie.snapvids.domain.storage.event.CheckUploadedCommand;
@@ -13,13 +11,9 @@ import io.github.hellovie.snapvids.domain.storage.event.GetUrlQuery;
 import io.github.hellovie.snapvids.domain.storage.repository.StorageRepository;
 import io.github.hellovie.snapvids.domain.storage.service.StorageService;
 import io.github.hellovie.snapvids.domain.storage.vo.UploadToken;
-import io.github.hellovie.snapvids.domain.util.ContextHolder;
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileExt;
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileStorage;
-import io.github.hellovie.snapvids.infrastructure.properties.JwtProperties;
-import io.github.hellovie.snapvids.types.common.Id;
 import io.github.hellovie.snapvids.types.common.ValueString;
-import io.github.hellovie.snapvids.types.file.FileIdentifier;
 import io.github.hellovie.snapvids.types.file.FilePath;
 import io.github.hellovie.snapvids.types.file.Filename;
 import org.slf4j.Logger;
@@ -28,8 +22,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashMap;
 
 /**
  * 本地存储服务。
@@ -52,21 +44,10 @@ public class LocalStorageService implements StorageService {
     private StorageRepository storageRepository;
 
     /**
-     * JWT Token 配置类
+     * 本地上传服务
      */
-    @Resource(name = "jwtProperties")
-    private JwtProperties jwtProperties;
-
-    /**
-     * JWT Token 服务
-     */
-    @Resource(name = "jwtTokenService")
-    private TokenService jwtTokenService;
-
-    /**
-     * 令牌有效时间（单位：秒）
-     */
-    private static final long TOKEN_EXPIRED_IN_SECONDS = 30 * 60;
+    @Resource(name = "localUploadService")
+    private LocalUploadService uploadService;
 
     /**
      * {@inheritDoc}
@@ -75,19 +56,7 @@ public class LocalStorageService implements StorageService {
      */
     @Override
     public UploadToken generateUploadToken(GenUploadTokenCommand command) throws UtilException {
-        long nowTimestamp = new Date().getTime() / 1000;
-        long expiredTimestamp = nowTimestamp + TOKEN_EXPIRED_IN_SECONDS;
-        HashMap<String, String> payload = new HashMap<>(0);
-        String jwtToken = jwtTokenService.create(payload, TOKEN_EXPIRED_IN_SECONDS, jwtProperties.getSecret());
-        UploadToken token = new UploadToken(
-                new Id(command.getFileId().getValue()),
-                new FileIdentifier(command.getFileIdentifier().getValue()),
-                ValueString.buildOrElseThrowByMessage(jwtToken, "上传令牌生成失败"),
-                nowTimestamp,
-                expiredTimestamp
-        );
-        LOG.info("[生成上传令牌成功]>>> 令牌={}", token);
-        return token;
+        return uploadService.createToken(command.getFileId(), command.getFileKey());
     }
 
     /**
@@ -102,7 +71,7 @@ public class LocalStorageService implements StorageService {
         }
 
         try {
-            FileMetadata fileMetadata = storageRepository.findByIdentifierAndUserId(query.getIdentifier(),
+            FileMetadata fileMetadata = storageRepository.findByFileKeyAndUserId(query.getFileKey(),
                     query.getCreatedById());
             FilePath path = fileMetadata.getPath();
             Filename storageName = fileMetadata.getStorageName();
@@ -123,22 +92,10 @@ public class LocalStorageService implements StorageService {
      */
     @Override
     public boolean checkUploaded(CheckUploadedCommand command) {
-        // Todo：需要查询文件是否以上传到本地
-        // 文件存储路径
-        try {
-            SysUser curUser = ContextHolder.getUserOrElseThrow();
-            FileMetadata fileMetadata = storageRepository.findByIdentifierAndUserId(command.getIdentifier(),
-                    curUser.getId());
-            if (fileMetadata == null) {
-                return false;
-            }
-            String path = fileMetadata.getPath().getValue() + "/" + fileMetadata.getStorageName().getValue() +
-                    "." + fileMetadata.getExt().name().toLowerCase();
-            LOG.info("[本地存储服务获取文件路径成功]>>> 文件路径={}", path);
-            return true;
-        } catch (Exception ex) {
-            LOG.error("[检查文件上传是否成功发生异常]>>> 方法入参={}，异常信息={}", command, ex.getMessage(), ex);
+        if (command == null || command.getFileKey() == null) {
             return false;
         }
+
+        return uploadService.checkUploaded(command.getFileKey());
     }
 }

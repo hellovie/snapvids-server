@@ -12,7 +12,7 @@ import io.github.hellovie.snapvids.infrastructure.persistence.entity.File;
 import io.github.hellovie.snapvids.infrastructure.persistence.entity.User;
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileState;
 import io.github.hellovie.snapvids.types.common.Id;
-import io.github.hellovie.snapvids.types.file.FileIdentifier;
+import io.github.hellovie.snapvids.types.file.FileKey;
 import io.github.hellovie.snapvids.types.file.FilePath;
 import io.github.hellovie.snapvids.types.file.FileSize;
 import io.github.hellovie.snapvids.types.file.Filename;
@@ -53,7 +53,7 @@ public class DefaultFileRepository implements FileRepository {
         File file = new File();
         file.setOriginalName(fileInfo.getOriginalName().getValue())
                 .setStorageName(fileInfo.getStorageName().getValue())
-                .setIdentifier(fileInfo.getIdentifier().getValue())
+                .setFileKey(fileInfo.getFileKey().getValue())
                 .setPath(fileInfo.getPath().getValue())
                 .setExt(fileInfo.getExt())
                 .setSize(fileInfo.getSize().getValue())
@@ -97,14 +97,14 @@ public class DefaultFileRepository implements FileRepository {
     /**
      * {@inheritDoc}
      *
-     * @see FileRepository#findByIdentifierAndUserId(FileIdentifier, Id)
+     * @see FileRepository#findByFileKeyAndUserId(FileKey, Id)
      */
     @Override
-    public FileInfo findByIdentifierAndUserId(FileIdentifier fileIdentifier, Id userId) {
-        if (fileIdentifier == null || userId == null) {
+    public FileInfo findByFileKeyAndUserId(FileKey fileKey, Id userId) {
+        if (fileKey == null || userId == null) {
             return null;
         }
-        Optional<File> optional = fileDao.findByIdentifierAndCreatedById(fileIdentifier.getValue(), userId.getValue());
+        Optional<File> optional = fileDao.findByFileKeyAndCreatedById(fileKey.getValue(), userId.getValue());
         return optional.map(this::toFileInfo).orElse(null);
     }
 
@@ -129,7 +129,7 @@ public class DefaultFileRepository implements FileRepository {
                 new Id(file.getId()),
                 new Filename(file.getOriginalName()),
                 new Filename(file.getStorageName()),
-                new FileIdentifier(file.getIdentifier()),
+                new FileKey(file.getFileKey()),
                 new FilePath(file.getPath()),
                 file.getExt(),
                 new FileSize(file.getSize()),

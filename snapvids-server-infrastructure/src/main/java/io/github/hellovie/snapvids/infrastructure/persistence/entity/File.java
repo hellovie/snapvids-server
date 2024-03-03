@@ -28,7 +28,7 @@ public class File extends AuditEntity {
      * 文件唯一标识
      */
     @Column(updatable = false)
-    private String identifier;
+    private String fileKey;
 
     /**
      * 相对路径
@@ -106,12 +106,12 @@ public class File extends AuditEntity {
         return this;
     }
 
-    public String getIdentifier() {
-        return identifier;
+    public String getFileKey() {
+        return fileKey;
     }
 
-    public File setIdentifier(String identifier) {
-        this.identifier = identifier;
+    public File setFileKey(String fileKey) {
+        this.fileKey = fileKey;
         return this;
     }
 

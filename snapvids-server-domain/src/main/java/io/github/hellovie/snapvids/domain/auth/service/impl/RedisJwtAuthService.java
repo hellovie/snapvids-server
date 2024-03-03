@@ -332,17 +332,17 @@ public class RedisJwtAuthService implements AuthService {
      *     （{@link AuthService#MAXIMUM_LOGIN_TOKEN_ID}）时。</li>
      * </ul>
      *
-     * @param identifier 用户标识
+     * @param userId 用户 id
      * @throws DataException 生成失败抛出异常
      */
-    private TokenInfo createTokenInfo(final Id identifier) throws DataException {
-        String lockKey = UserCacheKey.USER_LOGIN_LOCK + identifier.getValue();
+    private TokenInfo createTokenInfo(final Id userId) throws DataException {
+        String lockKey = UserCacheKey.USER_LOGIN_LOCK + userId.getValue();
         boolean tryLock = cacheService.lock(lockKey, 1, TimeUnit.MINUTES);
 
         if (tryLock) {
             try {
-                Map<String, Long> accessTokens = repository.findOnlineAccessTokenByUserId(identifier);
-                Map<String, Long> refreshTokens = repository.findOnlineRefreshTokenByUserId(identifier);
+                Map<String, Long> accessTokens = repository.findOnlineAccessTokenByUserId(userId);
+                Map<String, Long> refreshTokens = repository.findOnlineRefreshTokenByUserId(userId);
                 checkTokenQuantity(accessTokens, refreshTokens);
 
                 if (AuthService.WHETHER_LOCK_USER && refreshTokens.size() >= AuthService.MAXIMUM_LOGIN_TOKEN_ID) {
@@ -356,14 +356,14 @@ public class RedisJwtAuthService implements AuthService {
                 // 满足条件，生成 JWT Token
                 String tokenId = ksuidGenerator.genId();
                 LOG.info("[生成令牌ID]>>> 令牌ID={}", tokenId);
-                String jwtAccessToken = createJwtToken(identifier, tokenId, TokenType.ACCESS_TOKEN);
-                String jwtRefreshToken = createJwtToken(identifier, tokenId, TokenType.REFRESH_TOKEN);
+                String jwtAccessToken = createJwtToken(userId, tokenId, TokenType.ACCESS_TOKEN);
+                String jwtRefreshToken = createJwtToken(userId, tokenId, TokenType.REFRESH_TOKEN);
 
                 // 更新 Token ID 到缓存
                 long now = new Date().getTime() / 1000;
                 accessTokens.put(tokenId, now + AuthService.ACCESS_TOKEN_EXPIRED_IN_SECONDS);
                 refreshTokens.put(tokenId, now + AuthService.REFRESH_TOKEN_EXPIRED_IN_SECONDS);
-                repository.saveOnlineToken(identifier, accessTokens, refreshTokens);
+                repository.saveOnlineToken(userId, accessTokens, refreshTokens);
                 LOG.info("[缓存在线令牌成功]>>> 访问令牌=[{}, {}]，刷新令牌=[{}, {}]",
                         tokenId, accessTokens.get(tokenId), tokenId, refreshTokens.get(tokenId));
                 LOG.info("[当前在线令牌的数量]>>> 访问令牌的数量={}，刷新令牌的数量={}",

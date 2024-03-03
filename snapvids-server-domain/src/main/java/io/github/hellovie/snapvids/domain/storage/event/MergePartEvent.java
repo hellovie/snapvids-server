@@ -1,16 +1,16 @@
-package io.github.hellovie.snapvids.domain.storage.vo;
+package io.github.hellovie.snapvids.domain.storage.event;
 
 import io.github.hellovie.snapvids.types.common.Id;
 import io.github.hellovie.snapvids.types.common.ValueString;
 import io.github.hellovie.snapvids.types.file.FileKey;
 
 /**
- * 文件上传凭证。
+ * 合并分片事件。
  *
  * @author hellovie
  * @since 1.0.0
  */
-public class UploadToken {
+public class MergePartEvent {
 
     /**
      * 文件 id
@@ -37,7 +37,7 @@ public class UploadToken {
      */
     private final Long expiredTime;
 
-    public UploadToken(Id fileId, FileKey fileKey, ValueString token, Long startTime, Long expiredTime) {
+    public MergePartEvent(Id fileId, FileKey fileKey, ValueString token, Long startTime, Long expiredTime) {
         this.fileId = fileId;
         this.fileKey = fileKey;
         this.token = token;
@@ -63,16 +63,5 @@ public class UploadToken {
 
     public Long getExpiredTime() {
         return expiredTime;
-    }
-
-    @Override
-    public String toString() {
-        return "UploadToken{" +
-                "fileId=" + fileId +
-                ", fileKey=" + fileKey +
-                ", token=" + token +
-                ", startTime=" + startTime +
-                ", expiredTime=" + expiredTime +
-                '}';
     }
 }

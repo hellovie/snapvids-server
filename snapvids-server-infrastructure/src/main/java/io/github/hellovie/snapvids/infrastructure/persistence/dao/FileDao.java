@@ -19,9 +19,9 @@ public interface FileDao extends JpaRepository<File, Long>, CustomFileDao {
     /**
      * 根据文件唯一标识和创建者 id 查询文件
      *
-     * @param identifier  文件唯一标识
+     * @param fileKey     文件唯一标识
      * @param createdById 创建者 id
      * @return 文件
      */
-    Optional<File> findByIdentifierAndCreatedById(String identifier, Long createdById);
+    Optional<File> findByFileKeyAndCreatedById(String fileKey, Long createdById);
 }

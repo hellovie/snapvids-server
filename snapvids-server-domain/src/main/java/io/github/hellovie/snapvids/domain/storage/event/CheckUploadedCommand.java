@@ -1,6 +1,6 @@
 package io.github.hellovie.snapvids.domain.storage.event;
 
-import io.github.hellovie.snapvids.types.file.FileIdentifier;
+import io.github.hellovie.snapvids.types.file.FileKey;
 
 /**
  * 检查文件是否已上传命令。
@@ -13,20 +13,20 @@ public class CheckUploadedCommand {
     /**
      * 文件唯一标识
      */
-    private final FileIdentifier identifier;
+    private final FileKey fileKey;
 
-    public CheckUploadedCommand(FileIdentifier identifier) {
-        this.identifier = identifier;
+    public CheckUploadedCommand(FileKey fileKey) {
+        this.fileKey = fileKey;
     }
 
-    public FileIdentifier getIdentifier() {
-        return identifier;
+    public FileKey getFileKey() {
+        return fileKey;
     }
 
     @Override
     public String toString() {
         return "CheckUploadedCommand{" +
-                "identifier=" + identifier +
+                "fileKey=" + fileKey +
                 '}';
     }
 }

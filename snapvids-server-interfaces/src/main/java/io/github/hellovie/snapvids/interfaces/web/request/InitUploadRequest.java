@@ -16,7 +16,7 @@ public class InitUploadRequest {
     /**
      * 文件唯一标识
      */
-    private String identifier;
+    private String fileKey;
 
     /**
      * 文件后缀
@@ -36,12 +36,12 @@ public class InitUploadRequest {
         this.originalName = originalName;
     }
 
-    public String getIdentifier() {
-        return identifier;
+    public String getFileKey() {
+        return fileKey;
     }
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
+    public void setFileKey(String fileKey) {
+        this.fileKey = fileKey;
     }
 
     public String getExt() {

@@ -2,8 +2,7 @@ package io.github.hellovie.snapvids.application.upload.service.impl;
 
 import io.github.hellovie.snapvids.application.upload.dto.FileInfoDTO;
 import io.github.hellovie.snapvids.application.upload.dto.UploadTokenDTO;
-import io.github.hellovie.snapvids.application.upload.event.FinishUploadCommand;
-import io.github.hellovie.snapvids.application.upload.event.InitUploadCommand;
+import io.github.hellovie.snapvids.application.upload.event.*;
 import io.github.hellovie.snapvids.application.upload.service.FileUploadService;
 import io.github.hellovie.snapvids.common.exception.business.DataException;
 import io.github.hellovie.snapvids.common.module.file.FileExceptionType;
@@ -13,10 +12,11 @@ import io.github.hellovie.snapvids.domain.file.event.CreateFileInfoCommand;
 import io.github.hellovie.snapvids.domain.file.event.UpdateFileStateCommand;
 import io.github.hellovie.snapvids.domain.file.service.FileService;
 import io.github.hellovie.snapvids.domain.file.state.FileUpdateStateEvent;
-import io.github.hellovie.snapvids.domain.storage.event.CheckUploadedCommand;
-import io.github.hellovie.snapvids.domain.storage.event.GenUploadTokenCommand;
+import io.github.hellovie.snapvids.domain.storage.event.*;
 import io.github.hellovie.snapvids.domain.storage.factory.StorageFactory;
 import io.github.hellovie.snapvids.domain.storage.service.StorageService;
+import io.github.hellovie.snapvids.domain.storage.service.UploadService;
+import io.github.hellovie.snapvids.domain.storage.vo.UploadProgressVO;
 import io.github.hellovie.snapvids.domain.storage.vo.UploadToken;
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileState;
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileVisibility;
@@ -45,6 +45,9 @@ public class DefaultFileUploadService implements FileUploadService {
     @Resource(name = "storageFactory")
     private StorageFactory storageFactory;
 
+    @Resource(name = "localUploadService")
+    private UploadService uploadService;
+
     /**
      * {@inheritDoc}
      *
@@ -55,7 +58,7 @@ public class DefaultFileUploadService implements FileUploadService {
     public UploadTokenDTO initUpload(InitUploadCommand command) {
         CreateFileInfoCommand cmd = new CreateFileInfoCommand(
                 command.getOriginalName(),
-                command.getIdentifier(),
+                command.getFileKey(),
                 new FilePath(FilePathConfig.DEFAULT),
                 command.getExt(),
                 command.getSize(),
@@ -66,7 +69,7 @@ public class DefaultFileUploadService implements FileUploadService {
         FileInfo fileInfo = fileService.create(cmd);
         StorageService storageService = storageFactory.getDefaultStorageService();
         UploadToken uploadToken = storageService.generateUploadToken(new GenUploadTokenCommand(
-                fileInfo.getId(), fileInfo.getIdentifier()
+                fileInfo.getId(), fileInfo.getFileKey()
         ));
         return UploadTokenDTO.Convertor.toUploadTokenDTO(uploadToken);
     }
@@ -79,16 +82,94 @@ public class DefaultFileUploadService implements FileUploadService {
     @Override
     public FileInfoDTO finishUpload(FinishUploadCommand command) {
         StorageService storageService = storageFactory.getDefaultStorageService();
-        boolean isUploaded = storageService.checkUploaded(new CheckUploadedCommand(command.getFileIdentifier()));
+        boolean isUploaded = storageService.checkUploaded(new CheckUploadedCommand(command.getFileKey()));
         if (!isUploaded) {
             throw new DataException(FileExceptionType.FILE_HAS_NOT_YET_BEEN_UPLOADED);
         }
         UpdateFileStateCommand cmd = new UpdateFileStateCommand(
-                command.getFileIdentifier(),
+                command.getFileKey(),
                 FileState.UPLOADING,
                 FileUpdateStateEvent.COMPLETE_THE_UPLOAD
         );
         FileInfo fileInfo = fileService.updateState(cmd);
         return FileInfoDTO.Convertor.toFileInfoDTO(fileInfo, storageService);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see FileUploadService#upload(UploadEvent)
+     */
+    @Override
+    public void upload(UploadEvent event) {
+        SingleUploadEvent cmd = new SingleUploadEvent(
+                event.getFileId(),
+                event.getFileKey(),
+                event.getToken(),
+                event.getStartTime(),
+                event.getExpiredTime(),
+                event.getCurrentFileHash(),
+                event.getFile()
+        );
+        uploadService.singleUpload(cmd);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see FileUploadService#uploadWithChunks(UploadChunksEvent)
+     */
+    @Override
+    public void uploadWithChunks(UploadChunksEvent event) {
+        UploadPartEvent uploadPartEvent = new UploadPartEvent(
+                event.getFileId(),
+                event.getFileKey(),
+                event.getToken(),
+                event.getStartTime(),
+                event.getExpiredTime(),
+                event.getCurrentNum(),
+                event.getCurrentSize(),
+                event.getChunkSize(),
+                event.getTotalSize(),
+                event.getTotalChunks(),
+                event.getChunkHash(),
+                event.getFile()
+        );
+        uploadService.uploadPart(uploadPartEvent);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see FileUploadService#getUploadProgress(UploadChunksProgressQuery)
+     */
+    @Override
+    public UploadChunksProgressDTO getUploadProgress(UploadChunksProgressQuery query) {
+        UploadProgressQuery progressQuery = new UploadProgressQuery(
+                query.getFileId(),
+                query.getFileKey(),
+                query.getToken(),
+                query.getStartTime(),
+                query.getExpiredTime()
+        );
+        UploadProgressVO uploadProgress = uploadService.getUploadProgress(progressQuery);
+        return UploadChunksProgressDTO.Convertor.toUploadChunksProgressDTO(uploadProgress);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see FileUploadService#mergeChunks(MergeChunksEvent)
+     */
+    @Override
+    public void mergeChunks(MergeChunksEvent event) {
+        MergePartEvent mergePartEvent = new MergePartEvent(
+                event.getFileId(),
+                event.getFileKey(),
+                event.getToken(),
+                event.getStartTime(),
+                event.getExpiredTime()
+        );
+        uploadService.mergePart(mergePartEvent);
     }
 }

@@ -32,10 +32,10 @@ public class QFile extends EntityPathBase<File> {
 
     public final EnumPath<io.github.hellovie.snapvids.infrastructure.persistence.enums.FileExt> ext = createEnum("ext", io.github.hellovie.snapvids.infrastructure.persistence.enums.FileExt.class);
 
+    public final StringPath fileKey = createString("fileKey");
+
     //inherited
     public final NumberPath<Long> id = _super.id;
-
-    public final StringPath identifier = createString("identifier");
 
     //inherited
     public final BooleanPath isAuditSuccess = _super.isAuditSuccess;

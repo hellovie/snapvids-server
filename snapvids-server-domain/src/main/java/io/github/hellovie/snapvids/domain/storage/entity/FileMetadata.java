@@ -2,13 +2,14 @@ package io.github.hellovie.snapvids.domain.storage.entity;
 
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileExt;
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileType;
-import io.github.hellovie.snapvids.types.file.FileIdentifier;
+import io.github.hellovie.snapvids.types.file.FileKey;
 import io.github.hellovie.snapvids.types.file.FilePath;
 import io.github.hellovie.snapvids.types.file.FileSize;
 import io.github.hellovie.snapvids.types.file.Filename;
 
 /**
  * 文件元数据。
+ * <p>仅查询，无需 id。</p>
  *
  * @author hellovie
  * @since 1.0.0
@@ -28,7 +29,7 @@ public class FileMetadata {
     /**
      * 文件唯一标识
      */
-    private FileIdentifier identifier;
+    private FileKey fileKey;
 
     /**
      * 相对路径
@@ -50,11 +51,11 @@ public class FileMetadata {
      */
     private FileType type;
 
-    public FileMetadata(Filename originalName, Filename storageName, FileIdentifier identifier, FilePath path, 
+    public FileMetadata(Filename originalName, Filename storageName, FileKey fileKey, FilePath path,
                         FileExt ext, FileSize size, FileType type) {
         this.originalName = originalName;
         this.storageName = storageName;
-        this.identifier = identifier;
+        this.fileKey = fileKey;
         this.path = path;
         this.ext = ext;
         this.size = size;
@@ -79,12 +80,12 @@ public class FileMetadata {
         return this;
     }
 
-    public FileIdentifier getIdentifier() {
-        return identifier;
+    public FileKey getFileKey() {
+        return fileKey;
     }
 
-    public FileMetadata setIdentifier(FileIdentifier identifier) {
-        this.identifier = identifier;
+    public FileMetadata setFileKey(FileKey fileKey) {
+        this.fileKey = fileKey;
         return this;
     }
 

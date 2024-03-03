@@ -32,7 +32,7 @@ public class UserAuth extends BaseEntity {
      * 身份标识
      */
     @Column(updatable = false)
-    private String identifier;
+    private String externalId;
 
     /**
      * 密码凭证
@@ -63,12 +63,12 @@ public class UserAuth extends BaseEntity {
         return this;
     }
 
-    public String getIdentifier() {
-        return identifier;
+    public String getExternalId() {
+        return externalId;
     }
 
-    public UserAuth setIdentifier(String identifier) {
-        this.identifier = identifier;
+    public UserAuth setExternalId(String externalId) {
+        this.externalId = externalId;
         return this;
     }
 

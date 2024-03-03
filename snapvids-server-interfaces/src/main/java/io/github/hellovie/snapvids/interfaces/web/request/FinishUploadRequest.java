@@ -11,13 +11,13 @@ public class FinishUploadRequest {
     /**
      * 文件唯一标识
      */
-    private String identifier;
+    private String fileKey;
 
-    public String getIdentifier() {
-        return identifier;
+    public String getFileKey() {
+        return fileKey;
     }
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
+    public void setFileKey(String fileKey) {
+        this.fileKey = fileKey;
     }
 }

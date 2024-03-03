@@ -1,16 +1,17 @@
-package io.github.hellovie.snapvids.domain.storage.vo;
+package io.github.hellovie.snapvids.application.upload.event;
 
 import io.github.hellovie.snapvids.types.common.Id;
 import io.github.hellovie.snapvids.types.common.ValueString;
 import io.github.hellovie.snapvids.types.file.FileKey;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
- * 文件上传凭证。
+ * 文件上传事件。
  *
  * @author hellovie
  * @since 1.0.0
  */
-public class UploadToken {
+public class UploadEvent {
 
     /**
      * 文件 id
@@ -37,12 +38,26 @@ public class UploadToken {
      */
     private final Long expiredTime;
 
-    public UploadToken(Id fileId, FileKey fileKey, ValueString token, Long startTime, Long expiredTime) {
+    /**
+     * 当前文件哈希（用于后端校验数据是否被篡改）
+     * <p>单文件上传为它本身的哈希值，分片上传为分片的哈希值。</p>
+     */
+    private final FileKey currentFileHash;
+
+    /**
+     * 文件
+     */
+    private final MultipartFile file;
+
+    public UploadEvent(Id fileId, FileKey fileKey, ValueString token, Long startTime, Long expiredTime,
+                       FileKey currentFileHash, MultipartFile file) {
         this.fileId = fileId;
         this.fileKey = fileKey;
         this.token = token;
         this.startTime = startTime;
         this.expiredTime = expiredTime;
+        this.currentFileHash = currentFileHash;
+        this.file = file;
     }
 
     public Id getFileId() {
@@ -65,14 +80,11 @@ public class UploadToken {
         return expiredTime;
     }
 
-    @Override
-    public String toString() {
-        return "UploadToken{" +
-                "fileId=" + fileId +
-                ", fileKey=" + fileKey +
-                ", token=" + token +
-                ", startTime=" + startTime +
-                ", expiredTime=" + expiredTime +
-                '}';
+    public FileKey getCurrentFileHash() {
+        return currentFileHash;
+    }
+
+    public MultipartFile getFile() {
+        return file;
     }
 }

@@ -150,7 +150,7 @@ public class FileInfoDTO {
             FileOperatorDTO createdBy = FileOperatorDTO.Convertor.toFileOperatorDTO(fileInfo.getCreatedBy());
             FileOperatorDTO modifiedBy = FileOperatorDTO.Convertor.toFileOperatorDTO(fileInfo.getModifiedBy());
             String url = storageService != null
-                    ? storageService.getUrl(new GetUrlQuery(fileInfo.getIdentifier(), fileInfo.getCreatedBy().getId())).getValue()
+                    ? storageService.getUrl(new GetUrlQuery(fileInfo.getFileKey(), fileInfo.getCreatedBy().getId())).getValue()
                     : "no url";
             return new FileInfoDTO(id, filename, path, fileInfo.getExt(), url, size, fileInfo.getType(),
                     fileInfo.getState(), fileInfo.getVisibility(), createdBy, modifiedBy);

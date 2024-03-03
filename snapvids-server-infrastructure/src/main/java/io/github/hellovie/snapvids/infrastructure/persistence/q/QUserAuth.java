@@ -26,10 +26,10 @@ public class QUserAuth extends EntityPathBase<UserAuth> {
 
     public final StringPath credential = createString("credential");
 
+    public final StringPath externalId = createString("externalId");
+
     //inherited
     public final NumberPath<Long> id = _super.id;
-
-    public final StringPath identifier = createString("identifier");
 
     //inherited
     public final BooleanPath isDeleted = _super.isDeleted;

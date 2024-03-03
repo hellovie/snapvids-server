@@ -1,7 +1,7 @@
 package io.github.hellovie.snapvids.domain.storage.event;
 
 import io.github.hellovie.snapvids.types.common.Id;
-import io.github.hellovie.snapvids.types.file.FileIdentifier;
+import io.github.hellovie.snapvids.types.file.FileKey;
 
 /**
  * 生成上传令牌命令。
@@ -19,18 +19,18 @@ public class GenUploadTokenCommand {
     /**
      * 文件唯一标识
      */
-    private final FileIdentifier fileIdentifier;
+    private final FileKey fileKey;
 
-    public GenUploadTokenCommand(Id fileId, FileIdentifier fileIdentifier) {
+    public GenUploadTokenCommand(Id fileId, FileKey fileKey) {
         this.fileId = fileId;
-        this.fileIdentifier = fileIdentifier;
+        this.fileKey = fileKey;
     }
 
     public Id getFileId() {
         return fileId;
     }
 
-    public FileIdentifier getFileIdentifier() {
-        return fileIdentifier;
+    public FileKey getFileKey() {
+        return fileKey;
     }
 }

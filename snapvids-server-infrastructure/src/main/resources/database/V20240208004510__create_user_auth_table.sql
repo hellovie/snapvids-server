@@ -3,7 +3,7 @@ CREATE TABLE `user_auth`
     `id`           BIGINT UNSIGNED AUTO_INCREMENT NOT NULL COMMENT 'ID',
     `user_id`      BIGINT UNSIGNED                NOT NULL COMMENT '用户ID',
     `type`         TINYINT UNSIGNED               NOT NULL COMMENT '认证类型',
-    `identifier`   VARCHAR(64)                    NOT NULL COMMENT '身份标识',
+    `external_id`  VARCHAR(64)                    NOT NULL COMMENT '身份标识(外部ID)',
     `credential`   VARCHAR(256)     DEFAULT ''    NOT NULL COMMENT '密码凭证',
     `utc_created`  DATETIME(6)                    NOT NULL COMMENT '创建时间(UTC)',
     `utc_modified` DATETIME(6)                    NOT NULL COMMENT '更新时间(UTC)',

@@ -46,7 +46,7 @@ public class DefaultFileService implements FileService {
     @Override
     public FileInfo create(CreateFileInfoCommand command) throws DataException {
         Id curUserId = ContextHolder.getUserOrElseThrow().getId();
-        FileInfo dbFileInfo = repository.findByIdentifierAndUserId(command.getIdentifier(), curUserId);
+        FileInfo dbFileInfo = repository.findByFileKeyAndUserId(command.getFileKey(), curUserId);
         // 文件已存在，抛出异常
         if (dbFileInfo != null) {
             throw new DataException(FileExceptionType.FILE_ALREADY_EXIST);
@@ -56,7 +56,7 @@ public class DefaultFileService implements FileService {
         FileInfo fileInfo = new FileInfo(
                 command.getOriginalName(),
                 new Filename(ksuidGenerator.genId()),
-                command.getIdentifier(),
+                command.getFileKey(),
                 command.getPath(),
                 command.getExt(),
                 command.getSize(),
@@ -78,7 +78,7 @@ public class DefaultFileService implements FileService {
     @Override
     public FileInfo updateState(UpdateFileStateCommand command) throws DataException {
         SysUser curUser = ContextHolder.getUserOrElseThrow();
-        FileInfo fileInfo = repository.findByIdentifierAndUserId(command.getFileIdentifier(), curUser.getId());
+        FileInfo fileInfo = repository.findByFileKeyAndUserId(command.getFileKey(), curUser.getId());
         if (fileInfo == null) {
             throw new DataException(FileExceptionType.FILE_NOT_FOUNT);
         }

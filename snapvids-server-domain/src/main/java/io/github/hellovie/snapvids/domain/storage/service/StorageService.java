@@ -36,7 +36,7 @@ public interface StorageService {
     ValueString getUrl(GetUrlQuery query) throws UtilException;
 
     /**
-     * 检查文件上传成功上传。
+     * 检查文件是否上传成功。
      *
      * @param command 检查文件是否已上传命令
      * @return 成功上传返回 true

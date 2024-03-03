@@ -2,7 +2,7 @@ package io.github.hellovie.snapvids.domain.file.entity;
 
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.*;
 import io.github.hellovie.snapvids.types.common.Id;
-import io.github.hellovie.snapvids.types.file.FileIdentifier;
+import io.github.hellovie.snapvids.types.file.FileKey;
 import io.github.hellovie.snapvids.types.file.FilePath;
 import io.github.hellovie.snapvids.types.file.FileSize;
 import io.github.hellovie.snapvids.types.file.Filename;
@@ -33,7 +33,7 @@ public class FileInfo {
     /**
      * 文件唯一标识
      */
-    private FileIdentifier identifier;
+    private FileKey fileKey;
 
     /**
      * 相对路径
@@ -80,12 +80,12 @@ public class FileInfo {
      */
     private FileOperator modifiedBy;
 
-    public FileInfo(Filename originalName, Filename storageName, FileIdentifier identifier, FilePath path,
+    public FileInfo(Filename originalName, Filename storageName, FileKey fileKey, FilePath path,
                     FileExt ext, FileSize size, FileType type, FileStorage storage, FileState state,
                     FileVisibility visibility, FileOperator createdBy, FileOperator modifiedBy) {
         this.originalName = originalName;
         this.storageName = storageName;
-        this.identifier = identifier;
+        this.fileKey = fileKey;
         this.path = path;
         this.ext = ext;
         this.size = size;
@@ -97,13 +97,13 @@ public class FileInfo {
         this.modifiedBy = modifiedBy;
     }
 
-    public FileInfo(Id id, Filename originalName, Filename storageName, FileIdentifier identifier, FilePath path,
+    public FileInfo(Id id, Filename originalName, Filename storageName, FileKey fileKey, FilePath path,
                     FileExt ext, FileSize size, FileType type, FileStorage storage, FileState state,
                     FileVisibility visibility, FileOperator createdBy, FileOperator modifiedBy) {
         this.id = id;
         this.originalName = originalName;
         this.storageName = storageName;
-        this.identifier = identifier;
+        this.fileKey = fileKey;
         this.path = path;
         this.ext = ext;
         this.size = size;
@@ -142,12 +142,12 @@ public class FileInfo {
         return this;
     }
 
-    public FileIdentifier getIdentifier() {
-        return identifier;
+    public FileKey getFileKey() {
+        return fileKey;
     }
 
-    public FileInfo setIdentifier(FileIdentifier identifier) {
-        this.identifier = identifier;
+    public FileInfo setFileKey(FileKey fileKey) {
+        this.fileKey = fileKey;
         return this;
     }
 

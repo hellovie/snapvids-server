@@ -18,7 +18,7 @@ public class UploadTokenDTO {
     /**
      * 文件标识
      */
-    private final String identifier;
+    private final String fileKey;
 
     /**
      * 令牌
@@ -35,9 +35,9 @@ public class UploadTokenDTO {
      */
     private final Long expiredTime;
 
-    public UploadTokenDTO(Long fileId, String identifier, String token, Long startTime, Long expiredTime) {
+    public UploadTokenDTO(Long fileId, String fileKey, String token, Long startTime, Long expiredTime) {
         this.fileId = fileId;
-        this.identifier = identifier;
+        this.fileKey = fileKey;
         this.token = token;
         this.startTime = startTime;
         this.expiredTime = expiredTime;
@@ -47,8 +47,8 @@ public class UploadTokenDTO {
         return fileId;
     }
 
-    public String getIdentifier() {
-        return identifier;
+    public String getFileKey() {
+        return fileKey;
     }
 
     public String getToken() {
@@ -76,12 +76,12 @@ public class UploadTokenDTO {
             }
 
             long fileId = uploadToken.getFileId() != null ? uploadToken.getFileId().getValue() : 0L;
-            String identifier = uploadToken.getIdentifier() != null ? uploadToken.getIdentifier().getValue()
-                    : "no identifier";
+            String fileKey = uploadToken.getFileKey() != null ? uploadToken.getFileKey().getValue()
+                    : "no file key";
             String token = uploadToken.getToken() != null ? uploadToken.getToken().getValue() : "no token";
             return new UploadTokenDTO(
                     fileId,
-                    identifier,
+                    fileKey,
                     token,
                     uploadToken.getStartTime(),
                     uploadToken.getExpiredTime()

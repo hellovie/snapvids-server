@@ -4,7 +4,7 @@ import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileExt;
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileStorage;
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileType;
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileVisibility;
-import io.github.hellovie.snapvids.types.file.FileIdentifier;
+import io.github.hellovie.snapvids.types.file.FileKey;
 import io.github.hellovie.snapvids.types.file.FilePath;
 import io.github.hellovie.snapvids.types.file.FileSize;
 import io.github.hellovie.snapvids.types.file.Filename;
@@ -25,7 +25,7 @@ public class CreateFileInfoCommand {
     /**
      * 文件唯一标识
      */
-    private final FileIdentifier identifier;
+    private final FileKey fileKey;
 
     /**
      * 相对路径
@@ -57,10 +57,10 @@ public class CreateFileInfoCommand {
      */
     private final FileVisibility visibility;
 
-    public CreateFileInfoCommand(Filename originalName, FileIdentifier identifier, FilePath path, FileExt ext,
+    public CreateFileInfoCommand(Filename originalName, FileKey fileKey, FilePath path, FileExt ext,
                                  FileSize size, FileType type, FileStorage storage, FileVisibility visibility) {
         this.originalName = originalName;
-        this.identifier = identifier;
+        this.fileKey = fileKey;
         this.path = path;
         this.ext = ext;
         this.size = size;
@@ -73,8 +73,8 @@ public class CreateFileInfoCommand {
         return originalName;
     }
 
-    public FileIdentifier getIdentifier() {
-        return identifier;
+    public FileKey getFileKey() {
+        return fileKey;
     }
 
     public FilePath getPath() {

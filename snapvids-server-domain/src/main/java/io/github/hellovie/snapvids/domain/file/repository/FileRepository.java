@@ -3,7 +3,7 @@ package io.github.hellovie.snapvids.domain.file.repository;
 import io.github.hellovie.snapvids.domain.file.entity.FileInfo;
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileState;
 import io.github.hellovie.snapvids.types.common.Id;
-import io.github.hellovie.snapvids.types.file.FileIdentifier;
+import io.github.hellovie.snapvids.types.file.FileKey;
 
 /**
  * 文件仓储。
@@ -41,9 +41,9 @@ public interface FileRepository {
     /**
      * 根据文件唯一标识和用户 id 查询文件信息。
      *
-     * @param fileIdentifier 文件唯一标识
+     * @param fileKey 文件唯一标识
      * @param userId         用户 id
      * @return 文件信息，文件不存在返回 null
      */
-    FileInfo findByIdentifierAndUserId(FileIdentifier fileIdentifier, Id userId);
+    FileInfo findByFileKeyAndUserId(FileKey fileKey, Id userId);
 }

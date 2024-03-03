@@ -2,7 +2,7 @@ package io.github.hellovie.snapvids.domain.file.event;
 
 import io.github.hellovie.snapvids.domain.file.state.FileUpdateStateEvent;
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileState;
-import io.github.hellovie.snapvids.types.file.FileIdentifier;
+import io.github.hellovie.snapvids.types.file.FileKey;
 
 /**
  * 更新文件状态命令。
@@ -15,7 +15,7 @@ public class UpdateFileStateCommand {
     /**
      * 文件唯一标识
      */
-    private final FileIdentifier fileIdentifier;
+    private final FileKey fileKey;
 
     /**
      * 当前状态
@@ -27,14 +27,14 @@ public class UpdateFileStateCommand {
      */
     private final FileUpdateStateEvent event;
 
-    public UpdateFileStateCommand(FileIdentifier fileIdentifier, FileState state, FileUpdateStateEvent event) {
-        this.fileIdentifier = fileIdentifier;
+    public UpdateFileStateCommand(FileKey fileKey, FileState state, FileUpdateStateEvent event) {
+        this.fileKey = fileKey;
         this.state = state;
         this.event = event;
     }
 
-    public FileIdentifier getFileIdentifier() {
-        return fileIdentifier;
+    public FileKey getFileKey() {
+        return fileKey;
     }
 
     public FileState getState() {

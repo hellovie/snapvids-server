@@ -1,7 +1,7 @@
 package io.github.hellovie.snapvids.application.upload.event;
 
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileExt;
-import io.github.hellovie.snapvids.types.file.FileIdentifier;
+import io.github.hellovie.snapvids.types.file.FileKey;
 import io.github.hellovie.snapvids.types.file.FileSize;
 import io.github.hellovie.snapvids.types.file.Filename;
 
@@ -21,7 +21,7 @@ public class InitUploadCommand {
     /**
      * 文件唯一标识
      */
-    private final FileIdentifier identifier;
+    private final FileKey fileKey;
 
     /**
      * 文件后缀
@@ -33,9 +33,9 @@ public class InitUploadCommand {
      */
     private final FileSize size;
 
-    public InitUploadCommand(Filename originalName, FileIdentifier identifier, FileExt ext, FileSize size) {
+    public InitUploadCommand(Filename originalName, FileKey fileKey, FileExt ext, FileSize size) {
         this.originalName = originalName;
-        this.identifier = identifier;
+        this.fileKey = fileKey;
         this.ext = ext;
         this.size = size;
     }
@@ -44,8 +44,8 @@ public class InitUploadCommand {
         return originalName;
     }
 
-    public FileIdentifier getIdentifier() {
-        return identifier;
+    public FileKey getFileKey() {
+        return fileKey;
     }
 
     public FileExt getExt() {

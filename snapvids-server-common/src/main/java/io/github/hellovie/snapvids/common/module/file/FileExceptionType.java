@@ -28,7 +28,7 @@ public enum FileExceptionType implements ExceptionCode {
     /**
      * 文件标识不能为空
      */
-    FILE_IDENTIFIER_CANNOT_BE_EMPTY(BUSINESS, 3, "文件标识不能为空", true),
+    FILE_KEY_CANNOT_BE_EMPTY(BUSINESS, 3, "文件标识不能为空", true),
 
     /**
      * 无法解析 null 文件
@@ -95,6 +95,65 @@ public enum FileExceptionType implements ExceptionCode {
      */
     FILE_ALREADY_EXIST(BUSINESS, 16, "文件已存在", false),
 
+    /**
+     * 上传令牌生成失败
+     */
+    UPLOAD_TOKEN_GENERATE_FAILED(SYSTEM, 17, "上传令牌生成失败", false),
+
+    /**
+     * 上传令牌已过期
+     */
+    UPLOAD_TOKEN_HAS_EXPIRED(BUSINESS, 18, "上传令牌已过期", true),
+
+    /**
+     * 无效的上传令牌
+     */
+    INVALID_UPLOAD_TOKEN(BUSINESS, 19, "无效的上传令牌", true),
+
+    /**
+     * 上传的文件不能为空
+     */
+    UPLOAD_FILE_CANNOT_BE_EMPTY(BUSINESS, 20, "上传的文件不能为空", true),
+
+    /**
+     * 上传失败
+     */
+    UPLOAD_FILE_FAILED(BUSINESS, 21, "上传失败", true),
+
+    /**
+     * 创建文件夹失败
+     */
+    CREATE_FOLDER_FAILED(SYSTEM, 22, "创建文件夹失败", false),
+
+    /**
+     * 保存文件到磁盘失败
+     */
+    FILE_SAVE_TO_DISK_FAILED(SYSTEM, 23, "无法将文件保存到磁盘", false),
+
+    /**
+     * 超出单次上传的文件大小
+     */
+    UPLOAD_EXCEED_SIZE_LIMIT_FILE(BUSINESS, 24, "超出单次上传的文件大小", false),
+
+    /**
+     * 找不到分片文件
+     */
+    CHUNK_FILE_NOT_FOUND(BUSINESS, 25, "找不到分片文件", false),
+
+    /**
+     * 缺少分片文件
+     */
+    MISSING_CHUNK_FILE(BUSINESS, 26, "缺少分片文件，请先上传", false),
+
+    /**
+     * 数据库分片文件数据异常
+     */
+    DB_CHUNK_FILE_DATA_EXCEPTION(SYSTEM, 27, "数据库分片文件数据异常", false),
+
+    /**
+     * 合并文件失败
+     */
+    MERGE_CHUNK_FILE_FAILED(BUSINESS, 28, "合并文件失败", false),
     ;
 
     /**
