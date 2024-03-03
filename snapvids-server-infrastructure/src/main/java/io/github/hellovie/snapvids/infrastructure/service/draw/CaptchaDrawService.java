@@ -6,12 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FastByteArrayOutputStream;
-import sun.misc.BASE64Encoder;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.Random;
 
 /**
@@ -105,11 +105,12 @@ public class CaptchaDrawService implements DrawService {
 
         final int width = calculateWidth(text);
         final int height = calculateHeight(text);
+        final Base64.Encoder encoder = Base64.getEncoder();
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_BGR);
         drawToBufferedImage(image, text);
         try (FastByteArrayOutputStream outputStream = new FastByteArrayOutputStream();) {
             ImageIO.write(image, "png", outputStream);
-            String base64Image = new BASE64Encoder().encode(outputStream.toByteArray());
+            String base64Image = encoder.encodeToString(outputStream.toByteArray());
             base64.append(base64Image);
         } catch (IOException e) {
             LOG.error("[将文本转换为Base64图片失败]>>> 异常信息={}", e.getMessage(), e);
