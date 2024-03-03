@@ -184,10 +184,11 @@ public class Validation {
      *
      * @param enumName      枚举名
      * @param enumClazz     枚举类
-     * @param exceptionCode 字符串不是枚举名抛出
+     * @param exceptionCode 异常状态码
+     * @throws InvalidParamException 字符串不是枚举名抛出
      */
     public static void isEnumNameOrElseThrow(String enumName, Class<? extends Enum<?>> enumClazz,
-                                             ExceptionCode exceptionCode) {
+                                             ExceptionCode exceptionCode) throws InvalidParamException {
 
         if (enumName == null || "".equals(enumName) || enumClazz == null) {
             throw new InvalidParamException(exceptionCode);
@@ -205,6 +206,23 @@ public class Validation {
         }
 
         if (!isMatch) {
+            throw new InvalidParamException(exceptionCode);
+        }
+    }
+
+    /**
+     * 若执行动作期间出现异常直接抛出指定异常状态码。
+     *
+     * @param runnable      动作
+     * @param exceptionCode 异常状态码
+     * @throws InvalidParamException 执行动作过程中出现异常抛出
+     */
+    public static void executeWithException(Runnable runnable, ExceptionCode exceptionCode)
+            throws InvalidParamException {
+
+        try {
+            runnable.run();
+        } catch (Exception ex) {
             throw new InvalidParamException(exceptionCode);
         }
     }
