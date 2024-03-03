@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
-import static io.github.hellovie.snapvids.common.module.file.FileExceptionType.WRONG_FILE_STATE;
+import static io.github.hellovie.snapvids.common.module.file.FileExceptionType.UNSUPPORTED_FILE_TYPES;
 
 /**
  * 文件上传控制器。
@@ -47,7 +47,7 @@ public class UploadController {
         LOG.info("[UploadController#initUpload入参]>>> originalName={}, fileKey={}, ext={} size={}",
                 request.getOriginalName(), request.getFileKey(), request.getExt(), request.getSize());
 
-        Validation.isEnumNameOrElseThrow(request.getExt(), FileExt.class, WRONG_FILE_STATE);
+        Validation.isEnumNameOrElseThrow(request.getExt(), FileExt.class, UNSUPPORTED_FILE_TYPES);
         InitUploadCommand cmd = new InitUploadCommand(
                 new Filename(request.getOriginalName()),
                 new FileKey(request.getFileKey()),
@@ -83,6 +83,13 @@ public class UploadController {
     public ResultResponse.SuccessResult<Void> upload(@ModelAttribute UploadRequest request) {
         LOG.info("[UploadController#upload入参]>>> fileId={}, fileKey={}, md5={}, token={}",
                 request.getFileId(), request.getFileKey(), request.getMd5(), request.getToken());
+        // 校验上传文件的类型
+        Validation.executeWithException(() -> {
+            String _filename = request.getFile().getOriginalFilename();
+            String ext = _filename.substring(_filename.lastIndexOf(".") + 1);
+            Validation.isEnumNameOrElseThrow(ext, FileExt.class, UNSUPPORTED_FILE_TYPES);
+        }, UNSUPPORTED_FILE_TYPES);
+
         UploadEvent event = new UploadEvent(
                 new Id(request.getFileId()),
                 new FileKey(request.getFileKey()),
@@ -106,6 +113,12 @@ public class UploadController {
     public ResultResponse.SuccessResult<Void> uploadWithChunks(@ModelAttribute UploadChunksRequest request) {
         LOG.info("[UploadController#uploadWithChunks入参]>>> fileId={}, fileKey={}, md5={}, token={}",
                 request.getFileId(), request.getFileKey(), request.getMd5(), request.getToken());
+        // 校验上传文件的类型
+        Validation.executeWithException(() -> {
+            String _filename = request.getFile().getOriginalFilename();
+            String ext = _filename.substring(_filename.lastIndexOf(".") + 1);
+            Validation.isEnumNameOrElseThrow(ext, FileExt.class, UNSUPPORTED_FILE_TYPES);
+        }, UNSUPPORTED_FILE_TYPES);
 
         UploadChunksEvent event = new UploadChunksEvent(
                 new Id(request.getFileId()),

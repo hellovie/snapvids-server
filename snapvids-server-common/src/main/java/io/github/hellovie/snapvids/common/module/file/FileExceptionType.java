@@ -154,6 +154,12 @@ public enum FileExceptionType implements ExceptionCode {
      * 合并文件失败
      */
     MERGE_CHUNK_FILE_FAILED(BUSINESS, 28, "合并文件失败", false),
+
+    /**
+     * 不支持的文件类型
+     */
+    UNSUPPORTED_FILE_TYPES(BUSINESS, 29, "不支持的文件类型", true),
+
     ;
 
     /**
