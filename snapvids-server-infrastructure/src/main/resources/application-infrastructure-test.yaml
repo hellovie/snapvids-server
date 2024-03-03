@@ -20,3 +20,6 @@ snapvids:
   jwt:
     secret: ${JWT_SECRET}
     expired-in-seconds: 2_592_000_000 # 默认 30 天
+  server:
+    protocol: "http"
+    domain-name: "127.0.0.1"

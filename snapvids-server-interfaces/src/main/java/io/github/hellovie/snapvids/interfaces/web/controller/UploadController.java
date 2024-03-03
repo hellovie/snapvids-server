@@ -4,6 +4,7 @@ import io.github.hellovie.snapvids.application.upload.dto.FileInfoDTO;
 import io.github.hellovie.snapvids.application.upload.dto.UploadTokenDTO;
 import io.github.hellovie.snapvids.application.upload.event.*;
 import io.github.hellovie.snapvids.application.upload.service.FileUploadService;
+import io.github.hellovie.snapvids.common.constants.UploadPath;
 import io.github.hellovie.snapvids.common.types.Validation;
 import io.github.hellovie.snapvids.common.util.ResultResponse;
 import io.github.hellovie.snapvids.common.util.TypeConvertor;
@@ -51,7 +52,8 @@ public class UploadController {
                 new Filename(request.getOriginalName()),
                 new FileKey(request.getFileKey()),
                 (FileExt) TypeConvertor.toEnum(request.getExt(), FileExt.class),
-                new FileSize(request.getSize())
+                new FileSize(request.getSize()),
+                new FilePath(UploadPath.DEFAULT.getRoot())
         );
         UploadTokenDTO uploadTokenDTO = fileUploadService.initUpload(cmd);
         return ResultResponse.success(uploadTokenDTO);

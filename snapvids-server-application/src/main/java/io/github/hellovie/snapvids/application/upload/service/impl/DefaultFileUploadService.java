@@ -6,7 +6,6 @@ import io.github.hellovie.snapvids.application.upload.event.*;
 import io.github.hellovie.snapvids.application.upload.service.FileUploadService;
 import io.github.hellovie.snapvids.common.exception.business.DataException;
 import io.github.hellovie.snapvids.common.module.file.FileExceptionType;
-import io.github.hellovie.snapvids.domain.file.config.FilePathConfig;
 import io.github.hellovie.snapvids.domain.file.entity.FileInfo;
 import io.github.hellovie.snapvids.domain.file.event.CreateFileInfoCommand;
 import io.github.hellovie.snapvids.domain.file.event.UpdateFileStateCommand;
@@ -20,7 +19,6 @@ import io.github.hellovie.snapvids.domain.storage.vo.UploadProgressVO;
 import io.github.hellovie.snapvids.domain.storage.vo.UploadToken;
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileState;
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileVisibility;
-import io.github.hellovie.snapvids.types.file.FilePath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -59,7 +57,7 @@ public class DefaultFileUploadService implements FileUploadService {
         CreateFileInfoCommand cmd = new CreateFileInfoCommand(
                 command.getOriginalName(),
                 command.getFileKey(),
-                new FilePath(FilePathConfig.DEFAULT),
+                command.getPath(),
                 command.getExt(),
                 command.getSize(),
                 command.getExt().getType(),

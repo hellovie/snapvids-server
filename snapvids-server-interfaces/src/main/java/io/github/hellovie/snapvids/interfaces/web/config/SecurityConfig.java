@@ -56,7 +56,8 @@ public class SecurityConfig {
             "/login/**",
             "/register/**",
             "/logout/**",
-            "/tokens/refresh"
+            "/tokens/refresh",
+            "/resources/**"
     };
 
     /**

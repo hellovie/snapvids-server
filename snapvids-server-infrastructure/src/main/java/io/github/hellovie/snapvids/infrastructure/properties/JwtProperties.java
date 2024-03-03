@@ -39,11 +39,12 @@ public class JwtProperties {
         if (StringUtils.isBlank(secret) || expiredInSeconds == null || expiredInSeconds <= 0) {
             LOG.error("[注入JWT密钥失败]>>> 密钥={}", secret);
             LOG.error("[注册JWT过期时间失败]>>> 过期时间={}s", expiredInSeconds);
-            throw new RuntimeException("Failed to inject JWT properties.");
+            throw new RuntimeException("注入JWT变量失败");
         }
-        LOG.info("[注入JWT变量成功]>>> 密钥=***，过期时间={}s", expiredInSeconds);
+
         this.secret = secret;
         this.expiredInSeconds = expiredInSeconds;
+        LOG.info("[注入JWT变量成功]>>> 密钥=***，过期时间={}s", expiredInSeconds);
     }
 
     public String getSecret() {
