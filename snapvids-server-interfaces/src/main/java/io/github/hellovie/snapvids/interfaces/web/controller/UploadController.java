@@ -83,12 +83,6 @@ public class UploadController {
     public ResultResponse.SuccessResult<Void> upload(@ModelAttribute UploadRequest request) {
         LOG.info("[UploadController#upload入参]>>> fileId={}, fileKey={}, md5={}, token={}",
                 request.getFileId(), request.getFileKey(), request.getMd5(), request.getToken());
-        // 校验上传文件的类型
-        Validation.executeWithException(() -> {
-            String _filename = request.getFile().getOriginalFilename();
-            String ext = _filename.substring(_filename.lastIndexOf(".") + 1);
-            Validation.isEnumNameOrElseThrow(ext, FileExt.class, UNSUPPORTED_FILE_TYPES);
-        }, UNSUPPORTED_FILE_TYPES);
 
         UploadEvent event = new UploadEvent(
                 new Id(request.getFileId()),
@@ -97,7 +91,7 @@ public class UploadController {
                 request.getStartTime(),
                 request.getExpiredTime(),
                 new FileKey(request.getMd5()),
-                request.getFile()
+                new EffectiveFile(request.getFile())
         );
         fileUploadService.upload(event);
         return ResultResponse.success(null);
@@ -113,12 +107,6 @@ public class UploadController {
     public ResultResponse.SuccessResult<Void> uploadWithChunks(@ModelAttribute UploadChunksRequest request) {
         LOG.info("[UploadController#uploadWithChunks入参]>>> fileId={}, fileKey={}, md5={}, token={}",
                 request.getFileId(), request.getFileKey(), request.getMd5(), request.getToken());
-        // 校验上传文件的类型
-        Validation.executeWithException(() -> {
-            String _filename = request.getFile().getOriginalFilename();
-            String ext = _filename.substring(_filename.lastIndexOf(".") + 1);
-            Validation.isEnumNameOrElseThrow(ext, FileExt.class, UNSUPPORTED_FILE_TYPES);
-        }, UNSUPPORTED_FILE_TYPES);
 
         UploadChunksEvent event = new UploadChunksEvent(
                 new Id(request.getFileId()),
@@ -132,7 +120,7 @@ public class UploadController {
                 new FileSize(request.getTotalSize()),
                 new ChunkTotal(request.getTotalChunks()),
                 new FileKey(request.getMd5()),
-                request.getFile()
+                new EffectiveFile(request.getFile())
         );
         fileUploadService.uploadWithChunks(event);
         return ResultResponse.success(null);

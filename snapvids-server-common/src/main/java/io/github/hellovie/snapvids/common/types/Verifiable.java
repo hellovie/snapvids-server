@@ -11,6 +11,8 @@ import io.github.hellovie.snapvids.common.exception.business.InvalidParamExcepti
 @FunctionalInterface
 public interface Verifiable {
 
+    // Todo：需要重新设计
+
     /**
      * 校验自身属性值，校验失败抛出异常。
      *

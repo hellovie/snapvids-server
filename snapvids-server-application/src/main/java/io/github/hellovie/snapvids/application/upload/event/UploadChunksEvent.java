@@ -2,11 +2,7 @@ package io.github.hellovie.snapvids.application.upload.event;
 
 import io.github.hellovie.snapvids.types.common.Id;
 import io.github.hellovie.snapvids.types.common.ValueString;
-import io.github.hellovie.snapvids.types.file.ChunkNumber;
-import io.github.hellovie.snapvids.types.file.ChunkTotal;
-import io.github.hellovie.snapvids.types.file.FileKey;
-import io.github.hellovie.snapvids.types.file.FileSize;
-import org.springframework.web.multipart.MultipartFile;
+import io.github.hellovie.snapvids.types.file.*;
 
 /**
  * 分片上传事件。
@@ -74,11 +70,11 @@ public class UploadChunksEvent {
     /**
      * 文件
      */
-    private final MultipartFile file;
+    private final EffectiveFile file;
 
     public UploadChunksEvent(Id fileId, FileKey fileKey, ValueString token, Long startTime, Long expiredTime,
                              ChunkNumber currentNum, FileSize currentSize, FileSize chunkSize, FileSize totalSize,
-                             ChunkTotal totalChunks, FileKey chunkHash, MultipartFile file) {
+                             ChunkTotal totalChunks, FileKey chunkHash, EffectiveFile file) {
         this.fileId = fileId;
         this.fileKey = fileKey;
         this.token = token;
@@ -137,7 +133,7 @@ public class UploadChunksEvent {
         return chunkHash;
     }
 
-    public MultipartFile getFile() {
+    public EffectiveFile getFile() {
         return file;
     }
 }

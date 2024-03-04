@@ -176,7 +176,7 @@ public class LocalUploadService implements UploadService {
                 event.getStartTime(), event.getExpiredTime());
         checkToken(token);
 
-        MultipartFile uploadFile = event.getFile();
+        MultipartFile uploadFile = event.getFile().getFile();
         if (uploadFile.getSize() > SINGLE_UPLOAD_MAX_FILE_SIZE) {
             throw new DataException(FileExceptionType.UPLOAD_EXCEED_SIZE_LIMIT_FILE);
         }
@@ -215,7 +215,7 @@ public class LocalUploadService implements UploadService {
                 event.getStartTime(), event.getExpiredTime());
         checkToken(token);
 
-        MultipartFile uploadFile = event.getFile();
+        MultipartFile uploadFile = event.getFile().getFile();
         if (uploadFile.getSize() > SINGLE_UPLOAD_MAX_FILE_SIZE) {
             throw new DataException(FileExceptionType.UPLOAD_EXCEED_SIZE_LIMIT_FILE);
         }

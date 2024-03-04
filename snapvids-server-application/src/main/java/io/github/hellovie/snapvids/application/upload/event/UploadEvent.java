@@ -2,8 +2,8 @@ package io.github.hellovie.snapvids.application.upload.event;
 
 import io.github.hellovie.snapvids.types.common.Id;
 import io.github.hellovie.snapvids.types.common.ValueString;
+import io.github.hellovie.snapvids.types.file.EffectiveFile;
 import io.github.hellovie.snapvids.types.file.FileKey;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 文件上传事件。
@@ -47,10 +47,10 @@ public class UploadEvent {
     /**
      * 文件
      */
-    private final MultipartFile file;
+    private final EffectiveFile file;
 
     public UploadEvent(Id fileId, FileKey fileKey, ValueString token, Long startTime, Long expiredTime,
-                       FileKey currentFileHash, MultipartFile file) {
+                       FileKey currentFileHash, EffectiveFile file) {
         this.fileId = fileId;
         this.fileKey = fileKey;
         this.token = token;
@@ -84,7 +84,7 @@ public class UploadEvent {
         return currentFileHash;
     }
 
-    public MultipartFile getFile() {
+    public EffectiveFile getFile() {
         return file;
     }
 }

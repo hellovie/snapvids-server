@@ -1,11 +1,9 @@
 package io.github.hellovie.snapvids.domain.storage.event;
 
-import io.github.hellovie.snapvids.common.module.file.FileExceptionType;
-import io.github.hellovie.snapvids.common.types.Validation;
 import io.github.hellovie.snapvids.types.common.Id;
 import io.github.hellovie.snapvids.types.common.ValueString;
+import io.github.hellovie.snapvids.types.file.EffectiveFile;
 import io.github.hellovie.snapvids.types.file.FileKey;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 上传文件事件。
@@ -49,11 +47,10 @@ public class SingleUploadEvent {
     /**
      * 文件
      */
-    private final MultipartFile file;
+    private final EffectiveFile file;
 
     public SingleUploadEvent(Id fileId, FileKey fileKey, ValueString token, Long startTime, Long expiredTime,
-                             FileKey hash, MultipartFile file) {
-        Validation.isNotNullOrElseThrow(file, FileExceptionType.UPLOAD_FILE_CANNOT_BE_EMPTY);
+                             FileKey hash, EffectiveFile file) {
         this.fileId = fileId;
         this.fileKey = fileKey;
         this.token = token;
@@ -87,7 +84,7 @@ public class SingleUploadEvent {
         return hash;
     }
 
-    public MultipartFile getFile() {
+    public EffectiveFile getFile() {
         return file;
     }
 }
