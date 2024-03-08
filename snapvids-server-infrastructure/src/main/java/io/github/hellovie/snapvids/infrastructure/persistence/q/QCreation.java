@@ -4,9 +4,7 @@ import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
 import com.querydsl.core.types.dsl.*;
 import io.github.hellovie.snapvids.infrastructure.persistence.entity.Creation;
-import io.github.hellovie.snapvids.infrastructure.persistence.entity.File;
 import io.github.hellovie.snapvids.infrastructure.persistence.entity.Tag;
-import io.github.hellovie.snapvids.infrastructure.persistence.entity.User;
 
 import javax.annotation.Generated;
 
@@ -43,9 +41,11 @@ public class QCreation extends EntityPathBase<Creation> {
 
     public final StringPath caption = createString("caption");
 
-    public final ListPath<File, QFile> content = this.<File, QFile>createList("content", File.class, QFile.class, PathInits.DIRECT2);
-
     public final QFile cover;
+
+    public final StringPath creationFileIds = createString("creationFileIds");
+
+    public final StringPath creationVisibilityUserIds = createString("creationVisibilityUserIds");
 
     //inherited
     public final NumberPath<Long> id = _super.id;
@@ -61,8 +61,6 @@ public class QCreation extends EntityPathBase<Creation> {
     public final ListPath<Tag, QTag> tags = this.<Tag, QTag>createList("tags", Tag.class, QTag.class, PathInits.DIRECT2);
 
     public final EnumPath<io.github.hellovie.snapvids.infrastructure.persistence.enums.CreationType> type = createEnum("type", io.github.hellovie.snapvids.infrastructure.persistence.enums.CreationType.class);
-
-    public final ListPath<User, QUser> usersScope = this.<User, QUser>createList("usersScope", User.class, QUser.class, PathInits.DIRECT2);
 
     //inherited
     public final DateTimePath<java.sql.Timestamp> utcCreated = _super.utcCreated;

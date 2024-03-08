@@ -41,6 +41,11 @@ public class Creation extends AuditEntity {
     private File bgm;
 
     /**
+     * 作品的文件 ID（英文逗号分割）
+     */
+    private String creationFileIds;
+
+    /**
      * BGM 音量
      */
     private Integer bgmVolume = 100;
@@ -61,6 +66,11 @@ public class Creation extends AuditEntity {
      */
     @Enumerated(EnumType.ORDINAL)
     private CreationVisibility visibility;
+
+    /**
+     * 作品可见范围的用户 ID（英文逗号分割）
+     */
+    private String creationVisibilityUserIds;
 
     /**
      * 作品权限（默认无设置任何权限）
@@ -93,29 +103,6 @@ public class Creation extends AuditEntity {
             inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id")
     )
     private List<Tag> tags;
-
-    /**
-     * 作品内容
-     */
-    @OneToMany
-    @JoinTable(
-            name = "creation_file",
-            joinColumns = @JoinColumn(name = "creation_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "file_id", referencedColumnName = "id")
-    )
-    private List<File> content;
-
-    // Todo：是否能仅显示用户 ID？
-    /**
-     * 用户范围（可见用户列表、不给谁看列表）
-     */
-    @OneToMany
-    @JoinTable(
-            name = "creation_visibility",
-            joinColumns = @JoinColumn(name = "creation_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id")
-    )
-    private List<User> usersScope;
 
     public Creation() {}
 
@@ -159,6 +146,15 @@ public class Creation extends AuditEntity {
         return this;
     }
 
+    public String getCreationFileIds() {
+        return creationFileIds;
+    }
+
+    public Creation setCreationFileIds(String creationFileIds) {
+        this.creationFileIds = creationFileIds;
+        return this;
+    }
+
     public Integer getBgmVolume() {
         return bgmVolume;
     }
@@ -192,6 +188,15 @@ public class Creation extends AuditEntity {
 
     public Creation setVisibility(CreationVisibility visibility) {
         this.visibility = visibility;
+        return this;
+    }
+
+    public String getCreationVisibilityUserIds() {
+        return creationVisibilityUserIds;
+    }
+
+    public Creation setCreationVisibilityUserIds(String creationVisibilityUserIds) {
+        this.creationVisibilityUserIds = creationVisibilityUserIds;
         return this;
     }
 
@@ -237,24 +242,6 @@ public class Creation extends AuditEntity {
 
     public Creation setTags(List<Tag> tags) {
         this.tags = tags;
-        return this;
-    }
-
-    public List<File> getContent() {
-        return content;
-    }
-
-    public Creation setContent(List<File> content) {
-        this.content = content;
-        return this;
-    }
-
-    public List<User> getUsersScope() {
-        return usersScope;
-    }
-
-    public Creation setUsersScope(List<User> usersScope) {
-        this.usersScope = usersScope;
         return this;
     }
 }
