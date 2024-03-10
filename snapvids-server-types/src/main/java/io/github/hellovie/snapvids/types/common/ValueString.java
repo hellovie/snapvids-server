@@ -1,8 +1,12 @@
 package io.github.hellovie.snapvids.types.common;
 
 import io.github.hellovie.snapvids.common.exception.business.InvalidParamException;
-import io.github.hellovie.snapvids.common.types.Verifiable;
+import io.github.hellovie.snapvids.common.types.DomainPrimitive;
+import io.github.hellovie.snapvids.common.types.Validation;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static io.github.hellovie.snapvids.common.module.common.CommonExceptionType.STRING_CANNOT_BE_EMPTY;
 
@@ -13,7 +17,7 @@ import static io.github.hellovie.snapvids.common.module.common.CommonExceptionTy
  * @author hellovie
  * @since 1.0.0
  */
-public class ValueString implements Verifiable {
+public class ValueString extends DomainPrimitive {
 
     /**
      * 值
@@ -53,23 +57,13 @@ public class ValueString implements Verifiable {
      * @param errorMessage 字符串不符合要求的异常信息
      */
     private ValueString(String value, String errorMessage) {
+        Map<String, Object> params = new HashMap<>(2);
+        params.put("value", value);
+        params.put("errorMessage", errorMessage);
+        verify(params);
+
         this.value = value;
         this.errorMessage = errorMessage;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see Verifiable#verify()
-     */
-    @Override
-    public void verify() throws InvalidParamException {
-        if (StringUtils.isBlank(value)) {
-            if (StringUtils.isBlank(errorMessage)) {
-                throw new InvalidParamException(STRING_CANNOT_BE_EMPTY);
-            }
-            throw new InvalidParamException(STRING_CANNOT_BE_EMPTY, errorMessage);
-        }
     }
 
     public String getValue() {
@@ -83,5 +77,25 @@ public class ValueString implements Verifiable {
     @Override
     public String toString() {
         return value + "#" + errorMessage;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see DomainPrimitive#verify(Map)
+     */
+    @Override
+    protected void verify(Map<String, Object> params) throws InvalidParamException {
+        // 校验字符串值
+        Validation.executeWithInvalidParamException(() -> {
+            String _value = (String) params.get("value");
+            String _errorMessage = (String) params.get("errorMessage");
+            if (StringUtils.isBlank(_value)) {
+                if (StringUtils.isBlank(_errorMessage)) {
+                    throw new InvalidParamException(STRING_CANNOT_BE_EMPTY);
+                }
+                throw new InvalidParamException(STRING_CANNOT_BE_EMPTY, errorMessage);
+            }
+        }, STRING_CANNOT_BE_EMPTY);
     }
 }

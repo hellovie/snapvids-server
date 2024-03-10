@@ -2,8 +2,8 @@ package io.github.hellovie.snapvids.types.file;
 
 import io.github.hellovie.snapvids.common.exception.business.InvalidParamException;
 import io.github.hellovie.snapvids.common.exception.system.UtilException;
+import io.github.hellovie.snapvids.common.types.DomainPrimitive;
 import io.github.hellovie.snapvids.common.types.Validation;
-import io.github.hellovie.snapvids.common.types.Verifiable;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 
 import static io.github.hellovie.snapvids.common.module.file.FileExceptionType.*;
 
@@ -21,7 +23,7 @@ import static io.github.hellovie.snapvids.common.module.file.FileExceptionType.*
  * @author hellovie
  * @since 1.0.0
  */
-public class FileKey implements Verifiable {
+public class FileKey extends DomainPrimitive {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileKey.class);
 
@@ -31,6 +33,10 @@ public class FileKey implements Verifiable {
     private final String value;
 
     public FileKey(String value) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("value", value);
+        verify(params);
+
         this.value = value;
     }
 
@@ -87,16 +93,6 @@ public class FileKey implements Verifiable {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see Verifiable#verify()
-     */
-    @Override
-    public void verify() throws InvalidParamException {
-        Validation.isNotBlankOrElseThrow(value, FILE_KEY_CANNOT_BE_EMPTY);
-    }
-
     public String getValue() {
         return value;
     }
@@ -104,5 +100,19 @@ public class FileKey implements Verifiable {
     @Override
     public String toString() {
         return value;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see DomainPrimitive#verify(Map)
+     */
+    @Override
+    protected void verify(Map<String, Object> params) throws InvalidParamException {
+        // 校验文件 Key
+        Validation.executeWithInvalidParamException(() -> {
+            String _value = (String) params.get("value");
+            Validation.isNotBlankOrElseThrow(_value, FILE_KEY_CANNOT_BE_EMPTY);
+        }, FILE_KEY_CANNOT_BE_EMPTY);
     }
 }

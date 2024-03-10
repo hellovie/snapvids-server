@@ -1,8 +1,11 @@
 package io.github.hellovie.snapvids.types.common;
 
 import io.github.hellovie.snapvids.common.exception.business.InvalidParamException;
-import io.github.hellovie.snapvids.common.types.Verifiable;
+import io.github.hellovie.snapvids.common.types.DomainPrimitive;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * [Domain Primitive] audit result.
@@ -10,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author hellovie
  * @since 1.0.0
  */
-public class AuditResult implements Verifiable {
+public class AuditResult extends DomainPrimitive {
 
     /**
      * 是否审核成功
@@ -49,19 +52,13 @@ public class AuditResult implements Verifiable {
     }
 
     private AuditResult(Boolean isSuccess, String description) {
+        Map<String, Object> params = new HashMap<>(2);
+        params.put("isSuccess", isSuccess);
+        params.put("description", description);
+        verify(params);
+
         this.isSuccess = isSuccess;
         this.description = description;
-        verify();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see Verifiable#verify()
-     */
-    @Override
-    public void verify() throws InvalidParamException {
-        // 暂无
     }
 
     public Boolean getSuccess() {
@@ -75,5 +72,15 @@ public class AuditResult implements Verifiable {
     @Override
     public String toString() {
         return isSuccess + "#" + description;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see DomainPrimitive#verify(Map)
+     */
+    @Override
+    protected void verify(Map<String, Object> params) throws InvalidParamException {
+        // 暂无
     }
 }

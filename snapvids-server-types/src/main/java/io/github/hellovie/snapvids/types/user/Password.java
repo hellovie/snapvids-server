@@ -2,8 +2,8 @@ package io.github.hellovie.snapvids.types.user;
 
 import io.github.hellovie.snapvids.common.exception.business.DataException;
 import io.github.hellovie.snapvids.common.exception.business.InvalidParamException;
+import io.github.hellovie.snapvids.common.types.DomainPrimitive;
 import io.github.hellovie.snapvids.common.types.Validation;
-import io.github.hellovie.snapvids.common.types.Verifiable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ import static io.github.hellovie.snapvids.common.module.user.UserExceptionType.*
  * @author hellovie
  * @since 1.0.0
  */
-public class Password implements Verifiable {
+public class Password extends DomainPrimitive {
 
     private static final Logger LOG = LoggerFactory.getLogger(Password.class);
 
@@ -84,32 +84,15 @@ public class Password implements Verifiable {
      * @param from       构造来源
      */
     private Password(String plaintext, String ciphertext, From from) {
+        Map<String, Object> params = new HashMap<>(3);
+        params.put("plaintext", plaintext);
+        params.put("ciphertext", ciphertext);
+        params.put("from", from);
+        verify(params);
+
         this.plaintext = plaintext;
         this.ciphertext = ciphertext;
         this.from = from;
-        verify();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see Verifiable#verify()
-     */
-    @Override
-    public void verify() throws InvalidParamException {
-        // 校验密码明文
-        if (from == From.PLAINTEXT) {
-            final int max = 20;
-            final int min = 8;
-            final String pattern = "^(?![a-zA-Z]+$)(?!\\d+$)(?![^\\da-zA-Z\\S]+$).*$";
-            Validation.isNotBlankOrElseThrow(plaintext, PASSWORD_CANNOT_BE_EMPTY);
-            Validation.inIntScopeOrElseThrow(plaintext.length(), min, max, PASSWORD_LEN_NOT_MATCH);
-            Validation.isMatchOrElseThrow(plaintext, pattern, PASSWORD_FORMAT_NOT_MATCH);
-        }
-        // 校验密码密文
-        if (from == From.CIPHERTEXT) {
-            Validation.isNotBlankOrElseThrow(ciphertext, PASSWORD_CIPHERTEXT_CANNOT_BE_EMPTY);
-        }
     }
 
     /**
@@ -159,6 +142,36 @@ public class Password implements Verifiable {
     @Override
     public String toString() {
         return ciphertext;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see DomainPrimitive#verify(Map)
+     */
+    @Override
+    protected void verify(Map<String, Object> params) throws InvalidParamException {
+        final int max = 20;
+        final int min = 8;
+        final String pattern = "^(?![a-zA-Z]+$)(?!\\d+$)(?![^\\da-zA-Z\\S]+$).*$";
+
+        // 校验密码明文
+        if (from == From.PLAINTEXT) {
+            Validation.executeWithInvalidParamException(() -> {
+                String _plaintext = (String) params.get("plaintext");
+                Validation.isNotBlankOrElseThrow(_plaintext, PASSWORD_CANNOT_BE_EMPTY);
+                Validation.inIntScopeOrElseThrow(_plaintext.length(), min, max, PASSWORD_LEN_NOT_MATCH);
+                Validation.isMatchOrElseThrow(_plaintext, pattern, PASSWORD_FORMAT_NOT_MATCH);
+            }, PASSWORD_CANNOT_BE_EMPTY);
+        }
+
+        // 校验密码密文
+        if (from == From.CIPHERTEXT) {
+            Validation.executeWithInvalidParamException(() -> {
+                String _ciphertext = (String) params.get("ciphertext");
+                Validation.isNotBlankOrElseThrow(_ciphertext, PASSWORD_CIPHERTEXT_CANNOT_BE_EMPTY);
+            }, PASSWORD_CIPHERTEXT_CANNOT_BE_EMPTY);
+        }
     }
 
     /**

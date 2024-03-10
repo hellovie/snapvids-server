@@ -128,17 +128,17 @@ public enum UserExceptionType implements ExceptionCode {
     /**
      * 访问令牌不能为空
      */
-    ACCESS_TOKEN_CANNOT_BE_EMPTY(BUSINESS, 23, "访问令牌不能为空", true),
+    ACCESS_TOKEN_CANNOT_BE_EMPTY(SYSTEM, 23, "访问令牌不能为空", false),
 
     /**
      * 刷新令牌不能为空
      */
-    REFRESH_TOKEN_CANNOT_BE_EMPTY(BUSINESS, 24, "刷新令牌不能为空", true),
+    REFRESH_TOKEN_CANNOT_BE_EMPTY(SYSTEM, 24, "刷新令牌不能为空", false),
 
     /**
      * 无效的过期时间
      */
-    INVALID_REFRESH_TOKEN_EXPIRATION_TIME(BUSINESS, 25, "无效的过期时间", true),
+    INVALID_REFRESH_TOKEN_EXPIRATION_TIME(SYSTEM, 25, "无效的过期时间", false),
 
     /**
      * 找不到认证策略

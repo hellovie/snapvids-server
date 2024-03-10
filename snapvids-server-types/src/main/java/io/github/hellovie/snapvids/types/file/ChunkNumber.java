@@ -1,8 +1,11 @@
 package io.github.hellovie.snapvids.types.file;
 
 import io.github.hellovie.snapvids.common.exception.business.InvalidParamException;
+import io.github.hellovie.snapvids.common.types.DomainPrimitive;
 import io.github.hellovie.snapvids.common.types.Validation;
-import io.github.hellovie.snapvids.common.types.Verifiable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static io.github.hellovie.snapvids.common.module.file.FileExceptionType.CHUNK_NUMBER_SIZE_NOT_MATCH;
 
@@ -12,7 +15,7 @@ import static io.github.hellovie.snapvids.common.module.file.FileExceptionType.C
  * @author hellovie
  * @since 1.0.0
  */
-public class ChunkNumber implements Verifiable {
+public class ChunkNumber extends DomainPrimitive {
 
     /**
      * 分块编号
@@ -20,18 +23,11 @@ public class ChunkNumber implements Verifiable {
     private final Integer value;
 
     public ChunkNumber(int value) {
-        this.value = value;
-        verify();
-    }
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("value", value);
+        verify(params);
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see Verifiable#verify()
-     */
-    @Override
-    public void verify() throws InvalidParamException {
-        Validation.inIntScopeOrElseThrow(value, 1, Integer.MAX_VALUE, CHUNK_NUMBER_SIZE_NOT_MATCH);
+        this.value = value;
     }
 
     public Integer getValue() {
@@ -41,5 +37,20 @@ public class ChunkNumber implements Verifiable {
     @Override
     public String toString() {
         return Integer.toString(value);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see DomainPrimitive#verify(Map)
+     */
+    @Override
+    protected void verify(Map<String, Object> params) throws InvalidParamException {
+        // 校验分片编号
+        Validation.executeWithInvalidParamException(() -> {
+            int _value = (int) params.get("value");
+            Validation.inIntScopeOrElseThrow(_value, 1, Integer.MAX_VALUE, CHUNK_NUMBER_SIZE_NOT_MATCH);
+        }, CHUNK_NUMBER_SIZE_NOT_MATCH);
+
     }
 }

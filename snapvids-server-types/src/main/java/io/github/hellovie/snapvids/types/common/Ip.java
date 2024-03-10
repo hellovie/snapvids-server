@@ -1,11 +1,13 @@
 package io.github.hellovie.snapvids.types.common;
 
 import io.github.hellovie.snapvids.common.exception.business.InvalidParamException;
+import io.github.hellovie.snapvids.common.types.DomainPrimitive;
 import io.github.hellovie.snapvids.common.types.Validation;
-import io.github.hellovie.snapvids.common.types.Verifiable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static io.github.hellovie.snapvids.common.module.user.UserExceptionType.WRONG_IP_ADDRESS;
 
@@ -15,33 +17,23 @@ import static io.github.hellovie.snapvids.common.module.user.UserExceptionType.W
  * @author hellovie
  * @since 1.0.0
  */
-public class Ip implements Verifiable {
+public class Ip extends DomainPrimitive {
 
     /**
      * ip 地址
      */
     private final String address;
 
-    public Ip(String address) {
-        this.address = address;
-        verify();
-    }
-
     public Ip(int address) {
-        this.address = int2Ip(address);
-        verify();
+        this(int2Ip(address));
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see Verifiable#verify()
-     */
-    @Override
-    public void verify() throws InvalidParamException {
-        final String pattern = "^((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})(\\.((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})){3}$";
-        Validation.isNotBlankOrElseThrow(address, WRONG_IP_ADDRESS);
-        Validation.isMatchOrElseThrow(address, pattern, WRONG_IP_ADDRESS);
+    public Ip(String address) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("address", address);
+        verify(params);
+
+        this.address = address;
     }
 
     public String getAddress() {
@@ -95,5 +87,22 @@ public class Ip implements Verifiable {
     @Override
     public String toString() {
         return address;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see DomainPrimitive#verify(Map)
+     */
+    @Override
+    protected void verify(Map<String, Object> params) throws InvalidParamException {
+        final String pattern = "^((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})(\\.((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})){3}$";
+
+        // 校验 IP 地址值
+        Validation.executeWithInvalidParamException(() -> {
+            String _address = (String) params.get("address");
+            Validation.isNotBlankOrElseThrow(_address, WRONG_IP_ADDRESS);
+            Validation.isMatchOrElseThrow(_address, pattern, WRONG_IP_ADDRESS);
+        }, WRONG_IP_ADDRESS);
     }
 }

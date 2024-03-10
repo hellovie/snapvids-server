@@ -211,19 +211,21 @@ public class Validation {
     }
 
     /**
-     * 若执行动作期间出现异常直接抛出指定异常状态码。
+     * 若执行动作期间出现 {@link InvalidParamException} 以外的异常直接抛出指定异常状态码。
      *
      * @param runnable      动作
      * @param exceptionCode 异常状态码
      * @throws InvalidParamException 执行动作过程中出现异常抛出
      */
-    public static void executeWithException(Runnable runnable, ExceptionCode exceptionCode)
+    public static void executeWithInvalidParamException(Runnable runnable, ExceptionCode exceptionCode)
             throws InvalidParamException {
 
         try {
             runnable.run();
+        } catch (InvalidParamException invalidParamException) {
+            throw new InvalidParamException(invalidParamException.getExceptionCode());
         } catch (Exception ex) {
-            throw new InvalidParamException(exceptionCode);
+            throw new InvalidParamException(exceptionCode, ex);
         }
     }
 }

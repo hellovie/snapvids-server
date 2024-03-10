@@ -1,12 +1,15 @@
 package io.github.hellovie.snapvids.types.file;
 
 import io.github.hellovie.snapvids.common.exception.business.InvalidParamException;
+import io.github.hellovie.snapvids.common.types.DomainPrimitive;
 import io.github.hellovie.snapvids.common.types.Validation;
-import io.github.hellovie.snapvids.common.types.Verifiable;
 import io.github.hellovie.snapvids.common.util.TypeConvertor;
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileExt;
 import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileType;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static io.github.hellovie.snapvids.common.module.file.FileExceptionType.*;
 
@@ -16,7 +19,7 @@ import static io.github.hellovie.snapvids.common.module.file.FileExceptionType.*
  * @author hellovie
  * @since 1.0.0
  */
-public class EffectiveFile implements Verifiable {
+public class EffectiveFile extends DomainPrimitive {
 
     /**
      * 文件名
@@ -49,35 +52,18 @@ public class EffectiveFile implements Verifiable {
     private final MultipartFile file;
 
     public EffectiveFile(MultipartFile file) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("file", file);
+        verify(params);
+
         this.file = file;
-        verify();
         String _filename = file.getOriginalFilename();
+        assert _filename != null;
         this.filename = new Filename(_filename.substring(0, _filename.lastIndexOf(".")));
         this.fileExt = (FileExt) TypeConvertor.toEnum(_filename.substring(_filename.lastIndexOf(".") + 1), FileExt.class);
         this.fileType = fileExt.getType();
         this.fileKey = new FileKey(FileKey.calculateHash(file));
         this.fileSize = new FileSize(file.getSize());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see Verifiable#verify()
-     */
-    @Override
-    public void verify() throws InvalidParamException {
-        Validation.isNotNullOrElseThrow(file, UPLOAD_FILE_CANNOT_BE_EMPTY);
-        // 文件名校验
-        String _filename = file.getOriginalFilename();
-        Validation.isNotBlankOrElseThrow(_filename, FILENAME_CANNOT_BE_EMPTY);
-        Validation.executeWithException(() -> new Filename(_filename.substring(0, _filename.lastIndexOf("."))),
-                FILENAME_CANNOT_BE_EMPTY);
-        // 文件后缀校验
-        Validation.executeWithException(() -> {
-            String _ext = _filename.substring(_filename.lastIndexOf(".") + 1);
-            Validation.isEnumNameOrElseThrow(_ext, FileExt.class, UNSUPPORTED_FILE_TYPES);
-            FileExt _fileExt = (FileExt) TypeConvertor.toEnum(_ext, FileExt.class);
-        }, UNSUPPORTED_FILE_TYPES);
     }
 
     public Filename getFilename() {
@@ -114,5 +100,32 @@ public class EffectiveFile implements Verifiable {
                 ", fileSize=" + fileSize +
                 ", file=" + file +
                 '}';
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see DomainPrimitive#verify(Map)
+     */
+    @Override
+    protected void verify(Map<String, Object> params) throws InvalidParamException {
+        // 校验文件
+        Validation.executeWithInvalidParamException(() -> {
+            MultipartFile _file = (MultipartFile) params.get("file");
+            Validation.isNotNullOrElseThrow(_file, UPLOAD_FILE_CANNOT_BE_EMPTY);
+
+            // 文件名校验
+            String _filename = file.getOriginalFilename();
+            Validation.isNotBlankOrElseThrow(_filename, FILENAME_CANNOT_BE_EMPTY);
+            Validation.executeWithInvalidParamException(() -> new Filename(_filename.substring(0, _filename.lastIndexOf("."))),
+                    FILENAME_CANNOT_BE_EMPTY);
+
+            // 文件后缀校验
+            Validation.executeWithInvalidParamException(() -> {
+                String _ext = _filename.substring(_filename.lastIndexOf(".") + 1);
+                Validation.isEnumNameOrElseThrow(_ext, FileExt.class, UNSUPPORTED_FILE_TYPES);
+                FileExt _fileExt = (FileExt) TypeConvertor.toEnum(_ext, FileExt.class);
+            }, UNSUPPORTED_FILE_TYPES);
+        }, UPLOAD_FILE_CANNOT_BE_EMPTY);
     }
 }

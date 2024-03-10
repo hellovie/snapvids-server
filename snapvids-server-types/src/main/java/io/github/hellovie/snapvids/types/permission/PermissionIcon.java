@@ -1,7 +1,10 @@
 package io.github.hellovie.snapvids.types.permission;
 
 import io.github.hellovie.snapvids.common.exception.business.InvalidParamException;
-import io.github.hellovie.snapvids.common.types.Verifiable;
+import io.github.hellovie.snapvids.common.types.DomainPrimitive;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * [Domain Primitive] permission icon.
@@ -9,7 +12,7 @@ import io.github.hellovie.snapvids.common.types.Verifiable;
  * @author hellovie
  * @since 1.0.0
  */
-public class PermissionIcon implements Verifiable {
+public class PermissionIcon extends DomainPrimitive {
 
     /**
      * 图标名称
@@ -17,18 +20,11 @@ public class PermissionIcon implements Verifiable {
     private final String name;
 
     public PermissionIcon(String name) {
-        this.name = name;
-        verify();
-    }
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("name", name);
+        verify(params);
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see Verifiable#verify()
-     */
-    @Override
-    public void verify() throws InvalidParamException {
-        // 暂无
+        this.name = name;
     }
 
     public String getName() {
@@ -38,5 +34,15 @@ public class PermissionIcon implements Verifiable {
     @Override
     public String toString() {
         return name;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see DomainPrimitive#verify(Map)
+     */
+    @Override
+    protected void verify(Map<String, Object> params) throws InvalidParamException {
+        // 暂无
     }
 }
