@@ -24,12 +24,12 @@ public class SystemException extends RuntimeException {
     private final ExceptionCode exceptionCode;
 
     /**
-     * 是否自定义消息
+     * 返回给用户的信息
      */
-    private final Boolean whetherCustomMessage;
+    private final String returnMessage;
 
     /**
-     * 非主动抛出的异常，需要将原来的异常信息传递，不能吞掉异常。
+     * 「不指定返回消息」非主动抛出的异常，需要将原来的异常信息传递，不能吞掉异常。
      *
      * @param exceptionCode 开发者自定义的异常状态码
      * @param originalEx    原异常
@@ -37,30 +37,43 @@ public class SystemException extends RuntimeException {
     public SystemException(ExceptionCode exceptionCode, Exception originalEx) {
         super(originalEx.getMessage(), originalEx);
         this.exceptionCode = exceptionCode;
-        this.whetherCustomMessage = Boolean.FALSE;
+        this.returnMessage = null;
     }
 
     /**
-     * 主动抛出的异常。
+     * 「指定返回消息」非主动抛出的异常，需要将原来的异常信息传递，不能吞掉异常。
      *
      * @param exceptionCode 开发者自定义的异常信息
-     * @param message       自定义返回的消息
+     * @param originalEx    原异常
+     * @param returnCode    自定义返回给用户的异常信息
      */
-    public SystemException(ExceptionCode exceptionCode, String message) {
-        super(message);
-        this.whetherCustomMessage = Boolean.TRUE;
+    public SystemException(ExceptionCode exceptionCode, Exception originalEx, ExceptionCode returnCode) {
+        super(originalEx.getMessage(), originalEx);
         this.exceptionCode = exceptionCode;
+        this.returnMessage = returnCode.getMessage();
     }
 
     /**
-     * 主动抛出的异常。
+     * 「指定返回消息」主动抛出的异常。
+     *
+     * @param exceptionCode 开发者自定义的异常信息
+     * @param returnCode    自定义返回给用户的异常信息
+     */
+    public SystemException(ExceptionCode exceptionCode, ExceptionCode returnCode) {
+        super(exceptionCode.getMessage());
+        this.exceptionCode = exceptionCode;
+        this.returnMessage = returnCode.getMessage();
+    }
+
+    /**
+     * 「不指定返回消息」主动抛出的异常。
      *
      * @param exceptionCode 开发者自定义的异常状态码
      */
     public SystemException(ExceptionCode exceptionCode) {
         super(exceptionCode.getMessage());
         this.exceptionCode = exceptionCode;
-        this.whetherCustomMessage = Boolean.FALSE;
+        this.returnMessage = null;
     }
 
     /**
@@ -82,11 +95,11 @@ public class SystemException extends RuntimeException {
     }
 
     /**
-     * 获取是否自定义消息的布尔值。
+     * 获取返回给用户的信息
      *
-     * @return true：自定义消息
+     * @return 返回给用户的信息，没指定返回消息则为 null
      */
-    public Boolean getWhetherCustomMessage() {
-        return whetherCustomMessage;
+    public String getReturnMessage() {
+        return returnMessage;
     }
 }

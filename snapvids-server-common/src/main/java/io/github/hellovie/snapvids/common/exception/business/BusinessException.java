@@ -24,11 +24,6 @@ public class BusinessException extends RuntimeException {
     private final ExceptionCode exceptionCode;
 
     /**
-     * 是否自定义消息
-     */
-    private final Boolean whetherCustomMessage;
-
-    /**
      * 非主动抛出的异常，需要将原来的异常信息传递，不能吞掉异常。
      *
      * @param exceptionCode 开发者自定义的异常状态码
@@ -36,19 +31,6 @@ public class BusinessException extends RuntimeException {
      */
     public BusinessException(ExceptionCode exceptionCode, Exception originalEx) {
         super(originalEx.getMessage(), originalEx);
-        this.exceptionCode = exceptionCode;
-        this.whetherCustomMessage = Boolean.FALSE;
-    }
-
-    /**
-     * 主动抛出的异常。
-     *
-     * @param exceptionCode 开发者自定义的异常信息
-     * @param message       自定义返回的消息
-     */
-    public BusinessException(ExceptionCode exceptionCode, String message) {
-        super(message);
-        this.whetherCustomMessage = Boolean.TRUE;
         this.exceptionCode = exceptionCode;
     }
 
@@ -60,7 +42,6 @@ public class BusinessException extends RuntimeException {
     public BusinessException(ExceptionCode exceptionCode) {
         super(exceptionCode.getMessage());
         this.exceptionCode = exceptionCode;
-        this.whetherCustomMessage = Boolean.FALSE;
     }
 
     /**
@@ -79,14 +60,5 @@ public class BusinessException extends RuntimeException {
      */
     public ExceptionCode getExceptionCode() {
         return this.exceptionCode;
-    }
-
-    /**
-     * 获取是否自定义消息的布尔值。
-     *
-     * @return true：自定义消息
-     */
-    public Boolean getWhetherCustomMessage() {
-        return whetherCustomMessage;
     }
 }

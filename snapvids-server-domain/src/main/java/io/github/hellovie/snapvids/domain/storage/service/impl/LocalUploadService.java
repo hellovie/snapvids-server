@@ -2,6 +2,7 @@ package io.github.hellovie.snapvids.domain.storage.service.impl;
 
 import io.github.hellovie.snapvids.common.exception.business.AuthException;
 import io.github.hellovie.snapvids.common.exception.business.DataException;
+import io.github.hellovie.snapvids.common.exception.system.DataErrorException;
 import io.github.hellovie.snapvids.common.exception.system.UtilException;
 import io.github.hellovie.snapvids.common.module.file.FileExceptionType;
 import io.github.hellovie.snapvids.common.service.TokenService;
@@ -114,7 +115,7 @@ public class LocalUploadService implements UploadService {
             UploadToken token = new UploadToken(
                     new Id(fileId.getValue()),
                     new FileKey(fileHash.getValue()),
-                    ValueString.buildOrElseThrowByMessage(jwtToken, "上传令牌生成失败"),
+                    ValueString.buildOrElseThrow(jwtToken, FileExceptionType.UPLOAD_TOKEN_GENERATE_FAILED),
                     nowTimestamp,
                     expiredTimestamp
             );
@@ -348,8 +349,8 @@ public class LocalUploadService implements UploadService {
         long count = repository.deleteAllChunkByFileId(event.getFileId());
         if (count != totalChunks) {
             LOG.warn("[数据库分片数量不等于实际分片数量]>>> 数据库分片数量={}，实际分片数量={}", count, totalChunks);
-            throw new DataException(FileExceptionType.DB_CHUNK_FILE_DATA_EXCEPTION,
-                    FileExceptionType.MERGE_CHUNK_FILE_FAILED.getMessage());
+            throw new DataErrorException(FileExceptionType.DB_CHUNK_FILE_DATA_EXCEPTION,
+                    FileExceptionType.MERGE_CHUNK_FILE_FAILED);
         }
 
         // 分片完整，开始合并

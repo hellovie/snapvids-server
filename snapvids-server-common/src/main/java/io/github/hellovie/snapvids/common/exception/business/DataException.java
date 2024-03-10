@@ -26,16 +26,6 @@ public class DataException extends BusinessException {
      * 主动抛出的异常。
      *
      * @param exceptionCode 开发者自定义的异常信息
-     * @param message       自定义返回的消息
-     */
-    public DataException(ExceptionCode exceptionCode, String message) {
-        super(exceptionCode, message);
-    }
-
-    /**
-     * 主动抛出的异常。
-     *
-     * @param exceptionCode 开发者自定义的异常信息
      */
     public DataException(ExceptionCode exceptionCode) {
         super(exceptionCode);

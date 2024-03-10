@@ -75,7 +75,7 @@ public class LocalStorageService implements StorageService {
             FileExt ext = fileMetadata.getExt();
             String url = serverProperties.getUrl() + path.getValue() + "/" +
                     storageName.getValue() + "." + ext.name().toLowerCase();
-            return ValueString.buildOrElseThrowByMessage(url, "获取文件访问路径失败");
+            return ValueString.buildOrElseThrow(url, FileExceptionType.GET_FILE_ACCESS_URL_FAILED);
         } catch (Exception ex) {
             LOG.error("[获取文件访问路径异常]>>> 方法入参={}", query);
             throw new UtilException(FileExceptionType.GET_FILE_ACCESS_URL_FAILED, ex);

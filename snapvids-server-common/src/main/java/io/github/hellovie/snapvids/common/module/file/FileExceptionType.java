@@ -160,6 +160,11 @@ public enum FileExceptionType implements ExceptionCode {
      */
     UNSUPPORTED_FILE_TYPES(BUSINESS, 29, "不支持的文件类型", true),
 
+    /**
+     * 上传令牌不能为空
+     */
+    UPLOAD_TOKEN_CANNOT_BE_EMPTY(BUSINESS, 30, "上传令牌不能为空", true),
+
     ;
 
     /**

@@ -3,14 +3,14 @@ package io.github.hellovie.snapvids.common.exception.system;
 import io.github.hellovie.snapvids.common.exception.manager.ExceptionCode;
 
 /**
- * 「系统异常」自定义工具类或第三方工具类发生的异常。
+ * 「系统异常」数据错误异常，包含数据库数据被篡改、数据库数据与实际对不上...
  *
  * @author hellovie
  * @since 1.0.0
  */
-public class UtilException extends SystemException {
+public class DataErrorException extends SystemException {
 
-    private static final long serialVersionUID = -7482534018089484319L;
+    private static final long serialVersionUID = -1919588957823719452L;
 
     /**
      * 「不指定返回消息」非主动抛出的异常，需要将原来的异常信息传递，不能吞掉异常。
@@ -18,7 +18,7 @@ public class UtilException extends SystemException {
      * @param exceptionCode 开发者自定义的异常状态码
      * @param originalEx    原异常
      */
-    public UtilException(ExceptionCode exceptionCode, Exception originalEx) {
+    public DataErrorException(ExceptionCode exceptionCode, Exception originalEx) {
         super(exceptionCode, originalEx);
     }
 
@@ -29,7 +29,7 @@ public class UtilException extends SystemException {
      * @param originalEx    原异常
      * @param returnCode    自定义返回给用户的异常信息
      */
-    public UtilException(ExceptionCode exceptionCode, Exception originalEx, ExceptionCode returnCode) {
+    public DataErrorException(ExceptionCode exceptionCode, Exception originalEx, ExceptionCode returnCode) {
         super(exceptionCode, originalEx, returnCode);
     }
 
@@ -39,7 +39,7 @@ public class UtilException extends SystemException {
      * @param exceptionCode 开发者自定义的异常信息
      * @param returnCode    自定义返回给用户的异常信息
      */
-    public UtilException(ExceptionCode exceptionCode, ExceptionCode returnCode) {
+    public DataErrorException(ExceptionCode exceptionCode, ExceptionCode returnCode) {
         super(exceptionCode, returnCode);
     }
 
@@ -48,7 +48,7 @@ public class UtilException extends SystemException {
      *
      * @param exceptionCode 开发者自定义的异常状态码
      */
-    public UtilException(ExceptionCode exceptionCode) {
+    public DataErrorException(ExceptionCode exceptionCode) {
         super(exceptionCode);
     }
 }

@@ -60,7 +60,7 @@ public class AuthenticationExceptionHandler implements AuthenticationEntryPoint 
             exceptionCode = be.getExceptionCode();
             canRetry = exceptionCode.canRetry();
             code = exceptionManager.formatCode(exceptionCode);
-            message = be.getWhetherCustomMessage() ? be.getMessage() : exceptionCode.getMessage();
+            message = exceptionCode.getMessage();
 
             // {@link io.github.hellovie.snapvids.domain.auth.service.AuthService#auth()}
             // {@link UserExceptionType.ACCESS_TOKEN_HAS_EXPIRED}

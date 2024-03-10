@@ -5,6 +5,7 @@ import io.github.hellovie.snapvids.application.upload.dto.UploadTokenDTO;
 import io.github.hellovie.snapvids.application.upload.event.*;
 import io.github.hellovie.snapvids.application.upload.service.FileUploadService;
 import io.github.hellovie.snapvids.common.constants.UploadPath;
+import io.github.hellovie.snapvids.common.module.file.FileExceptionType;
 import io.github.hellovie.snapvids.common.types.Validation;
 import io.github.hellovie.snapvids.common.util.ResultResponse;
 import io.github.hellovie.snapvids.common.util.TypeConvertor;
@@ -87,7 +88,7 @@ public class UploadController {
         UploadEvent event = new UploadEvent(
                 new Id(request.getFileId()),
                 new FileKey(request.getFileKey()),
-                ValueString.buildOrElseThrowByMessage(request.getToken(), "非法上传"),
+                ValueString.buildOrElseThrow(request.getToken(), FileExceptionType.UPLOAD_TOKEN_CANNOT_BE_EMPTY),
                 request.getStartTime(),
                 request.getExpiredTime(),
                 new FileKey(request.getMd5()),
@@ -111,7 +112,7 @@ public class UploadController {
         UploadChunksEvent event = new UploadChunksEvent(
                 new Id(request.getFileId()),
                 new FileKey(request.getFileKey()),
-                ValueString.buildOrElseThrowByMessage(request.getToken(), "非法上传"),
+                ValueString.buildOrElseThrow(request.getToken(), FileExceptionType.UPLOAD_TOKEN_CANNOT_BE_EMPTY),
                 request.getStartTime(),
                 request.getExpiredTime(),
                 new ChunkNumber(request.getCurrentNum()),
@@ -141,7 +142,7 @@ public class UploadController {
         UploadChunksProgressQuery query = new UploadChunksProgressQuery(
                 new Id(request.getFileId()),
                 new FileKey(request.getFileKey()),
-                ValueString.buildOrElseThrowByMessage(request.getToken(), "非法上传"),
+                ValueString.buildOrElseThrow(request.getToken(), FileExceptionType.UPLOAD_TOKEN_CANNOT_BE_EMPTY),
                 request.getStartTime(),
                 request.getExpiredTime()
         );
@@ -163,7 +164,7 @@ public class UploadController {
         MergeChunksEvent event = new MergeChunksEvent(
                 new Id(request.getFileId()),
                 new FileKey(request.getFileKey()),
-                ValueString.buildOrElseThrowByMessage(request.getToken(), "非法上传"),
+                ValueString.buildOrElseThrow(request.getToken(), FileExceptionType.UPLOAD_TOKEN_CANNOT_BE_EMPTY),
                 request.getStartTime(),
                 request.getExpiredTime()
         );

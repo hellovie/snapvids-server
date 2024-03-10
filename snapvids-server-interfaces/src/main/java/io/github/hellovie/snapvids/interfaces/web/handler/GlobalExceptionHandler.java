@@ -3,7 +3,6 @@ package io.github.hellovie.snapvids.interfaces.web.handler;
 import io.github.hellovie.snapvids.common.exception.business.BusinessException;
 import io.github.hellovie.snapvids.common.exception.manager.ExceptionManager;
 import io.github.hellovie.snapvids.common.exception.system.SystemException;
-import io.github.hellovie.snapvids.common.module.common.CommonExceptionType;
 import io.github.hellovie.snapvids.common.module.user.UserExceptionType;
 import io.github.hellovie.snapvids.common.util.ResultResponse;
 import io.github.hellovie.snapvids.domain.util.ContextHolder;
@@ -67,7 +66,7 @@ public class GlobalExceptionHandler {
     public ResultResponse.FailResult businessExceptionHandler(final BusinessException ex) {
         final boolean canRetry = ex.getExceptionCode().canRetry();
         final String code = exceptionManager.formatCode(ex.getExceptionCode());
-        final String message = ex.getWhetherCustomMessage() ? ex.getMessage() : ex.getExceptionCode().getMessage();
+        final String message = ex.getExceptionCode().getMessage();
 
         // 异常告警
         exceptionNotifyHandler.notifyWarning(ex);
@@ -90,7 +89,7 @@ public class GlobalExceptionHandler {
         // 异常告警
         exceptionNotifyHandler.notifyError(ex);
 
-        final String message = ex.getWhetherCustomMessage() ? ex.getMessage() : UNKNOWN_EXCEPTION.getMessage();
+        final String message = ex.getReturnMessage() != null ? ex.getReturnMessage() : UNKNOWN_EXCEPTION.getMessage();
         return ResultResponse.track(
                 traceId,
                 exceptionManager.formatCode(UNKNOWN_EXCEPTION),
