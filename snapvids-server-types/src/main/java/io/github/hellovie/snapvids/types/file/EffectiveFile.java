@@ -115,9 +115,10 @@ public class EffectiveFile extends DomainPrimitive {
             Validation.isNotNullOrElseThrow(_file, UPLOAD_FILE_CANNOT_BE_EMPTY);
 
             // 文件名校验
-            String _filename = file.getOriginalFilename();
+            String _filename = _file.getOriginalFilename();
             Validation.isNotBlankOrElseThrow(_filename, FILENAME_CANNOT_BE_EMPTY);
-            Validation.executeWithInvalidParamException(() -> new Filename(_filename.substring(0, _filename.lastIndexOf("."))),
+            Validation.executeWithInvalidParamException(() ->
+                            new Filename(_filename.substring(0, _filename.lastIndexOf("."))),
                     FILENAME_CANNOT_BE_EMPTY);
 
             // 文件后缀校验
