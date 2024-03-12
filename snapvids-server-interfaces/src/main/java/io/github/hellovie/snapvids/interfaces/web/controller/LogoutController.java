@@ -1,6 +1,6 @@
 package io.github.hellovie.snapvids.interfaces.web.controller;
 
-import io.github.hellovie.snapvids.application.auth.service.UserAuthService;
+import io.github.hellovie.snapvids.application.auth.service.UserAuthAppService;
 import io.github.hellovie.snapvids.common.util.ResultResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +22,8 @@ public class LogoutController {
 
     private static final Logger LOG = LoggerFactory.getLogger(LogoutController.class);
 
-    @Resource(name = "userAuthService")
-    private UserAuthService userAuthService;
+    @Resource(name = "userAuthAppService")
+    private UserAuthAppService userAuthAppService;
 
     /**
      * 用户登出接口。
@@ -32,7 +32,7 @@ public class LogoutController {
      */
     @GetMapping
     public ResultResponse.SuccessResult<Void> logout() {
-        userAuthService.logout();
+        userAuthAppService.logout();
         return ResultResponse.success(null);
     }
 }

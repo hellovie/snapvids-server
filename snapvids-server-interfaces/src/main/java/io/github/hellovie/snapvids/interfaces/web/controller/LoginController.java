@@ -3,7 +3,7 @@ package io.github.hellovie.snapvids.interfaces.web.controller;
 import io.github.hellovie.snapvids.application.auth.dto.GraphicalCaptchaDTO;
 import io.github.hellovie.snapvids.application.auth.dto.LoginUserDTO;
 import io.github.hellovie.snapvids.application.auth.event.UsernameLoginCommand;
-import io.github.hellovie.snapvids.application.auth.service.UserAuthService;
+import io.github.hellovie.snapvids.application.auth.service.UserAuthAppService;
 import io.github.hellovie.snapvids.common.util.ResultResponse;
 import io.github.hellovie.snapvids.interfaces.web.request.UsernameLoginRequest;
 import io.github.hellovie.snapvids.types.common.Captcha;
@@ -27,8 +27,8 @@ public class LoginController {
 
     private static final Logger LOG = LoggerFactory.getLogger(LoginController.class);
 
-    @Resource(name = "userAuthService")
-    private UserAuthService userAuthService;
+    @Resource(name = "userAuthAppService")
+    private UserAuthAppService userAuthAppService;
 
     /**
      * 用户名密码登录接口。
@@ -45,7 +45,7 @@ public class LoginController {
                 Password.ofPlaintext(request.getPassword()),
                 new Captcha(request.getCaptchaId(), request.getCaptcha())
         );
-        LoginUserDTO loginUserDTO = userAuthService.loginByUsername(cmd);
+        LoginUserDTO loginUserDTO = userAuthAppService.loginByUsername(cmd);
         return ResultResponse.success(loginUserDTO);
     }
 
@@ -56,7 +56,7 @@ public class LoginController {
      */
     @GetMapping("/username/captcha")
     public ResultResponse.SuccessResult<GraphicalCaptchaDTO> createCaptchaForUsernameLogin() {
-        GraphicalCaptchaDTO captcha = userAuthService.createCaptchaForUsernameLogin();
+        GraphicalCaptchaDTO captcha = userAuthAppService.createCaptchaForUsernameLogin();
         return ResultResponse.success(captcha);
     }
 }

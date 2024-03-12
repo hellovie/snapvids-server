@@ -6,8 +6,7 @@ import io.github.hellovie.snapvids.application.auth.dto.TokenDTO;
 import io.github.hellovie.snapvids.application.auth.event.SendSmsEvent;
 import io.github.hellovie.snapvids.application.auth.event.UsernameLoginCommand;
 import io.github.hellovie.snapvids.application.auth.event.UsernameRegisterCommand;
-import io.github.hellovie.snapvids.application.auth.service.UserAuthService;
-import io.github.hellovie.snapvids.common.service.DrawService;
+import io.github.hellovie.snapvids.application.auth.service.UserAuthAppService;
 import io.github.hellovie.snapvids.domain.auth.service.AuthService;
 import io.github.hellovie.snapvids.domain.auth.strategy.LoginParams;
 import io.github.hellovie.snapvids.domain.auth.strategy.RegisterParams;
@@ -18,6 +17,7 @@ import io.github.hellovie.snapvids.domain.auth.vo.TokenInfo;
 import io.github.hellovie.snapvids.domain.captcha.event.CheckCaptchaEvent;
 import io.github.hellovie.snapvids.domain.captcha.event.GenerateCaptchaCommand;
 import io.github.hellovie.snapvids.domain.captcha.service.CaptchaService;
+import io.github.hellovie.snapvids.infrastructure.service.draw.DrawService;
 import io.github.hellovie.snapvids.types.common.Captcha;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,15 +26,15 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
 /**
- * 用户认证服务默认实现。
+ * 用户认证应用服务默认实现。
  *
  * @author hellovie
  * @since 1.0.0
  */
-@Service("userAuthService")
-public class DefaultUserAuthService implements UserAuthService {
+@Service("userAuthAppService")
+public class DefaultUserAuthAppService implements UserAuthAppService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultUserAuthService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultUserAuthAppService.class);
 
     @Resource(name = "redisJwtAuthService")
     private AuthService authService;
@@ -48,7 +48,7 @@ public class DefaultUserAuthService implements UserAuthService {
     /**
      * {@inheritDoc}
      *
-     * @see UserAuthService#registerByUsername(UsernameRegisterCommand)
+     * @see UserAuthAppService#registerByUsername(UsernameRegisterCommand)
      */
     @Override
     public LoginUserDTO registerByUsername(UsernameRegisterCommand command) {
@@ -67,7 +67,7 @@ public class DefaultUserAuthService implements UserAuthService {
     /**
      * {@inheritDoc}
      *
-     * @see UserAuthService#loginByUsername(UsernameLoginCommand)
+     * @see UserAuthAppService#loginByUsername(UsernameLoginCommand)
      */
     @Override
     public LoginUserDTO loginByUsername(UsernameLoginCommand command) {
@@ -85,7 +85,7 @@ public class DefaultUserAuthService implements UserAuthService {
     /**
      * {@inheritDoc}
      *
-     * @see UserAuthService#logout()
+     * @see UserAuthAppService#logout()
      */
     @Override
     public void logout() {
@@ -95,7 +95,7 @@ public class DefaultUserAuthService implements UserAuthService {
     /**
      * {@inheritDoc}
      *
-     * @see UserAuthService#refreshToken()
+     * @see UserAuthAppService#refreshToken()
      */
     @Override
     public TokenDTO refreshToken() {
@@ -106,7 +106,7 @@ public class DefaultUserAuthService implements UserAuthService {
     /**
      * {@inheritDoc}
      *
-     * @see UserAuthService#createCaptchaForUsernameLogin()
+     * @see UserAuthAppService#createCaptchaForUsernameLogin()
      */
     @Override
     public GraphicalCaptchaDTO createCaptchaForUsernameLogin() {
@@ -120,7 +120,7 @@ public class DefaultUserAuthService implements UserAuthService {
     /**
      * {@inheritDoc}
      *
-     * @see UserAuthService#sendSmsForUsernameRegister(SendSmsEvent)
+     * @see UserAuthAppService#sendSmsForUsernameRegister(SendSmsEvent)
      */
     @Override
     public void sendSmsForUsernameRegister(SendSmsEvent event) {

@@ -1,7 +1,7 @@
 package io.github.hellovie.snapvids.interfaces.web.controller;
 
 import io.github.hellovie.snapvids.application.auth.dto.TokenDTO;
-import io.github.hellovie.snapvids.application.auth.service.UserAuthService;
+import io.github.hellovie.snapvids.application.auth.service.UserAuthAppService;
 import io.github.hellovie.snapvids.common.util.ResultResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +23,8 @@ public class TokenController {
 
     private static final Logger LOG = LoggerFactory.getLogger(TokenController.class);
 
-    @Resource(name = "userAuthService")
-    private UserAuthService userAuthService;
+    @Resource(name = "userAuthAppService")
+    private UserAuthAppService userAuthAppService;
 
     /**
      * 刷新 Token 令牌.
@@ -33,7 +33,7 @@ public class TokenController {
      */
     @GetMapping("/refresh")
     public ResultResponse.SuccessResult<TokenDTO> refresh() {
-        TokenDTO tokenDTO = userAuthService.refreshToken();
+        TokenDTO tokenDTO = userAuthAppService.refreshToken();
         return ResultResponse.success(tokenDTO);
     }
 }

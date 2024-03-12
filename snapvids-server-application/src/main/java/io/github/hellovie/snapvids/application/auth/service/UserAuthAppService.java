@@ -8,12 +8,12 @@ import io.github.hellovie.snapvids.application.auth.event.UsernameLoginCommand;
 import io.github.hellovie.snapvids.application.auth.event.UsernameRegisterCommand;
 
 /**
- * 用户认证服务接口。
+ * 用户认证应用服务。
  *
  * @author hellovie
  * @since 1.0.0
  */
-public interface UserAuthService {
+public interface UserAuthAppService {
 
     /**
      * 用户名注册。

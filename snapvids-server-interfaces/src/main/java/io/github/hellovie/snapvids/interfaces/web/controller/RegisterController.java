@@ -3,7 +3,7 @@ package io.github.hellovie.snapvids.interfaces.web.controller;
 import io.github.hellovie.snapvids.application.auth.dto.LoginUserDTO;
 import io.github.hellovie.snapvids.application.auth.event.SendSmsEvent;
 import io.github.hellovie.snapvids.application.auth.event.UsernameRegisterCommand;
-import io.github.hellovie.snapvids.application.auth.service.UserAuthService;
+import io.github.hellovie.snapvids.application.auth.service.UserAuthAppService;
 import io.github.hellovie.snapvids.common.util.ResultResponse;
 import io.github.hellovie.snapvids.interfaces.web.request.SendSmsRequest;
 import io.github.hellovie.snapvids.interfaces.web.request.UsernameRegisterRequest;
@@ -29,8 +29,8 @@ public class RegisterController {
 
     private static final Logger LOG = LoggerFactory.getLogger(RegisterController.class);
 
-    @Resource(name = "userAuthService")
-    private UserAuthService userAuthService;
+    @Resource(name = "userAuthAppService")
+    private UserAuthAppService userAuthAppService;
 
     /**
      * 用户名密码注册接口。
@@ -47,7 +47,7 @@ public class RegisterController {
                 new PhoneNumber(request.getPhoneNumber()),
                 new Captcha(request.getPhoneNumber(), request.getCaptcha())
         );
-        LoginUserDTO loginUserDTO = userAuthService.registerByUsername(cmd);
+        LoginUserDTO loginUserDTO = userAuthAppService.registerByUsername(cmd);
         return ResultResponse.success(loginUserDTO);
     }
 
@@ -59,7 +59,7 @@ public class RegisterController {
     @GetMapping("/username/sms")
     public ResultResponse.SuccessResult<Void> sendSmsForUsernameRegister(@RequestBody SendSmsRequest request) {
         SendSmsEvent event = new SendSmsEvent(new PhoneNumber(request.getPhoneNumber()));
-        userAuthService.sendSmsForUsernameRegister(event);
+        userAuthAppService.sendSmsForUsernameRegister(event);
         return ResultResponse.success(null);
     }
 }
