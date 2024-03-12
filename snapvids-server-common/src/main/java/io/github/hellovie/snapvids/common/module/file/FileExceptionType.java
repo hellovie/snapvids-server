@@ -66,9 +66,9 @@ public enum FileExceptionType implements ExceptionCode {
     DEFAULT_STORAGE_SERVICE_NOT_FOUND(SYSTEM, 10, "找不到默认存储服务", false),
 
     /**
-     * 找不到文件
+     * 文件不存在
      */
-    FILE_NOT_FOUNT(BUSINESS, 11, "找不到文件", true),
+    FILE_NOT_FOUND(BUSINESS, 11, "文件不存在", true),
 
     /**
      * 更新文件状态失败
@@ -121,6 +121,11 @@ public enum FileExceptionType implements ExceptionCode {
      * 外部服务获取文件临时访问路径失败
      */
     GET_FILE_TEMP_ACCESS_URL_FAILED(THIRD_PARTY_SERVICE, 21, "外部服务获取文件临时访问路径失败", false),
+
+    /**
+     * 该文件存储服务不支持
+     */
+    FILE_STORAGE_SERVICE_IS_NOT_SUPPORTED(BUSINESS, 22, "该文件存储服务不支持", false),
 
     ;
 

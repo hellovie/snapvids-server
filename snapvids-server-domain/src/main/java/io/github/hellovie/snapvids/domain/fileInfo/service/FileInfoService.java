@@ -4,6 +4,7 @@ import io.github.hellovie.snapvids.common.exception.business.DataException;
 import io.github.hellovie.snapvids.domain.fileInfo.entity.FileInfo;
 import io.github.hellovie.snapvids.domain.fileInfo.event.CreateFileInfoCommand;
 import io.github.hellovie.snapvids.domain.fileInfo.event.UpdateFileStateCommand;
+import io.github.hellovie.snapvids.types.common.Id;
 
 /**
  * 文件信息服务。
@@ -30,4 +31,12 @@ public interface FileInfoService {
      * @throws DataException 文件不存在抛出
      */
     FileInfo updateState(UpdateFileStateCommand command) throws DataException;
+
+    /**
+     * 根据文件 id 获取有效文件的信息。
+     *
+     * @param fileId 文件 id
+     * @return 文件信息
+     */
+    FileInfo getValidFileInfoById(Id fileId);
 }

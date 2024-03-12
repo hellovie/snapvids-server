@@ -4,6 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.github.hellovie.snapvids.infrastructure.persistence.dao.custom.CustomUserDao;
 import io.github.hellovie.snapvids.infrastructure.persistence.entity.User;
 import io.github.hellovie.snapvids.infrastructure.persistence.q.QUser;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
@@ -25,6 +26,7 @@ public class CustomUserDaoImpl implements CustomUserDao {
      * @see CustomUserDao#updateLoginInfoByUsername(String, int, Timestamp)
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public long updateLoginInfoByUsername(String username, int lastLoginIp, Timestamp lastLoginTime) {
         QUser qUser = QUser.user;
         return jpaQueryFactory

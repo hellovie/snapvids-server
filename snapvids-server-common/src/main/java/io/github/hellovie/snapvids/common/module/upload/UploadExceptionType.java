@@ -87,6 +87,31 @@ public enum UploadExceptionType implements ExceptionCode {
     GEN_FILE_RESOURCE_SYSTEM_PATH_FAILED(BUSINESS, 14, "生成文件资源系统路径失败", false),
 
     /**
+     * 文件资源不存在
+     */
+    FILE_RESOURCE_NOT_FOUND(BUSINESS, 15, "文件资源不存在", false),
+
+    /**
+     * 音频资源不存在
+     */
+    AUDIO_RESOURCE_NOT_FOUND(BUSINESS, 16, "音频资源不存在", false),
+
+    /**
+     * 图片资源不存在
+     */
+    IMAGE_RESOURCE_NOT_FOUND(BUSINESS, 17, "图片资源不存在", false),
+
+    /**
+     * 视频资源不存在
+     */
+    VIDEO_RESOURCE_NOT_FOUND(BUSINESS, 18, "视频资源不存在", false),
+
+    /**
+     * 资源已过期
+     */
+    FILE_TEMP_URL_HAS_EXPIRED(BUSINESS, 9998, "资源已过期", true),
+
+    /**
      * 上传令牌已过期
      */
     UPLOAD_TOKEN_HAS_EXPIRED(BUSINESS, 9999, "上传令牌已过期", true),

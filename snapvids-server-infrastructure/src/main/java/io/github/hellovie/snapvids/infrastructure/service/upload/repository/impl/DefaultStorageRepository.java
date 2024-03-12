@@ -1,20 +1,27 @@
 package io.github.hellovie.snapvids.infrastructure.service.upload.repository.impl;
 
-import io.github.hellovie.snapvids.infrastructure.service.upload.repository.StorageRepository;
+import io.github.hellovie.snapvids.common.module.upload.UploadCacheKey;
+import io.github.hellovie.snapvids.infrastructure.cache.CacheService;
 import io.github.hellovie.snapvids.infrastructure.persistence.dao.ChunkFileDao;
 import io.github.hellovie.snapvids.infrastructure.persistence.dao.FileDao;
 import io.github.hellovie.snapvids.infrastructure.persistence.entity.ChunkFile;
 import io.github.hellovie.snapvids.infrastructure.persistence.entity.File;
-import io.github.hellovie.snapvids.types.common.Id;
-import io.github.hellovie.snapvids.types.file.*;
 import io.github.hellovie.snapvids.infrastructure.service.upload.entity.ChunkFileMetadata;
 import io.github.hellovie.snapvids.infrastructure.service.upload.entity.FileMetadata;
+import io.github.hellovie.snapvids.infrastructure.service.upload.repository.StorageRepository;
+import io.github.hellovie.snapvids.types.common.Id;
+import io.github.hellovie.snapvids.types.common.ValueString;
+import io.github.hellovie.snapvids.types.file.*;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -26,11 +33,16 @@ import java.util.stream.Collectors;
 @Repository("storageRepository")
 public class DefaultStorageRepository implements StorageRepository {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultStorageRepository.class);
+
     @Resource(name = "fileDao")
     private FileDao fileDao;
 
     @Resource(name = "chunkFileDao")
     private ChunkFileDao chunkFileDao;
+
+    @Resource(name = "redisCacheService")
+    private CacheService cacheService;
 
     /**
      * {@inheritDoc}
@@ -105,7 +117,61 @@ public class DefaultStorageRepository implements StorageRepository {
      */
     @Override
     public long deleteAllChunkByFileId(Id fileId) {
-        return 0;
+        if (fileId == null) {
+            return 0;
+        }
+
+        return chunkFileDao.deleteByFileId(fileId.getValue());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see StorageRepository#findById(Id)
+     */
+    @Override
+    public FileMetadata findById(Id fileId) {
+        if (fileId == null) {
+            return null;
+        }
+
+        Optional<File> optional = fileDao.findById(fileId.getValue());
+        return optional.map(this::toFileMetadata).orElse(null);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see StorageRepository#saveTempUrl(Id, ValueString, long)
+     */
+    @Override
+    public void saveTempUrl(Id fileId, ValueString tempUrl, long expiredInSeconds) {
+        if (fileId == null || tempUrl == null || expiredInSeconds <= 0) {
+            return;
+        }
+
+        String key = UploadCacheKey.TEMP_URL + fileId.getValue();
+        boolean isCacheSuccess = cacheService.setValue(key, tempUrl.getValue(), expiredInSeconds, TimeUnit.SECONDS);
+        if (!isCacheSuccess) {
+            LOG.warn("[缓存文件临时访问URL失败]>>> 缓存Key={}，缓存值={}，缓存时间={}，时间单位={}",
+                    key, tempUrl.getValue(), expiredInSeconds, TimeUnit.SECONDS);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see StorageRepository#findTempUrlById(Id)
+     */
+    @Override
+    public String findTempUrlById(Id fileId) {
+        String key = UploadCacheKey.TEMP_URL + fileId.getValue();
+        String url = cacheService.getString(key);
+        if (StringUtils.isBlank(url)) {
+            return "";
+        }
+
+        return url;
     }
 
     /**

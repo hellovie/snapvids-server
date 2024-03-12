@@ -1,6 +1,6 @@
 package io.github.hellovie.snapvids.domain.storage.event;
 
-import io.github.hellovie.snapvids.types.file.FileKey;
+import io.github.hellovie.snapvids.types.common.Id;
 
 /**
  * 获取临时 URL 的查询参数。
@@ -11,22 +11,22 @@ import io.github.hellovie.snapvids.types.file.FileKey;
 public class GetTempUrlQuery {
 
     /**
-     * 文件唯一标识
+     * 文件 id
      */
-    private final FileKey fileKey;
+    private final Id fileId;
 
-    public GetTempUrlQuery(FileKey fileKey) {
-        this.fileKey = fileKey;
+    public GetTempUrlQuery(Id fileId) {
+        this.fileId = fileId;
     }
 
-    public FileKey getFileKey() {
-        return fileKey;
+    public Id getFileId() {
+        return fileId;
     }
 
     @Override
     public String toString() {
         return "GetTempUrlQuery{" +
-                "fileKey=" + fileKey +
+                "fileId=" + fileId +
                 '}';
     }
 }

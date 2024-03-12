@@ -16,12 +16,17 @@ import io.github.hellovie.snapvids.domain.fileInfo.service.FileInfoService;
 import io.github.hellovie.snapvids.domain.fileInfo.state.FileUpdateStateEvent;
 import io.github.hellovie.snapvids.domain.storage.event.CheckUploadedCommand;
 import io.github.hellovie.snapvids.domain.storage.event.GenUploadTokenCommand;
+import io.github.hellovie.snapvids.domain.storage.event.GetTempUrlQuery;
+import io.github.hellovie.snapvids.domain.storage.event.GetUrlQuery;
 import io.github.hellovie.snapvids.domain.storage.factory.StorageFactory;
 import io.github.hellovie.snapvids.domain.storage.service.StorageService;
 import io.github.hellovie.snapvids.domain.storage.vo.UploadToken;
+import io.github.hellovie.snapvids.types.common.Id;
+import io.github.hellovie.snapvids.types.common.ValueString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -73,18 +78,63 @@ public class DefaultFileAppService implements FileAppService {
      * @see FileAppService#finishUpload(FinishUploadCommand)
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public FileInfoDTO finishUpload(FinishUploadCommand command) {
-        StorageService storageService = storageFactory.getDefaultStorageService();
-        boolean isUploaded = storageService.checkUploaded(new CheckUploadedCommand(command.getFileKey()));
-        if (!isUploaded) {
-            throw new DataException(FileExceptionType.FILE_HAS_NOT_YET_BEEN_UPLOADED);
-        }
         UpdateFileStateCommand cmd = new UpdateFileStateCommand(
                 command.getFileKey(),
                 FileState.UPLOADING,
                 FileUpdateStateEvent.COMPLETE_THE_UPLOAD
         );
         FileInfo fileInfo = fileInfoService.updateState(cmd);
-        return FileInfoDTO.Convertor.toFileInfoDTO(fileInfo, storageService, false);
+        StorageService storageService = storageFactory.getStorageService(fileInfo.getStorage());
+        if (storageService == null) {
+            throw new DataException(FileExceptionType.FILE_STORAGE_SERVICE_IS_NOT_SUPPORTED);
+        }
+
+        boolean isUploaded = storageService.checkUploaded(new CheckUploadedCommand(command.getFileKey()));
+        if (!isUploaded) {
+            throw new DataException(FileExceptionType.FILE_HAS_NOT_YET_BEEN_UPLOADED);
+        }
+        return FileInfoDTO.Convertor.toFileInfoDTO(fileInfo, storageService, true);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see FileAppService#getForeverUrlByFileId(Id)
+     */
+    @Override
+    public ValueString getForeverUrlByFileId(Id fileId) {
+        FileInfo fileInfo = fileInfoService.getValidFileInfoById(fileId);
+        if (fileInfo == null) {
+            throw new DataException(FileExceptionType.FILE_NOT_FOUND);
+        }
+
+        StorageService storageService = storageFactory.getStorageService(fileInfo.getStorage());
+        if (storageService == null) {
+            throw new DataException(FileExceptionType.FILE_STORAGE_SERVICE_IS_NOT_SUPPORTED);
+        }
+
+        return storageService.getUrl(new GetUrlQuery(fileId));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see FileAppService#getTempUrlByFileId(Id)
+     */
+    @Override
+    public ValueString getTempUrlByFileId(Id fileId) {
+        FileInfo fileInfo = fileInfoService.getValidFileInfoById(fileId);
+        if (fileInfo == null) {
+            throw new DataException(FileExceptionType.FILE_NOT_FOUND);
+        }
+
+        StorageService storageService = storageFactory.getStorageService(fileInfo.getStorage());
+        if (storageService == null) {
+            throw new DataException(FileExceptionType.FILE_STORAGE_SERVICE_IS_NOT_SUPPORTED);
+        }
+
+        return storageService.getTempUrl(new GetTempUrlQuery(fileId));
     }
 }

@@ -3,15 +3,15 @@ package io.github.hellovie.snapvids.infrastructure.service.upload;
 import io.github.hellovie.snapvids.common.exception.business.AuthException;
 import io.github.hellovie.snapvids.common.exception.business.DataException;
 import io.github.hellovie.snapvids.common.exception.system.UtilException;
-import io.github.hellovie.snapvids.types.common.Id;
-import io.github.hellovie.snapvids.types.common.ValueString;
-import io.github.hellovie.snapvids.types.file.FileKey;
 import io.github.hellovie.snapvids.infrastructure.service.upload.event.MergePartEvent;
 import io.github.hellovie.snapvids.infrastructure.service.upload.event.SingleUploadEvent;
 import io.github.hellovie.snapvids.infrastructure.service.upload.event.UploadPartEvent;
 import io.github.hellovie.snapvids.infrastructure.service.upload.event.UploadProgressQuery;
 import io.github.hellovie.snapvids.infrastructure.service.upload.vo.LocalUploadToken;
 import io.github.hellovie.snapvids.infrastructure.service.upload.vo.UploadProgressVO;
+import io.github.hellovie.snapvids.types.common.Id;
+import io.github.hellovie.snapvids.types.common.ValueString;
+import io.github.hellovie.snapvids.types.file.FileKey;
 
 /**
  * 上传服务。
@@ -38,19 +38,17 @@ public interface UploadService {
 
     /**
      * 创建上传令牌。
-     * <p>后端调用。</p>
      *
      * @param curUserId 当前用户 id
      * @param fileId    文件 id
-     * @param fileHash  文件哈希
+     * @param fileKey   文件 key
      * @return 上传令牌
      * @throws UtilException 创建失败后抛出
      */
-    LocalUploadToken createToken(Id curUserId, Id fileId, FileKey fileHash) throws UtilException;
+    LocalUploadToken createToken(Id curUserId, Id fileId, FileKey fileKey) throws UtilException;
 
     /**
      * 校验上传令牌。
-     * <p>前端调用，令牌只能上传指定文件。</p>
      *
      * @param curUserId 当前用户 id
      * @param token     上传令牌
@@ -60,7 +58,6 @@ public interface UploadService {
 
     /**
      * 文件上传。
-     * <p>前端调用，需要验证上传令牌。</p>
      *
      * @param curUserId 当前用户 id
      * @param event     上传文件事件
@@ -70,7 +67,6 @@ public interface UploadService {
 
     /**
      * 分片上传。
-     * <p>前端调用，需要验证上传令牌。</p>
      *
      * @param curUserId 当前用户 id
      * @param event     上传分片事件
@@ -80,7 +76,6 @@ public interface UploadService {
 
     /**
      * 查询分片上传的进度。
-     * <p>前端调用，需要验证上传令牌。</p>
      *
      * @param curUserId 当前用户 id
      * @param query     查询文件上传进度的参数
@@ -91,7 +86,6 @@ public interface UploadService {
 
     /**
      * 合并分片。
-     * <p>前端调用，需要验证上传令牌。</p>
      *
      * @param curUserId 当前用户 id
      * @param event     合并分片事件
@@ -101,41 +95,37 @@ public interface UploadService {
 
     /**
      * 检查文件是否上传成功。
-     * <p>后端调用，无需验证上传令牌。</p>
      *
      * @param curUserId 当前用户 id
-     * @param fileHash  文件哈希
+     * @param fileKey   文件 key
      * @return true：文件已上传
      */
-    boolean checkUploaded(Id curUserId, FileKey fileHash);
+    boolean checkUploaded(Id curUserId, FileKey fileKey);
 
     /**
      * 获取文件访问路径。
      *
-     * @param curUserId 当前用户 id
-     * @param fileHash  文件哈希
+     * @param fileId 文件 id
      * @return 文件访问路径
      * @throws DataException 获取失败抛出
      */
-    ValueString getUrl(Id curUserId, FileKey fileHash) throws DataException;
+    ValueString getUrl(Id fileId) throws DataException;
 
     /**
      * 获取文件临时访问路径。
      *
-     * @param curUserId 当前用户 id
-     * @param fileHash  文件哈希
+     * @param fileId 文件 id
      * @return 文件临时访问路径
      * @throws DataException 获取失败抛出
      */
-    ValueString getTempUrl(Id curUserId, FileKey fileHash) throws DataException;
+    ValueString getTempUrl(Id fileId) throws DataException;
 
     /**
      * 获取文件系统路径。
      *
-     * @param curUserId 当前用户 id
-     * @param fileHash  文件哈希
+     * @param fileId 文件 id
      * @return 文件系统路径
      * @throws DataException 获取失败抛出
      */
-    ValueString getSystemPath(Id curUserId, FileKey fileHash) throws DataException;
+    ValueString getSystemPath(Id fileId) throws DataException;
 }

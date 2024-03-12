@@ -1,6 +1,6 @@
 package io.github.hellovie.snapvids.domain.storage.event;
 
-import io.github.hellovie.snapvids.types.file.FileKey;
+import io.github.hellovie.snapvids.types.common.Id;
 
 /**
  * 获取 URL 的查询参数。
@@ -11,22 +11,22 @@ import io.github.hellovie.snapvids.types.file.FileKey;
 public class GetUrlQuery {
 
     /**
-     * 文件唯一标识
+     * 文件 id
      */
-    private final FileKey fileKey;
+    private final Id fileId;
 
-    public GetUrlQuery(FileKey fileKey) {
-        this.fileKey = fileKey;
+    public GetUrlQuery(Id fileId) {
+        this.fileId = fileId;
     }
 
-    public FileKey getFileKey() {
-        return fileKey;
+    public Id getFileId() {
+        return fileId;
     }
 
     @Override
     public String toString() {
         return "GetUrlQuery{" +
-                "fileKey=" + fileKey +
+                "fileId=" + fileId +
                 '}';
     }
 }

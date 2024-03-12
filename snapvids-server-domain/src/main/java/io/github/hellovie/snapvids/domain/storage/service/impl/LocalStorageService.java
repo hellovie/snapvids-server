@@ -2,18 +2,18 @@ package io.github.hellovie.snapvids.domain.storage.service.impl;
 
 import io.github.hellovie.snapvids.common.enums.FileStorage;
 import io.github.hellovie.snapvids.common.exception.system.UtilException;
-import io.github.hellovie.snapvids.domain.storage.event.GetTempUrlQuery;
-import io.github.hellovie.snapvids.domain.storage.vo.UploadToken;
-import io.github.hellovie.snapvids.domain.storage.service.StorageService;
 import io.github.hellovie.snapvids.domain.storage.annotation.StorageServiceMark;
 import io.github.hellovie.snapvids.domain.storage.event.CheckUploadedCommand;
 import io.github.hellovie.snapvids.domain.storage.event.GenUploadTokenCommand;
+import io.github.hellovie.snapvids.domain.storage.event.GetTempUrlQuery;
 import io.github.hellovie.snapvids.domain.storage.event.GetUrlQuery;
+import io.github.hellovie.snapvids.domain.storage.service.StorageService;
+import io.github.hellovie.snapvids.domain.storage.vo.UploadToken;
 import io.github.hellovie.snapvids.domain.util.ContextHolder;
-import io.github.hellovie.snapvids.types.common.Id;
-import io.github.hellovie.snapvids.types.common.ValueString;
 import io.github.hellovie.snapvids.infrastructure.service.upload.impl.LocalUploadService;
 import io.github.hellovie.snapvids.infrastructure.service.upload.vo.LocalUploadToken;
+import io.github.hellovie.snapvids.types.common.Id;
+import io.github.hellovie.snapvids.types.common.ValueString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -72,8 +72,7 @@ public class LocalStorageService implements StorageService {
         }
 
         try {
-            Id curUserId = ContextHolder.getUserOrElseThrow().getId();
-            return uploadService.getUrl(curUserId, query.getFileKey());
+            return uploadService.getUrl(query.getFileId());
         } catch (Exception ex) {
             LOG.error("[获取文件访问路径异常]>>> 方法入参={}", query);
             throw new UtilException(GET_FILE_ACCESS_URL_FAILED, ex);
@@ -92,8 +91,7 @@ public class LocalStorageService implements StorageService {
         }
 
         try {
-            Id curUserId = ContextHolder.getUserOrElseThrow().getId();
-            return uploadService.getTempUrl(curUserId, query.getFileKey());
+            return uploadService.getTempUrl(query.getFileId());
         } catch (Exception ex) {
             LOG.error("[获取文件临时访问路径异常]>>> 方法入参={}", query);
             throw new UtilException(GET_FILE_TEMP_ACCESS_URL_FAILED, ex);

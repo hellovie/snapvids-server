@@ -20,7 +20,6 @@ import io.github.hellovie.snapvids.types.user.Username;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Objects;
@@ -73,7 +72,6 @@ public class DefaultFileInfoRepository implements FileInfoRepository {
      * @see FileInfoRepository#updateFileState(Id, FileState, Id)
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void updateFileState(Id fileId, FileState fileState, Id userId) {
         long updateRows = fileDao.updateState(fileId.getValue(), fileState, userId.getValue());
         if (updateRows != 1) {
@@ -91,7 +89,10 @@ public class DefaultFileInfoRepository implements FileInfoRepository {
     @Override
     public FileInfo findById(Id id) {
         Optional<File> optional = fileDao.findById(id.getValue());
-        return optional.map(this::toFileInfo).orElse(null);
+        if (optional.isPresent() && checkValid(optional.get())) {
+            return toFileInfo(optional.get());
+        }
+        return null;
     }
 
     /**
@@ -105,7 +106,20 @@ public class DefaultFileInfoRepository implements FileInfoRepository {
             return null;
         }
         Optional<File> optional = fileDao.findByFileKeyAndCreatedById(fileKey.getValue(), userId.getValue());
-        return optional.map(this::toFileInfo).orElse(null);
+        if (optional.isPresent() && checkValid(optional.get())) {
+            return toFileInfo(optional.get());
+        }
+        return null;
+    }
+
+    /**
+     * 判断文件是否有效（逻辑删除）。
+     *
+     * @param file 文件
+     * @return true：有效
+     */
+    private boolean checkValid(File file) {
+        return file != null && !file.getIsDeleted();
     }
 
     /**

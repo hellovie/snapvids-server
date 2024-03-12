@@ -5,22 +5,26 @@ import io.github.hellovie.snapvids.common.exception.business.AuthException;
 import io.github.hellovie.snapvids.common.exception.business.DataException;
 import io.github.hellovie.snapvids.common.exception.system.DataErrorException;
 import io.github.hellovie.snapvids.common.exception.system.UtilException;
+import io.github.hellovie.snapvids.common.module.upload.UploadCacheKey;
+import io.github.hellovie.snapvids.common.util.SpecialStringGenerator;
+import io.github.hellovie.snapvids.infrastructure.cache.CacheService;
+import io.github.hellovie.snapvids.infrastructure.properties.JwtProperties;
+import io.github.hellovie.snapvids.infrastructure.properties.ServerProperties;
+import io.github.hellovie.snapvids.infrastructure.service.token.TokenService;
+import io.github.hellovie.snapvids.infrastructure.service.upload.UploadService;
+import io.github.hellovie.snapvids.infrastructure.service.upload.constants.UploadPath;
+import io.github.hellovie.snapvids.infrastructure.service.upload.entity.ChunkFileMetadata;
+import io.github.hellovie.snapvids.infrastructure.service.upload.entity.FileMetadata;
 import io.github.hellovie.snapvids.infrastructure.service.upload.event.MergePartEvent;
 import io.github.hellovie.snapvids.infrastructure.service.upload.event.SingleUploadEvent;
 import io.github.hellovie.snapvids.infrastructure.service.upload.event.UploadPartEvent;
 import io.github.hellovie.snapvids.infrastructure.service.upload.event.UploadProgressQuery;
 import io.github.hellovie.snapvids.infrastructure.service.upload.repository.StorageRepository;
-import io.github.hellovie.snapvids.infrastructure.service.upload.UploadService;
 import io.github.hellovie.snapvids.infrastructure.service.upload.vo.LocalUploadToken;
 import io.github.hellovie.snapvids.infrastructure.service.upload.vo.UploadProgressVO;
-import io.github.hellovie.snapvids.infrastructure.properties.JwtProperties;
-import io.github.hellovie.snapvids.infrastructure.properties.ServerProperties;
-import io.github.hellovie.snapvids.infrastructure.service.token.TokenService;
 import io.github.hellovie.snapvids.types.common.Id;
 import io.github.hellovie.snapvids.types.common.ValueString;
 import io.github.hellovie.snapvids.types.file.*;
-import io.github.hellovie.snapvids.infrastructure.service.upload.entity.ChunkFileMetadata;
-import io.github.hellovie.snapvids.infrastructure.service.upload.entity.FileMetadata;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +39,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -57,9 +62,9 @@ public class LocalUploadService implements UploadService {
     public static final String TOKEN_KEY_FILE_ID = "file_id";
 
     /**
-     * 文件哈希值
+     * 文件 key
      */
-    public static final String TOKEN_KEY_FILE_HASH = "file_hash";
+    public static final String TOKEN_KEY_FILE_KEY = "file_key";
 
     /**
      * 上传的用户 id
@@ -99,13 +104,16 @@ public class LocalUploadService implements UploadService {
     @Resource(name = "serverProperties")
     private ServerProperties serverProperties;
 
+    @Resource(name = "redisCacheService")
+    private CacheService cacheService;
+
     /**
      * {@inheritDoc}
      *
      * @see UploadService#createToken(Id, Id, FileKey)
      */
     @Override
-    public LocalUploadToken createToken(Id curUserId, Id fileId, FileKey fileHash) throws UtilException {
+    public LocalUploadToken createToken(Id curUserId, Id fileId, FileKey fileKey) throws UtilException {
         long nowTimestamp = new Date().getTime() / 1000;
         long expiredTimestamp = nowTimestamp + TOKEN_EXPIRED_IN_SECONDS;
         try {
@@ -114,11 +122,11 @@ public class LocalUploadService implements UploadService {
             payload.put(TOKEN_KEY_FILE_ID, Long.toString(fileId.getValue()));
             payload.put(TOKEN_KEY_START_TIME, Long.toString(nowTimestamp));
             payload.put(TOKEN_KEY_EXPIRED_TIME, Long.toString(expiredTimestamp));
-            payload.put(TOKEN_KEY_FILE_HASH, fileHash.getValue());
+            payload.put(TOKEN_KEY_FILE_KEY, fileKey.getValue());
             String jwtToken = jwtTokenService.create(payload, TOKEN_EXPIRED_IN_SECONDS, jwtProperties.getSecret());
             LocalUploadToken token = new LocalUploadToken(
                     new Id(fileId.getValue()),
-                    new FileKey(fileHash.getValue()),
+                    new FileKey(fileKey.getValue()),
                     ValueString.buildOrElseThrow(jwtToken, UPLOAD_TOKEN_GENERATE_FAILED),
                     nowTimestamp,
                     expiredTimestamp
@@ -154,13 +162,13 @@ public class LocalUploadService implements UploadService {
             long fileId = Long.parseLong(payload.get(TOKEN_KEY_FILE_ID));
             long startTime = Long.parseLong(payload.get(TOKEN_KEY_START_TIME));
             long expiredTime = Long.parseLong(payload.get(TOKEN_KEY_EXPIRED_TIME));
-            String fileHash = payload.get(TOKEN_KEY_FILE_HASH);
+            String fileKey = payload.get(TOKEN_KEY_FILE_KEY);
             if (userId != curUserId.getValue() || fileId != token.getFileId().getValue() ||
                     startTime != token.getStartTime() || expiredTime != token.getExpiredTime() ||
-                    !token.getFileKey().getValue().equals(fileHash)) {
+                    !token.getFileKey().getValue().equals(fileKey)) {
                 LOG.info("[上传令牌参数与JWT载荷的数据不符]>>> 上传令牌=[{}, {}, {}->{}, {}]，载荷=[{}, {}, {}->{}, {}]",
                         curUserId, token.getFileId(), token.getStartTime(), token.getExpiredTime(), token.getFileKey(),
-                        userId, fileId, startTime, expiredTime, fileHash);
+                        userId, fileId, startTime, expiredTime, fileKey);
                 throw new AuthException(INVALID_UPLOAD_TOKEN);
             }
         } catch (Exception ex) {
@@ -180,6 +188,13 @@ public class LocalUploadService implements UploadService {
                 event.getStartTime(), event.getExpiredTime());
         checkToken(curUserId, token);
 
+        // 单文件上传 file key = hash
+        if (!Objects.equals(event.getFileKey().getValue(), event.getHash().getValue())) {
+            LOG.info("[文件Key与文件哈希不一致，文件上传失败]>>> 文件ID={}，文件Key={}，文件哈希={}",
+                    event.getFileId(), event.getFileKey(), event.getHash());
+            throw new DataException(UPLOAD_FILE_FAILED);
+        }
+
         MultipartFile uploadFile = event.getFile().getFile();
         if (uploadFile.getSize() > SINGLE_UPLOAD_MAX_FILE_SIZE) {
             throw new DataException(UPLOAD_EXCEED_SIZE_LIMIT_FILE);
@@ -187,15 +202,21 @@ public class LocalUploadService implements UploadService {
 
         FileMetadata fileMetadata = repository.findByFileKeyAndUserId(event.getFileKey(), curUserId);
         if (fileMetadata == null) {
-            LOG.info("[找不到文件，文件上传失败]>>> 文件哈希={}，用户ID={}", event.getFileKey(), curUserId);
+            LOG.info("[找不到文件，文件上传失败]>>> 文件Key={}，用户ID={}", event.getFileKey(), curUserId);
             throw new DataException(FILE_RESOURCE_NOT_FOUNT);
         }
 
         // 存储前校验文件完整性
         String fileHash = FileKey.calculateHash(uploadFile);
-        if (!event.getHash().getValue().equals(fileHash)) {
-            LOG.warn("[文件数据被篡改]>>> 文件ID={}，传入文件哈希={}，实际文件哈希={}",
-                    event.getFileId(), event.getHash(), fileHash);
+        if (!event.getHash().getValue().equals(fileHash) ||
+                !(event.getFile().getFileSize().getValue().equals(fileMetadata.getSize().getValue())) ||
+                !(event.getFile().getFileExt()).equals(fileMetadata.getExt())) {
+            LOG.warn("[文件数据被篡改，文件上传失败]>>> 文件ID={}，传入文件哈希={}，数据库文件哈希={}，" +
+                            "传入文件大小={}（byte），数据库文件大小={}（byte），" +
+                            "传入文件后缀={}，数据库文件后缀={}",
+                    event.getFileId(), event.getHash(), fileHash,
+                    event.getFile().getFileSize(), fileMetadata.getSize(),
+                    event.getFile().getFileExt(), fileMetadata.getExt());
             throw new DataException(UPLOAD_FILE_FAILED);
         }
 
@@ -225,7 +246,7 @@ public class LocalUploadService implements UploadService {
 
         FileMetadata fileMetadata = repository.findByFileKeyAndUserId(event.getFileKey(), curUserId);
         if (fileMetadata == null) {
-            LOG.info("[找不到文件，分片上传失败]>>> 文件哈希={}，用户ID={}", event.getFileKey(), curUserId);
+            LOG.info("[找不到文件，分片上传失败]>>> 文件Key={}，用户ID={}", event.getFileKey(), curUserId);
             throw new DataException(FILE_RESOURCE_NOT_FOUNT);
         }
 
@@ -248,7 +269,7 @@ public class LocalUploadService implements UploadService {
         // 存储前校验文件完整性
         String fileHash = FileKey.calculateHash(uploadFile);
         if (!event.getHash().getValue().equals(fileHash)) {
-            LOG.warn("[文件数据被篡改]>>> 文件ID={}，传入文件哈希={}，实际文件哈希={}",
+            LOG.warn("[文件数据被篡改，分片上传失败]>>> 文件ID={}，传入文件哈希={}，实际文件哈希={}",
                     event.getFileId(), event.getHash(), fileHash);
             throw new DataException(UPLOAD_FILE_FAILED);
         }
@@ -280,7 +301,7 @@ public class LocalUploadService implements UploadService {
 
         FileMetadata fileMetadata = repository.findByFileKeyAndUserId(query.getFileKey(), curUserId);
         if (fileMetadata == null) {
-            LOG.info("[找不到文件，查询分片上传进度失败]>>> 文件哈希={}，用户ID={}", query.getFileKey(), curUserId);
+            LOG.info("[找不到文件，查询分片上传进度失败]>>> 文件Key={}，用户ID={}", query.getFileKey(), curUserId);
             throw new DataException(FILE_RESOURCE_NOT_FOUNT);
         }
 
@@ -326,7 +347,7 @@ public class LocalUploadService implements UploadService {
 
         FileMetadata fileMetadata = repository.findByFileKeyAndUserId(event.getFileKey(), curUserId);
         if (fileMetadata == null) {
-            LOG.info("[找不到文件，合并文件失败]>>> 文件哈希={}，用户ID={}", event.getFileKey(), curUserId);
+            LOG.info("[找不到文件，合并文件失败]>>> 文件Key={}，用户ID={}", event.getFileKey(), curUserId);
             throw new DataException(FILE_RESOURCE_NOT_FOUNT);
         }
 
@@ -371,10 +392,10 @@ public class LocalUploadService implements UploadService {
      * @see UploadService#checkUploaded(Id, FileKey)
      */
     @Override
-    public boolean checkUploaded(Id curUserId, FileKey fileHash) {
-        FileMetadata fileMetadata = repository.findByFileKeyAndUserId(fileHash, curUserId);
+    public boolean checkUploaded(Id curUserId, FileKey fileKey) {
+        FileMetadata fileMetadata = repository.findByFileKeyAndUserId(fileKey, curUserId);
         if (fileMetadata == null) {
-            LOG.info("[找不到文件，文件未上传成功]>>> 文件哈希={}，用户ID={}", fileHash, curUserId);
+            LOG.info("[找不到文件，文件未上传成功]>>> 文件Key={}，用户ID={}", fileKey, curUserId);
             return false;
         }
 
@@ -384,50 +405,84 @@ public class LocalUploadService implements UploadService {
     /**
      * {@inheritDoc}
      *
-     * @see UploadService#getUrl(Id, FileKey)
+     * @see UploadService#getUrl(Id)
      */
     @Override
-    public ValueString getUrl(Id curUserId, FileKey fileHash) throws DataException {
-        FileMetadata fileMetadata = repository.findByFileKeyAndUserId(fileHash, curUserId);
+    public ValueString getUrl(Id fileId) throws DataException {
+        FileMetadata fileMetadata = repository.findById(fileId);
         if (fileMetadata == null) {
-            LOG.info("[找不到文件资源，获取文件访问路径失败]>>> 文件哈希={}，用户ID={}", fileHash, curUserId);
+            LOG.info("[找不到文件数据，获取文件访问路径失败]>>> 文件ID={}", fileId);
             throw new DataException(FILE_RESOURCE_NOT_FOUNT);
         }
 
-        FilePath path = fileMetadata.getPath();
-        Filename storageName = fileMetadata.getStorageName();
-        FileExt ext = fileMetadata.getExt();
-        String url = serverProperties.getUrl() + path.getValue() + "/" +
-                storageName.getValue() + "." + ext.name().toLowerCase();
+        // 检查文件是否存在
+        if (!whetherInDisk(fileMetadata)) {
+            LOG.info("[找不到文件资源，获取文件访问路径失败]>>> 文件ID={}", fileId);
+            throw new DataException(FILE_RESOURCE_NOT_FOUNT);
+        }
+
+        String url = genResourceUrl(fileMetadata);
         return ValueString.buildOrElseThrow(url, GEN_FILE_RESOURCE_ACCESS_URL_FAILED);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @see UploadService#getTempUrl(Id, FileKey)
+     * @see UploadService#getTempUrl(Id)
      */
     @Override
-    public ValueString getTempUrl(Id curUserId, FileKey fileHash) throws DataException {
-        FileMetadata fileMetadata = repository.findByFileKeyAndUserId(fileHash, curUserId);
+    public ValueString getTempUrl(Id fileId) throws DataException {
+        FileMetadata fileMetadata = repository.findById(fileId);
         if (fileMetadata == null) {
-            LOG.info("[找不到文件资源，获取文件临时访问路径失败]>>> 文件哈希={}，用户ID={}", fileHash, curUserId);
+            LOG.info("[找不到文件数据，获取文件临时访问路径失败]>>> 文件ID={}", fileId);
             throw new DataException(FILE_RESOURCE_NOT_FOUNT);
         }
-        // Todo：获取文件临时访问路径。
-        return null;
+
+        // 检查文件是否存在
+        if (!whetherInDisk(fileMetadata)) {
+            LOG.info("[找不到文件资源，获取文件临时访问路径失败]>>> 文件ID={}", fileId);
+            throw new DataException(FILE_RESOURCE_NOT_FOUNT);
+        }
+
+        String tempUrl = repository.findTempUrlById(fileId);
+        if (StringUtils.isNotBlank(tempUrl)) {
+            return ValueString.buildOrElseThrow(tempUrl);
+        }
+
+        // 临时路径不存在，生成临时访问路径
+        String lockKey = UploadCacheKey.GEN_TEMP_URL_LOCK + fileId.getValue();
+        boolean tryLock = cacheService.lock(lockKey, 1, TimeUnit.MINUTES);
+        if (tryLock) {
+            try {
+                String url = genResourceTempUrl(fileMetadata);
+                ValueString newTempUrl = ValueString.buildOrElseThrow(url);
+                repository.saveTempUrl(fileId, newTempUrl, TEMP_URL_EXPIRED_IN_SECONDS);
+                return newTempUrl;
+            } finally {
+                cacheService.unlock(lockKey);
+            }
+        }
+
+        // Todo(pref): 并发获取未生成过临时访问路径的文件
+        throw new DataException(GEN_FILE_RESOURCE_TEMP_ACCESS_URL_FAILED);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @see UploadService#getSystemPath(Id, FileKey)
+     * @see UploadService#getSystemPath(Id)
      */
     @Override
-    public ValueString getSystemPath(Id curUserId, FileKey fileHash) throws DataException {
-        FileMetadata fileMetadata = repository.findByFileKeyAndUserId(fileHash, curUserId);
+    public ValueString getSystemPath(Id fileId) throws DataException {
+        FileMetadata fileMetadata = repository.findById(fileId);
         if (fileMetadata == null) {
-            LOG.info("[找不到文件资源，获取文件系统路径失败]>>> 文件哈希={}，用户ID={}", fileHash, curUserId);
+            LOG.info("[找不到文件数据，获取文件系统路径失败]>>> 文件ID={}", fileId);
+            throw new DataException(FILE_RESOURCE_NOT_FOUNT);
+        }
+
+        // 检查文件是否存在
+        if (!whetherInDisk(fileMetadata)) {
+            LOG.info("[找不到文件资源，获取文件系统路径失败]>>> 文件ID={}", fileId);
             throw new DataException(FILE_RESOURCE_NOT_FOUNT);
         }
 
@@ -543,13 +598,16 @@ public class LocalUploadService implements UploadService {
         // 文件合并成功，校验文件完整性
         try {
             String mergedFileHash = FileKey.calculateHash(mergedFile);
+            // Todo：可以加上后缀判断
             if (mergedFile.length() != fileSize.getValue() || StringUtils.isBlank(mergedFileHash) ||
                     !mergedFileHash.equals(hash.getValue())) {
-                LOG.error("[文件合并失败]>>> 数据库文件大小={}，磁盘文件大小={}，数据库文件哈希={}，磁盘文件哈希={}",
+                LOG.error("[文件合并失败]>>> 数据库文件大小={}（byte），磁盘文件大小={}（byte），" +
+                                "数据库文件哈希={}，磁盘文件哈希={}",
                         fileSize, mergedFile.length(), hash, mergedFileHash);
                 // 文件合并失败，将文件删除
                 FileUtils.forceDelete(mergedFile);
-                LOG.error("[文件合并失败，删除文件成功]>>> 数据库文件大小={}，磁盘文件大小={}，数据库文件哈希={}，磁盘文件哈希={}",
+                LOG.error("[文件合并失败，删除文件成功]>>> 数据库文件大小={}（byte），磁盘文件大小={}（byte），" +
+                                "数据库文件哈希={}，磁盘文件哈希={}",
                         fileSize, mergedFile.length(), hash, mergedFileHash);
                 return false;
             }
@@ -558,5 +616,46 @@ public class LocalUploadService implements UploadService {
             return false;
         }
         return true;
+    }
+
+    /**
+     * 生成资源临时访问路径。
+     *
+     * @param fileMetadata 文件信息
+     * @return 资源临时访问路径，生成失败返回空字符串
+     */
+    private String genResourceTempUrl(FileMetadata fileMetadata) {
+        if (fileMetadata == null) {
+            LOG.info("[生成资源临时访问路径]>>> fileMetadata=null");
+            return "";
+        }
+
+        String path = fileMetadata.getPath().getValue().replaceFirst(
+                UploadPath.ROOT.getPath(), UploadPath.TEMP_ROOT.getPath());
+
+        return serverProperties.getUrl() + path + "/" + SpecialStringGenerator.genNoRepeatRandomStr() + "?"
+                + "id=" + fileMetadata.getId().getValue() + "&"
+                + "type=" + fileMetadata.getType().name() + "&"
+                + "random=" + SpecialStringGenerator.genNoRepeatRandomStr();
+    }
+
+    /**
+     * 生成资源访问路径。
+     *
+     * @param fileMetadata 文件信息
+     * @return 资源访问路径，生成失败返回空字符串
+     */
+    private String genResourceUrl(FileMetadata fileMetadata) {
+        if (fileMetadata == null) {
+            LOG.info("[生成资源访问路径]>>> fileMetadata=null");
+            return "";
+        }
+
+        String path = fileMetadata.getPath().getValue();
+        Filename storageName = fileMetadata.getStorageName();
+
+        return serverProperties.getUrl() + path + "/" + storageName.getValue() + "?"
+                + "id=" + fileMetadata.getId().getValue() + "&"
+                + "type=" + fileMetadata.getType().name();
     }
 }

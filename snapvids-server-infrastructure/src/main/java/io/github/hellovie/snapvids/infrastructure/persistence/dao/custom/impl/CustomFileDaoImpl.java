@@ -1,9 +1,10 @@
 package io.github.hellovie.snapvids.infrastructure.persistence.dao.custom.impl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import io.github.hellovie.snapvids.infrastructure.persistence.dao.custom.CustomFileDao;
 import io.github.hellovie.snapvids.common.enums.FileState;
+import io.github.hellovie.snapvids.infrastructure.persistence.dao.custom.CustomFileDao;
 import io.github.hellovie.snapvids.infrastructure.persistence.q.QFile;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
@@ -25,6 +26,7 @@ public class CustomFileDaoImpl implements CustomFileDao {
      * @see CustomFileDao#updateState(long, FileState, long)
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public long updateState(long id, FileState state, long userId) {
         QFile qFile = QFile.file;
         return jpaQueryFactory

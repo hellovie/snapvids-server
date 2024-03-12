@@ -80,7 +80,7 @@ public class DefaultFileInfoService implements FileInfoService {
         SysUser curUser = ContextHolder.getUserOrElseThrow();
         FileInfo fileInfo = repository.findByFileKeyAndUserId(command.getFileKey(), curUser.getId());
         if (fileInfo == null) {
-            throw new DataException(FileExceptionType.FILE_NOT_FOUNT);
+            throw new DataException(FileExceptionType.FILE_NOT_FOUND);
         }
 
         // 文件状态机自动获取下一个状态
@@ -99,6 +99,21 @@ public class DefaultFileInfoService implements FileInfoService {
         repository.updateFileState(fileInfo.getId(), nextState, curUser.getId());
 
         fileInfo.setState(nextState);
+        return fileInfo;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see FileInfoService#getValidFileInfoById(Id)
+     */
+    @Override
+    public FileInfo getValidFileInfoById(Id fileId) {
+        FileInfo fileInfo = repository.findById(fileId);
+        if (fileInfo == null || !FileState.isValid(fileInfo.getState())) {
+            return null;
+        }
+
         return fileInfo;
     }
 }

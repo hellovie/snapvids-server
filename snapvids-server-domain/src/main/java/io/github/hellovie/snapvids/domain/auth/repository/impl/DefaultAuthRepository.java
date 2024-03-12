@@ -166,7 +166,6 @@ public class DefaultAuthRepository implements AuthRepository {
      * @see AuthRepository#updateLoginInfoByUsername(Username, Ip, Timestamp)
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void updateLoginInfoByUsername(Username username, Ip lastLoginIp, Timestamp lastLoginTime)
             throws DataException {
 

@@ -1,10 +1,11 @@
 package io.github.hellovie.snapvids.infrastructure.service.upload.repository;
 
-import io.github.hellovie.snapvids.types.common.Id;
-import io.github.hellovie.snapvids.types.file.ChunkNumber;
-import io.github.hellovie.snapvids.types.file.FileKey;
 import io.github.hellovie.snapvids.infrastructure.service.upload.entity.ChunkFileMetadata;
 import io.github.hellovie.snapvids.infrastructure.service.upload.entity.FileMetadata;
+import io.github.hellovie.snapvids.types.common.Id;
+import io.github.hellovie.snapvids.types.common.ValueString;
+import io.github.hellovie.snapvids.types.file.ChunkNumber;
+import io.github.hellovie.snapvids.types.file.FileKey;
 
 import java.util.List;
 
@@ -57,4 +58,29 @@ public interface StorageRepository {
      * @return 删除数量
      */
     long deleteAllChunkByFileId(Id fileId);
+
+    /**
+     * 根据文件 id 查询文件元数据。
+     *
+     * @param fileId 文件 id
+     * @return 文件元数据，文件不存在返回 null
+     */
+    FileMetadata findById(Id fileId);
+
+    /**
+     * 保存文件临时访问 url。
+     *
+     * @param fileId           文件 id
+     * @param tempUrl          文件临时访问 url
+     * @param expiredInSeconds 过期时间
+     */
+    void saveTempUrl(Id fileId, ValueString tempUrl, long expiredInSeconds);
+
+    /**
+     * 根据文件 id 查询文件临时访问 url。
+     *
+     * @param fileId 文件 id
+     * @return 文件临时访问 url，不存在返回空字符串
+     */
+    String findTempUrlById(Id fileId);
 }
