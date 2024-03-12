@@ -3,6 +3,7 @@ package io.github.hellovie.snapvids.infrastructure.persistence.q;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
 import com.querydsl.core.types.dsl.*;
+import io.github.hellovie.snapvids.common.enums.Gender;
 import io.github.hellovie.snapvids.infrastructure.persistence.entity.UserInfo;
 
 import javax.annotation.Generated;
@@ -40,7 +41,7 @@ public class QUserInfo extends EntityPathBase<UserInfo> {
 
     public final StringPath firstName = createString("firstName");
 
-    public final EnumPath<io.github.hellovie.snapvids.infrastructure.persistence.enums.Gender> gender = createEnum("gender", io.github.hellovie.snapvids.infrastructure.persistence.enums.Gender.class);
+    public final EnumPath<Gender> gender = createEnum("gender", Gender.class);
 
     //inherited
     public final NumberPath<Long> id = _super.id;

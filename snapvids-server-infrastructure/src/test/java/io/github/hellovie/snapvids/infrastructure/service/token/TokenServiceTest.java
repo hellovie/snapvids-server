@@ -1,6 +1,5 @@
 package io.github.hellovie.snapvids.infrastructure.service.token;
 
-import io.github.hellovie.snapvids.common.service.TokenService;
 import io.github.hellovie.snapvids.infrastructure.config.InfrastructureBeanConfig;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

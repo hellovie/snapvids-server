@@ -3,6 +3,8 @@ package io.github.hellovie.snapvids.infrastructure.persistence.q;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
 import com.querydsl.core.types.dsl.*;
+import io.github.hellovie.snapvids.common.enums.LikeObjectType;
+import io.github.hellovie.snapvids.common.enums.LikeType;
 import io.github.hellovie.snapvids.infrastructure.persistence.entity.Like;
 
 import javax.annotation.Generated;
@@ -36,9 +38,9 @@ public class QLike extends EntityPathBase<Like> {
 
     public final BooleanPath isLike = createBoolean("isLike");
 
-    public final EnumPath<io.github.hellovie.snapvids.infrastructure.persistence.enums.LikeObjectType> objectType = createEnum("objectType", io.github.hellovie.snapvids.infrastructure.persistence.enums.LikeObjectType.class);
+    public final EnumPath<LikeObjectType> objectType = createEnum("objectType", LikeObjectType.class);
 
-    public final EnumPath<io.github.hellovie.snapvids.infrastructure.persistence.enums.LikeType> type = createEnum("type", io.github.hellovie.snapvids.infrastructure.persistence.enums.LikeType.class);
+    public final EnumPath<LikeType> type = createEnum("type", LikeType.class);
 
     public final NumberPath<Long> userId = createNumber("userId", Long.class);
 

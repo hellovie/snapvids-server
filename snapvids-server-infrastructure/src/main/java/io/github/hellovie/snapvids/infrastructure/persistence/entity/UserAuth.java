@@ -1,6 +1,6 @@
 package io.github.hellovie.snapvids.infrastructure.persistence.entity;
 
-import io.github.hellovie.snapvids.infrastructure.persistence.enums.AuthType;
+import io.github.hellovie.snapvids.common.enums.AuthType;
 
 import javax.persistence.*;
 

@@ -20,7 +20,7 @@
         <!-- 本项目的依赖 -->
         <dependency>
             <groupId>io.github.hellovie</groupId>
-            <artifactId>snapvids-server-types</artifactId>
+            <artifactId>snapvids-server-infrastructure</artifactId>
         </dependency>
     </dependencies>
 </project>

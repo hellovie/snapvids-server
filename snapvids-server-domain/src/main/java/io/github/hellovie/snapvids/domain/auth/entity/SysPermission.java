@@ -1,6 +1,6 @@
 package io.github.hellovie.snapvids.domain.auth.entity;
 
-import io.github.hellovie.snapvids.infrastructure.persistence.enums.PermissionType;
+import io.github.hellovie.snapvids.common.enums.PermissionType;
 import io.github.hellovie.snapvids.types.common.Id;
 import io.github.hellovie.snapvids.types.permission.*;
 

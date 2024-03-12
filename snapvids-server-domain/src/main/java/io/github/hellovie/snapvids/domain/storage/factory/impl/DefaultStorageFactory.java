@@ -1,11 +1,12 @@
 package io.github.hellovie.snapvids.domain.storage.factory.impl;
 
+import io.github.hellovie.snapvids.common.enums.FileStorage;
 import io.github.hellovie.snapvids.common.exception.system.ConfigException;
 import io.github.hellovie.snapvids.common.module.file.FileExceptionType;
 import io.github.hellovie.snapvids.domain.storage.annotation.StorageServiceMark;
-import io.github.hellovie.snapvids.domain.storage.factory.StorageFactory;
 import io.github.hellovie.snapvids.domain.storage.service.StorageService;
-import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileStorage;
+import io.github.hellovie.snapvids.domain.storage.factory.StorageFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -35,16 +36,18 @@ public class DefaultStorageFactory implements StorageFactory {
      * @param services 存储服务列表
      */
     public DefaultStorageFactory(List<StorageService> services) {
-        StringBuffer registerService = new StringBuffer();
+        StringBuffer registerServiceStr = new StringBuffer();
         services.forEach(storageService -> {
             StorageServiceMark service = AnnotationUtils.findAnnotation(storageService.getClass(),
                     StorageServiceMark.class);
             if (null != service) {
                 storageServiceMap.put(service.type().name(), storageService);
-                registerService.append(service.type().name()).append(" ");
+                registerServiceStr.append(service.type().name()).append(", ");
             }
         });
-        LOG.info("[文件存储服务已成功注册]>>> [{}]{}", storageServiceMap.size(), registerService);
+
+        LOG.info("[文件存储服务已成功注册]>>> [{}]{}",
+                storageServiceMap.size(), StringUtils.removeEnd(registerServiceStr.toString(), ", "));
     }
 
     /**

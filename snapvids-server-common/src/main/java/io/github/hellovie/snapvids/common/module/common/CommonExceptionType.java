@@ -3,10 +3,6 @@ package io.github.hellovie.snapvids.common.module.common;
 import io.github.hellovie.snapvids.common.exception.manager.ExceptionCode;
 import io.github.hellovie.snapvids.common.exception.manager.ExceptionModule;
 import io.github.hellovie.snapvids.common.exception.manager.ExceptionSource;
-import io.github.hellovie.snapvids.common.exception.notify.ExceptionNotifyInfo;
-import io.github.hellovie.snapvids.common.exception.notify.NotifyService;
-import io.github.hellovie.snapvids.common.exception.notify.NotifyServiceManager;
-import io.github.hellovie.snapvids.common.exception.notify.NotifyServiceManager.Builder;
 import io.github.hellovie.snapvids.common.module.ExceptionModuleType;
 
 import static io.github.hellovie.snapvids.common.exception.model.ExceptionSourceType.*;
@@ -25,16 +21,12 @@ public enum CommonExceptionType implements ExceptionCode {
     TEST_BUSINESS_EXCEPTION(BUSINESS, 1, "这是一个业务异常测试案例", true),
 
     /**
-     * 找不到异常通知服务 {@link NotifyService} 的实现类
-     *
-     * @see NotifyServiceManager#notify(String, ExceptionNotifyInfo)
+     * 找不到异常通知服务的实现类
      */
     NOTIFY_SERVICE_NOT_FOUND(ENVIRONMENT, 2, "找不到异常通知服务的实现类", false),
 
     /**
      * 异常通知服务注入失败
-     *
-     * @see Builder#addNotifyService(String, NotifyService)
      */
     NOTIFY_SERVICE_INVALID_INJECTION(ENVIRONMENT, 3, "异常通知服务注入失败", false),
 

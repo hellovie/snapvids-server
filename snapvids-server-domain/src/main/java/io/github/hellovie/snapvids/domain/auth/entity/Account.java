@@ -1,6 +1,6 @@
 package io.github.hellovie.snapvids.domain.auth.entity;
 
-import io.github.hellovie.snapvids.infrastructure.persistence.enums.UserState;
+import io.github.hellovie.snapvids.common.enums.UserState;
 import io.github.hellovie.snapvids.types.common.Id;
 import io.github.hellovie.snapvids.types.common.Ip;
 import io.github.hellovie.snapvids.types.common.PhoneNumber;

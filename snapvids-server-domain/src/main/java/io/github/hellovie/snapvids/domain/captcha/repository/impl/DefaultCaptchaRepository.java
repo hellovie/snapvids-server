@@ -1,6 +1,6 @@
 package io.github.hellovie.snapvids.domain.captcha.repository.impl;
 
-import io.github.hellovie.snapvids.common.cache.CacheService;
+import io.github.hellovie.snapvids.infrastructure.cache.CacheService;
 import io.github.hellovie.snapvids.domain.captcha.repository.CaptchaRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

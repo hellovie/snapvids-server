@@ -1,7 +1,7 @@
 package io.github.hellovie.snapvids.infrastructure.persistence.entity;
 
-import io.github.hellovie.snapvids.infrastructure.persistence.enums.LikeObjectType;
-import io.github.hellovie.snapvids.infrastructure.persistence.enums.LikeType;
+import io.github.hellovie.snapvids.common.enums.LikeObjectType;
+import io.github.hellovie.snapvids.common.enums.LikeType;
 
 import javax.persistence.*;
 

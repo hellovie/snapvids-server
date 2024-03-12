@@ -1,7 +1,7 @@
 package io.github.hellovie.snapvids.infrastructure.persistence.entity;
 
-import io.github.hellovie.snapvids.infrastructure.persistence.enums.CreationType;
-import io.github.hellovie.snapvids.infrastructure.persistence.enums.CreationVisibility;
+import io.github.hellovie.snapvids.common.enums.CreationType;
+import io.github.hellovie.snapvids.common.enums.CreationVisibility;
 
 import javax.persistence.*;
 import java.util.List;

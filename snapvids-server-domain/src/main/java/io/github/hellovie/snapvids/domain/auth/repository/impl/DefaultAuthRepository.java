@@ -1,6 +1,6 @@
 package io.github.hellovie.snapvids.domain.auth.repository.impl;
 
-import io.github.hellovie.snapvids.common.cache.CacheService;
+
 import io.github.hellovie.snapvids.common.exception.business.DataException;
 import io.github.hellovie.snapvids.common.module.user.UserExceptionType;
 import io.github.hellovie.snapvids.domain.auth.entity.Account;
@@ -8,6 +8,7 @@ import io.github.hellovie.snapvids.domain.auth.entity.SysPermission;
 import io.github.hellovie.snapvids.domain.auth.entity.SysRole;
 import io.github.hellovie.snapvids.domain.auth.entity.SysUser;
 import io.github.hellovie.snapvids.domain.auth.repository.AuthRepository;
+import io.github.hellovie.snapvids.infrastructure.cache.CacheService;
 import io.github.hellovie.snapvids.infrastructure.persistence.dao.UserDao;
 import io.github.hellovie.snapvids.infrastructure.persistence.entity.Permission;
 import io.github.hellovie.snapvids.infrastructure.persistence.entity.Role;

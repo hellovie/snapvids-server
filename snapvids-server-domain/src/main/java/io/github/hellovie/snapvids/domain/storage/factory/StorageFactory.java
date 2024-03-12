@@ -1,7 +1,7 @@
 package io.github.hellovie.snapvids.domain.storage.factory;
 
+import io.github.hellovie.snapvids.common.enums.FileStorage;
 import io.github.hellovie.snapvids.domain.storage.service.StorageService;
-import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileStorage;
 
 import java.util.List;
 

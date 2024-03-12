@@ -1,6 +1,6 @@
 package io.github.hellovie.snapvids.domain.storage.annotation;
 
-import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileStorage;
+import io.github.hellovie.snapvids.common.enums.FileStorage;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

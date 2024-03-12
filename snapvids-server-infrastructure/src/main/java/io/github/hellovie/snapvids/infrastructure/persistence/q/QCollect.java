@@ -3,6 +3,7 @@ package io.github.hellovie.snapvids.infrastructure.persistence.q;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
 import com.querydsl.core.types.dsl.*;
+import io.github.hellovie.snapvids.common.enums.CollectObjectType;
 import io.github.hellovie.snapvids.infrastructure.persistence.entity.Collect;
 
 import javax.annotation.Generated;
@@ -32,7 +33,7 @@ public class QCollect extends EntityPathBase<Collect> {
     //inherited
     public final BooleanPath isDeleted = _super.isDeleted;
 
-    public final EnumPath<io.github.hellovie.snapvids.infrastructure.persistence.enums.CollectObjectType> objectType = createEnum("objectType", io.github.hellovie.snapvids.infrastructure.persistence.enums.CollectObjectType.class);
+    public final EnumPath<CollectObjectType> objectType = createEnum("objectType", CollectObjectType.class);
 
     public final NumberPath<Long> userId = createNumber("userId", Long.class);
 

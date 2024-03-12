@@ -1,26 +1,26 @@
 package io.github.hellovie.snapvids.domain.storage.service.impl;
 
+import io.github.hellovie.snapvids.common.enums.FileStorage;
 import io.github.hellovie.snapvids.common.exception.system.UtilException;
-import io.github.hellovie.snapvids.common.module.file.FileExceptionType;
+import io.github.hellovie.snapvids.domain.storage.event.GetTempUrlQuery;
+import io.github.hellovie.snapvids.domain.storage.vo.UploadToken;
+import io.github.hellovie.snapvids.domain.storage.service.StorageService;
 import io.github.hellovie.snapvids.domain.storage.annotation.StorageServiceMark;
-import io.github.hellovie.snapvids.domain.storage.entity.FileMetadata;
 import io.github.hellovie.snapvids.domain.storage.event.CheckUploadedCommand;
 import io.github.hellovie.snapvids.domain.storage.event.GenUploadTokenCommand;
 import io.github.hellovie.snapvids.domain.storage.event.GetUrlQuery;
-import io.github.hellovie.snapvids.domain.storage.repository.StorageRepository;
-import io.github.hellovie.snapvids.domain.storage.service.StorageService;
-import io.github.hellovie.snapvids.domain.storage.vo.UploadToken;
-import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileExt;
-import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileStorage;
-import io.github.hellovie.snapvids.infrastructure.properties.ServerProperties;
+import io.github.hellovie.snapvids.domain.util.ContextHolder;
+import io.github.hellovie.snapvids.types.common.Id;
 import io.github.hellovie.snapvids.types.common.ValueString;
-import io.github.hellovie.snapvids.types.file.FilePath;
-import io.github.hellovie.snapvids.types.file.Filename;
+import io.github.hellovie.snapvids.infrastructure.service.upload.impl.LocalUploadService;
+import io.github.hellovie.snapvids.infrastructure.service.upload.vo.LocalUploadToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+
+import static io.github.hellovie.snapvids.common.module.file.FileExceptionType.*;
 
 /**
  * 本地存储服务。
@@ -33,12 +33,6 @@ import javax.annotation.Resource;
 public class LocalStorageService implements StorageService {
 
     private static final Logger LOG = LoggerFactory.getLogger(LocalStorageService.class);
-
-    @Resource(name = "serverProperties")
-    private ServerProperties serverProperties;
-
-    @Resource(name = "storageRepository")
-    private StorageRepository storageRepository;
 
     /**
      * 本地上传服务
@@ -53,7 +47,17 @@ public class LocalStorageService implements StorageService {
      */
     @Override
     public UploadToken generateUploadToken(GenUploadTokenCommand command) throws UtilException {
-        return uploadService.createToken(command.getFileId(), command.getFileKey());
+        if (command == null) {
+            throw new UtilException(GEN_UPLOAD_TOKEN_FAILED);
+        }
+
+        try {
+            Id curUserId = ContextHolder.getUserOrElseThrow().getId();
+            LocalUploadToken token = uploadService.createToken(curUserId, command.getFileId(), command.getFileKey());
+            return UploadToken.Convertor.toUploadToken(token);
+        } catch (Exception ex) {
+            throw new UtilException(GEN_UPLOAD_TOKEN_FAILED, ex);
+        }
     }
 
     /**
@@ -64,21 +68,35 @@ public class LocalStorageService implements StorageService {
     @Override
     public ValueString getUrl(GetUrlQuery query) throws UtilException {
         if (query == null) {
-            throw new UtilException(FileExceptionType.GET_FILE_ACCESS_URL_FAILED);
+            throw new UtilException(GET_FILE_ACCESS_URL_FAILED);
         }
 
         try {
-            FileMetadata fileMetadata = storageRepository.findByFileKeyAndUserId(query.getFileKey(),
-                    query.getCreatedById());
-            FilePath path = fileMetadata.getPath();
-            Filename storageName = fileMetadata.getStorageName();
-            FileExt ext = fileMetadata.getExt();
-            String url = serverProperties.getUrl() + path.getValue() + "/" +
-                    storageName.getValue() + "." + ext.name().toLowerCase();
-            return ValueString.buildOrElseThrow(url, FileExceptionType.GET_FILE_ACCESS_URL_FAILED);
+            Id curUserId = ContextHolder.getUserOrElseThrow().getId();
+            return uploadService.getUrl(curUserId, query.getFileKey());
         } catch (Exception ex) {
             LOG.error("[获取文件访问路径异常]>>> 方法入参={}", query);
-            throw new UtilException(FileExceptionType.GET_FILE_ACCESS_URL_FAILED, ex);
+            throw new UtilException(GET_FILE_ACCESS_URL_FAILED, ex);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see StorageService#getTempUrl(GetTempUrlQuery)
+     */
+    @Override
+    public ValueString getTempUrl(GetTempUrlQuery query) throws UtilException {
+        if (query == null) {
+            throw new UtilException(GET_FILE_TEMP_ACCESS_URL_FAILED);
+        }
+
+        try {
+            Id curUserId = ContextHolder.getUserOrElseThrow().getId();
+            return uploadService.getTempUrl(curUserId, query.getFileKey());
+        } catch (Exception ex) {
+            LOG.error("[获取文件临时访问路径异常]>>> 方法入参={}", query);
+            throw new UtilException(GET_FILE_TEMP_ACCESS_URL_FAILED, ex);
         }
     }
 
@@ -93,6 +111,7 @@ public class LocalStorageService implements StorageService {
             return false;
         }
 
-        return uploadService.checkUploaded(command.getFileKey());
+        Id curUserId = ContextHolder.getUserOrElseThrow().getId();
+        return uploadService.checkUploaded(curUserId, command.getFileKey());
     }
 }

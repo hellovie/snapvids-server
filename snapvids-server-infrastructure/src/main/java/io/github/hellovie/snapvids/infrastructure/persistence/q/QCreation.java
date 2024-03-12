@@ -3,6 +3,8 @@ package io.github.hellovie.snapvids.infrastructure.persistence.q;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
 import com.querydsl.core.types.dsl.*;
+import io.github.hellovie.snapvids.common.enums.CreationType;
+import io.github.hellovie.snapvids.common.enums.CreationVisibility;
 import io.github.hellovie.snapvids.infrastructure.persistence.entity.Creation;
 import io.github.hellovie.snapvids.infrastructure.persistence.entity.Tag;
 
@@ -60,7 +62,7 @@ public class QCreation extends EntityPathBase<Creation> {
 
     public final ListPath<Tag, QTag> tags = this.<Tag, QTag>createList("tags", Tag.class, QTag.class, PathInits.DIRECT2);
 
-    public final EnumPath<io.github.hellovie.snapvids.infrastructure.persistence.enums.CreationType> type = createEnum("type", io.github.hellovie.snapvids.infrastructure.persistence.enums.CreationType.class);
+    public final EnumPath<CreationType> type = createEnum("type", CreationType.class);
 
     //inherited
     public final DateTimePath<java.sql.Timestamp> utcCreated = _super.utcCreated;
@@ -70,7 +72,7 @@ public class QCreation extends EntityPathBase<Creation> {
 
     public final NumberPath<Integer> views = createNumber("views", Integer.class);
 
-    public final EnumPath<io.github.hellovie.snapvids.infrastructure.persistence.enums.CreationVisibility> visibility = createEnum("visibility", io.github.hellovie.snapvids.infrastructure.persistence.enums.CreationVisibility.class);
+    public final EnumPath<CreationVisibility> visibility = createEnum("visibility", CreationVisibility.class);
 
     public final NumberPath<Integer> volume = createNumber("volume", Integer.class);
 

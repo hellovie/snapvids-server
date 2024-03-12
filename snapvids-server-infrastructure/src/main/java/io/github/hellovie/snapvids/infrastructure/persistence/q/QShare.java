@@ -3,6 +3,8 @@ package io.github.hellovie.snapvids.infrastructure.persistence.q;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
 import com.querydsl.core.types.dsl.*;
+import io.github.hellovie.snapvids.common.enums.ShareFromType;
+import io.github.hellovie.snapvids.common.enums.ShareToType;
 import io.github.hellovie.snapvids.infrastructure.persistence.entity.Share;
 
 import javax.annotation.Generated;
@@ -26,7 +28,7 @@ public class QShare extends EntityPathBase<Share> {
 
     public final NumberPath<Long> fromCreationId = createNumber("fromCreationId", Long.class);
 
-    public final EnumPath<io.github.hellovie.snapvids.infrastructure.persistence.enums.ShareFromType> fromType = createEnum("fromType", io.github.hellovie.snapvids.infrastructure.persistence.enums.ShareFromType.class);
+    public final EnumPath<ShareFromType> fromType = createEnum("fromType", ShareFromType.class);
 
     //inherited
     public final NumberPath<Long> id = _super.id;
@@ -34,7 +36,7 @@ public class QShare extends EntityPathBase<Share> {
     //inherited
     public final BooleanPath isDeleted = _super.isDeleted;
 
-    public final EnumPath<io.github.hellovie.snapvids.infrastructure.persistence.enums.ShareToType> toType = createEnum("toType", io.github.hellovie.snapvids.infrastructure.persistence.enums.ShareToType.class);
+    public final EnumPath<ShareToType> toType = createEnum("toType", ShareToType.class);
 
     public final NumberPath<Long> toUserId = createNumber("toUserId", Long.class);
 

@@ -3,6 +3,7 @@ package io.github.hellovie.snapvids.infrastructure.persistence.q;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
 import com.querydsl.core.types.dsl.*;
+import io.github.hellovie.snapvids.common.enums.UserState;
 import io.github.hellovie.snapvids.infrastructure.persistence.entity.Role;
 import io.github.hellovie.snapvids.infrastructure.persistence.entity.User;
 
@@ -43,7 +44,7 @@ public class QUser extends EntityPathBase<User> {
 
     public final ListPath<Role, QRole> roles = this.<Role, QRole>createList("roles", Role.class, QRole.class, PathInits.DIRECT2);
 
-    public final EnumPath<io.github.hellovie.snapvids.infrastructure.persistence.enums.UserState> state = createEnum("state", io.github.hellovie.snapvids.infrastructure.persistence.enums.UserState.class);
+    public final EnumPath<UserState> state = createEnum("state", UserState.class);
 
     public final StringPath username = createString("username");
 

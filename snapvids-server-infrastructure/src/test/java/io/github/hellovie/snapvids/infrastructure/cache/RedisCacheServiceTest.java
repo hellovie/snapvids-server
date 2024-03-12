@@ -1,6 +1,5 @@
 package io.github.hellovie.snapvids.infrastructure.cache;
 
-import io.github.hellovie.snapvids.common.cache.CacheService;
 import io.github.hellovie.snapvids.infrastructure.config.InfrastructureBeanConfig;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

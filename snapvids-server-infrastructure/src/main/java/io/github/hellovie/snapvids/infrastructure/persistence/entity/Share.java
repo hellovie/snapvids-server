@@ -1,7 +1,7 @@
 package io.github.hellovie.snapvids.infrastructure.persistence.entity;
 
-import io.github.hellovie.snapvids.infrastructure.persistence.enums.ShareFromType;
-import io.github.hellovie.snapvids.infrastructure.persistence.enums.ShareToType;
+import io.github.hellovie.snapvids.common.enums.ShareFromType;
+import io.github.hellovie.snapvids.common.enums.ShareToType;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;

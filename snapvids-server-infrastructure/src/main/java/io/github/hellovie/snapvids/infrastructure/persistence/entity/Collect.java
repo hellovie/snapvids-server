@@ -1,6 +1,6 @@
 package io.github.hellovie.snapvids.infrastructure.persistence.entity;
 
-import io.github.hellovie.snapvids.infrastructure.persistence.enums.CollectObjectType;
+import io.github.hellovie.snapvids.common.enums.CollectObjectType;
 
 import javax.persistence.*;
 

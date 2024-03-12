@@ -1,6 +1,6 @@
 package io.github.hellovie.snapvids.infrastructure.persistence.entity;
 
-import io.github.hellovie.snapvids.infrastructure.persistence.enums.Gender;
+import io.github.hellovie.snapvids.common.enums.Gender;
 
 import javax.persistence.*;
 import java.sql.Timestamp;

@@ -1,6 +1,7 @@
 package io.github.hellovie.snapvids.domain.auth.strategy.impl.username;
 
 import io.github.hellovie.snapvids.common.context.Context;
+import io.github.hellovie.snapvids.common.enums.UserState;
 import io.github.hellovie.snapvids.common.exception.business.DataException;
 import io.github.hellovie.snapvids.common.exception.business.ServiceException;
 import io.github.hellovie.snapvids.common.module.user.UserExceptionType;
@@ -12,7 +13,6 @@ import io.github.hellovie.snapvids.domain.auth.strategy.LoginParams;
 import io.github.hellovie.snapvids.domain.auth.strategy.RegisterParams;
 import io.github.hellovie.snapvids.domain.auth.strategy.annotation.AuthStrategyMark;
 import io.github.hellovie.snapvids.domain.util.ContextHolder;
-import io.github.hellovie.snapvids.infrastructure.persistence.enums.UserState;
 import io.github.hellovie.snapvids.types.common.Ip;
 import io.github.hellovie.snapvids.types.user.Password;
 import org.slf4j.Logger;

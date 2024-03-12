@@ -3,6 +3,7 @@ package io.github.hellovie.snapvids.infrastructure.persistence.q;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
 import com.querydsl.core.types.dsl.*;
+import io.github.hellovie.snapvids.common.enums.FollowType;
 import io.github.hellovie.snapvids.infrastructure.persistence.entity.Follow;
 
 import javax.annotation.Generated;
@@ -34,7 +35,7 @@ public class QFollow extends EntityPathBase<Follow> {
 
     public final StringPath remark = createString("remark");
 
-    public final EnumPath<io.github.hellovie.snapvids.infrastructure.persistence.enums.FollowType> type = createEnum("type", io.github.hellovie.snapvids.infrastructure.persistence.enums.FollowType.class);
+    public final EnumPath<FollowType> type = createEnum("type", FollowType.class);
 
     //inherited
     public final DateTimePath<java.sql.Timestamp> utcCreated = _super.utcCreated;

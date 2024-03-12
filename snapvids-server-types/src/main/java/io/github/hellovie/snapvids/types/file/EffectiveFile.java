@@ -1,11 +1,11 @@
 package io.github.hellovie.snapvids.types.file;
 
+import io.github.hellovie.snapvids.common.enums.FileExt;
+import io.github.hellovie.snapvids.common.enums.FileType;
 import io.github.hellovie.snapvids.common.exception.business.InvalidParamException;
 import io.github.hellovie.snapvids.common.types.DomainPrimitive;
 import io.github.hellovie.snapvids.common.types.Validation;
 import io.github.hellovie.snapvids.common.util.TypeConvertor;
-import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileExt;
-import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileType;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;

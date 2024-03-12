@@ -1,6 +1,6 @@
 package io.github.hellovie.snapvids.infrastructure.persistence.dao.custom;
 
-import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileState;
+import io.github.hellovie.snapvids.common.enums.FileState;
 
 /**
  * 自定义文件仓储接口。

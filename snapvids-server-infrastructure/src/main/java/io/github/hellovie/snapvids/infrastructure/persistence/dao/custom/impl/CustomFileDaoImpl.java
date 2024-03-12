@@ -2,7 +2,7 @@ package io.github.hellovie.snapvids.infrastructure.persistence.dao.custom.impl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.github.hellovie.snapvids.infrastructure.persistence.dao.custom.CustomFileDao;
-import io.github.hellovie.snapvids.infrastructure.persistence.enums.FileState;
+import io.github.hellovie.snapvids.common.enums.FileState;
 import io.github.hellovie.snapvids.infrastructure.persistence.q.QFile;
 
 import javax.annotation.Resource;

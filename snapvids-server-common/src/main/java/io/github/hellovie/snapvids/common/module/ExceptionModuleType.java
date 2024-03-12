@@ -4,6 +4,7 @@ import io.github.hellovie.snapvids.common.exception.manager.ExceptionCode;
 import io.github.hellovie.snapvids.common.exception.manager.ExceptionModule;
 import io.github.hellovie.snapvids.common.module.common.CommonExceptionType;
 import io.github.hellovie.snapvids.common.module.file.FileExceptionType;
+import io.github.hellovie.snapvids.common.module.upload.UploadExceptionType;
 import io.github.hellovie.snapvids.common.module.user.UserExceptionType;
 
 /**
@@ -20,6 +21,7 @@ public enum ExceptionModuleType implements ExceptionModule {
 
     FILE_MODULE(2, "文件模块", "文件模块", FileExceptionType.class),
 
+    UPLOAD_MODULE(3, "上传模块", "上传模块", UploadExceptionType.class),
     ;
 
     /**

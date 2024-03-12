@@ -1,6 +1,6 @@
 package io.github.hellovie.snapvids.domain.auth.service.impl;
 
-import io.github.hellovie.snapvids.common.cache.CacheService;
+import io.github.hellovie.snapvids.infrastructure.cache.CacheService;
 import io.github.hellovie.snapvids.common.context.Context;
 import io.github.hellovie.snapvids.common.exception.business.AuthException;
 import io.github.hellovie.snapvids.common.exception.business.DataException;
@@ -9,8 +9,8 @@ import io.github.hellovie.snapvids.common.exception.system.ConfigException;
 import io.github.hellovie.snapvids.common.exception.system.UtilException;
 import io.github.hellovie.snapvids.common.module.user.UserCacheKey;
 import io.github.hellovie.snapvids.common.module.user.UserExceptionType;
-import io.github.hellovie.snapvids.common.service.IdGenerateService;
-import io.github.hellovie.snapvids.common.service.TokenService;
+import io.github.hellovie.snapvids.infrastructure.service.generator.IdGenerateService;
+import io.github.hellovie.snapvids.infrastructure.service.token.TokenService;
 import io.github.hellovie.snapvids.domain.auth.entity.Account;
 import io.github.hellovie.snapvids.domain.auth.entity.SysUser;
 import io.github.hellovie.snapvids.domain.auth.enums.TokenType;

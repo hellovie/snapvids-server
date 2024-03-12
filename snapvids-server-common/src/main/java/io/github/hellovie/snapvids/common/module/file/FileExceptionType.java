@@ -81,89 +81,46 @@ public enum FileExceptionType implements ExceptionCode {
     WRONG_FILE_STATE(BUSINESS, 13, "错误的文件状态", true),
 
     /**
-     * 获取文件访问路径失败
-     */
-    GET_FILE_ACCESS_URL_FAILED(THIRD_PARTY_SERVICE, 14, "获取文件访问路径失败", false),
-
-    /**
      * 文件还未上传成功
      */
-    FILE_HAS_NOT_YET_BEEN_UPLOADED(BUSINESS, 15, "文件还未上传成功", true),
+    FILE_HAS_NOT_YET_BEEN_UPLOADED(BUSINESS, 14, "文件还未上传成功", true),
 
     /**
      * 文件已存在
      */
-    FILE_ALREADY_EXIST(BUSINESS, 16, "文件已存在", false),
+    FILE_ALREADY_EXIST(BUSINESS, 15, "文件已存在", false),
 
-    /**
-     * 上传令牌生成失败
-     */
-    UPLOAD_TOKEN_GENERATE_FAILED(SYSTEM, 17, "上传令牌生成失败", false),
-
-    /**
-     * 上传令牌已过期
-     */
-    UPLOAD_TOKEN_HAS_EXPIRED(BUSINESS, 18, "上传令牌已过期", true),
-
-    /**
-     * 无效的上传令牌
-     */
-    INVALID_UPLOAD_TOKEN(BUSINESS, 19, "无效的上传令牌", true),
 
     /**
      * 上传的文件不能为空
      */
-    UPLOAD_FILE_CANNOT_BE_EMPTY(BUSINESS, 20, "上传的文件不能为空", true),
+    UPLOAD_FILE_CANNOT_BE_EMPTY(BUSINESS, 16, "上传的文件不能为空", true),
 
-    /**
-     * 上传失败
-     */
-    UPLOAD_FILE_FAILED(BUSINESS, 21, "上传失败", true),
-
-    /**
-     * 创建文件夹失败
-     */
-    CREATE_FOLDER_FAILED(SYSTEM, 22, "创建文件夹失败", false),
-
-    /**
-     * 保存文件到磁盘失败
-     */
-    FILE_SAVE_TO_DISK_FAILED(SYSTEM, 23, "无法将文件保存到磁盘", false),
-
-    /**
-     * 超出单次上传的文件大小
-     */
-    UPLOAD_EXCEED_SIZE_LIMIT_FILE(BUSINESS, 24, "超出单次上传的文件大小", false),
-
-    /**
-     * 找不到分片文件
-     */
-    CHUNK_FILE_NOT_FOUND(BUSINESS, 25, "找不到分片文件", false),
-
-    /**
-     * 缺少分片文件
-     */
-    MISSING_CHUNK_FILE(BUSINESS, 26, "缺少分片文件，请先上传", false),
-
-    /**
-     * 数据库分片文件数据异常
-     */
-    DB_CHUNK_FILE_DATA_EXCEPTION(SYSTEM, 27, "数据库分片文件数据异常", false),
-
-    /**
-     * 合并文件失败
-     */
-    MERGE_CHUNK_FILE_FAILED(BUSINESS, 28, "合并文件失败", false),
 
     /**
      * 不支持的文件类型
      */
-    UNSUPPORTED_FILE_TYPES(BUSINESS, 29, "不支持的文件类型", true),
+    UNSUPPORTED_FILE_TYPES(BUSINESS, 17, "不支持的文件类型", true),
 
     /**
      * 上传令牌不能为空
      */
-    UPLOAD_TOKEN_CANNOT_BE_EMPTY(BUSINESS, 30, "上传令牌不能为空", true),
+    UPLOAD_TOKEN_CANNOT_BE_EMPTY(BUSINESS, 18, "上传令牌不能为空", true),
+
+    /**
+     * 外部服务生成文件上传令牌失败
+     */
+    GEN_UPLOAD_TOKEN_FAILED(THIRD_PARTY_SERVICE, 19, "外部服务生成文件上传令牌失败", false),
+
+    /**
+     * 外部服务获取文件访问路径失败
+     */
+    GET_FILE_ACCESS_URL_FAILED(THIRD_PARTY_SERVICE, 20, "外部服务获取文件访问路径失败", false),
+
+    /**
+     * 外部服务获取文件临时访问路径失败
+     */
+    GET_FILE_TEMP_ACCESS_URL_FAILED(THIRD_PARTY_SERVICE, 21, "外部服务获取文件临时访问路径失败", false),
 
     ;
 

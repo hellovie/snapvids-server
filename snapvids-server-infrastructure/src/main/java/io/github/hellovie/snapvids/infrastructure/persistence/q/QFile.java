@@ -3,6 +3,7 @@ package io.github.hellovie.snapvids.infrastructure.persistence.q;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
 import com.querydsl.core.types.dsl.*;
+import io.github.hellovie.snapvids.common.enums.*;
 import io.github.hellovie.snapvids.infrastructure.persistence.entity.File;
 
 import javax.annotation.Generated;
@@ -30,7 +31,7 @@ public class QFile extends EntityPathBase<File> {
 
     public final NumberPath<Long> createdById = createNumber("createdById", Long.class);
 
-    public final EnumPath<io.github.hellovie.snapvids.infrastructure.persistence.enums.FileExt> ext = createEnum("ext", io.github.hellovie.snapvids.infrastructure.persistence.enums.FileExt.class);
+    public final EnumPath<FileExt> ext = createEnum("ext", FileExt.class);
 
     public final StringPath fileKey = createString("fileKey");
 
@@ -51,13 +52,13 @@ public class QFile extends EntityPathBase<File> {
 
     public final NumberPath<Long> size = createNumber("size", Long.class);
 
-    public final EnumPath<io.github.hellovie.snapvids.infrastructure.persistence.enums.FileState> state = createEnum("state", io.github.hellovie.snapvids.infrastructure.persistence.enums.FileState.class);
+    public final EnumPath<FileState> state = createEnum("state", FileState.class);
 
-    public final EnumPath<io.github.hellovie.snapvids.infrastructure.persistence.enums.FileStorage> storage = createEnum("storage", io.github.hellovie.snapvids.infrastructure.persistence.enums.FileStorage.class);
+    public final EnumPath<FileStorage> storage = createEnum("storage", FileStorage.class);
 
     public final StringPath storageName = createString("storageName");
 
-    public final EnumPath<io.github.hellovie.snapvids.infrastructure.persistence.enums.FileType> type = createEnum("type", io.github.hellovie.snapvids.infrastructure.persistence.enums.FileType.class);
+    public final EnumPath<FileType> type = createEnum("type", FileType.class);
 
     //inherited
     public final DateTimePath<java.sql.Timestamp> utcCreated = _super.utcCreated;
@@ -65,7 +66,7 @@ public class QFile extends EntityPathBase<File> {
     //inherited
     public final DateTimePath<java.sql.Timestamp> utcModified = _super.utcModified;
 
-    public final EnumPath<io.github.hellovie.snapvids.infrastructure.persistence.enums.FileVisibility> visibility = createEnum("visibility", io.github.hellovie.snapvids.infrastructure.persistence.enums.FileVisibility.class);
+    public final EnumPath<FileVisibility> visibility = createEnum("visibility", FileVisibility.class);
 
     public QFile(String variable) {
         super(File.class, forVariable(variable));

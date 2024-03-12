@@ -3,6 +3,7 @@ package io.github.hellovie.snapvids.infrastructure.persistence.q;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
 import com.querydsl.core.types.dsl.*;
+import io.github.hellovie.snapvids.common.enums.PermissionType;
 import io.github.hellovie.snapvids.infrastructure.persistence.entity.Permission;
 
 import javax.annotation.Generated;
@@ -42,7 +43,7 @@ public class QPermission extends EntityPathBase<Permission> {
 
     public final NumberPath<Integer> sort = createNumber("sort", Integer.class);
 
-    public final EnumPath<io.github.hellovie.snapvids.infrastructure.persistence.enums.PermissionType> type = createEnum("type", io.github.hellovie.snapvids.infrastructure.persistence.enums.PermissionType.class);
+    public final EnumPath<PermissionType> type = createEnum("type", PermissionType.class);
 
     public final StringPath url = createString("url");
 

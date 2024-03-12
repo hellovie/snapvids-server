@@ -1,7 +1,7 @@
 package io.github.hellovie.snapvids.application.upload.event;
 
-import io.github.hellovie.snapvids.domain.storage.vo.UploadProgressVO;
 import io.github.hellovie.snapvids.types.file.ChunkNumber;
+import io.github.hellovie.snapvids.infrastructure.service.upload.vo.UploadProgressVO;
 
 import java.util.List;
 import java.util.stream.Collectors;

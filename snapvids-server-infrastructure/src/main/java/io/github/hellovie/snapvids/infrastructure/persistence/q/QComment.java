@@ -3,6 +3,7 @@ package io.github.hellovie.snapvids.infrastructure.persistence.q;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
 import com.querydsl.core.types.dsl.*;
+import io.github.hellovie.snapvids.common.enums.CommentType;
 import io.github.hellovie.snapvids.infrastructure.persistence.entity.Comment;
 
 import javax.annotation.Generated;
@@ -53,7 +54,7 @@ public class QComment extends EntityPathBase<Comment> {
 
     public final NumberPath<Long> replyUserId = createNumber("replyUserId", Long.class);
 
-    public final EnumPath<io.github.hellovie.snapvids.infrastructure.persistence.enums.CommentType> type = createEnum("type", io.github.hellovie.snapvids.infrastructure.persistence.enums.CommentType.class);
+    public final EnumPath<CommentType> type = createEnum("type", CommentType.class);
 
     //inherited
     public final DateTimePath<java.sql.Timestamp> utcCreated = _super.utcCreated;

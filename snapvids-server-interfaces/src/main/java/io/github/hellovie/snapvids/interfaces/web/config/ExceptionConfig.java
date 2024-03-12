@@ -2,9 +2,9 @@ package io.github.hellovie.snapvids.interfaces.web.config;
 
 import io.github.hellovie.snapvids.common.exception.manager.ExceptionManager;
 import io.github.hellovie.snapvids.common.exception.model.ExceptionSourceType;
-import io.github.hellovie.snapvids.common.exception.notify.NotifyService;
-import io.github.hellovie.snapvids.common.exception.notify.NotifyServiceManager;
-import io.github.hellovie.snapvids.common.exception.notify.NotifyServiceType;
+import io.github.hellovie.snapvids.infrastructure.service.notify.NotifyService;
+import io.github.hellovie.snapvids.infrastructure.service.notify.NotifyServiceManager;
+import io.github.hellovie.snapvids.infrastructure.service.notify.NotifyServiceType;
 import io.github.hellovie.snapvids.common.module.ExceptionModuleType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

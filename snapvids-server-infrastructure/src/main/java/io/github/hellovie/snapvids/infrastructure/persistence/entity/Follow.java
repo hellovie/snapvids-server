@@ -1,6 +1,6 @@
 package io.github.hellovie.snapvids.infrastructure.persistence.entity;
 
-import io.github.hellovie.snapvids.infrastructure.persistence.enums.FollowType;
+import io.github.hellovie.snapvids.common.enums.FollowType;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;

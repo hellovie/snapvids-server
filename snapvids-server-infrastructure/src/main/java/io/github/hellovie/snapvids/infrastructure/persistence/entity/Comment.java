@@ -1,6 +1,6 @@
 package io.github.hellovie.snapvids.infrastructure.persistence.entity;
 
-import io.github.hellovie.snapvids.infrastructure.persistence.enums.CommentType;
+import io.github.hellovie.snapvids.common.enums.CommentType;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;

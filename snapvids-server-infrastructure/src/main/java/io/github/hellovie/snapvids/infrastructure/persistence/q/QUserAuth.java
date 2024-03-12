@@ -3,6 +3,7 @@ package io.github.hellovie.snapvids.infrastructure.persistence.q;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
 import com.querydsl.core.types.dsl.*;
+import io.github.hellovie.snapvids.common.enums.AuthType;
 import io.github.hellovie.snapvids.infrastructure.persistence.entity.UserAuth;
 
 import javax.annotation.Generated;
@@ -34,7 +35,7 @@ public class QUserAuth extends EntityPathBase<UserAuth> {
     //inherited
     public final BooleanPath isDeleted = _super.isDeleted;
 
-    public final EnumPath<io.github.hellovie.snapvids.infrastructure.persistence.enums.AuthType> type = createEnum("type", io.github.hellovie.snapvids.infrastructure.persistence.enums.AuthType.class);
+    public final EnumPath<AuthType> type = createEnum("type", AuthType.class);
 
     public final QUser user;
 
