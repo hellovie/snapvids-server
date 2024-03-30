@@ -48,7 +48,6 @@ public class CaptchaDrawService implements DrawService {
         graphics.fillRect(0, 0, width, height);
         graphics.setFont(new Font("宋体,楷体,微软雅黑", Font.BOLD, FONT_SIZE));
 
-
         // 旋转原点的 x 坐标
         int x = 10;
         String ch;
@@ -68,7 +67,7 @@ public class CaptchaDrawService implements DrawService {
 
             // 反向旋转
             graphics.rotate(-degree * Math.PI / 180, x, 45);
-            x += 48;
+            x += 40;
         }
 
         // 画干扰线
@@ -136,7 +135,7 @@ public class CaptchaDrawService implements DrawService {
             return 0;
         }
 
-        return 50 * text.length();
+        return 10 + 40 * text.length();
     }
 
     /**
@@ -150,6 +149,6 @@ public class CaptchaDrawService implements DrawService {
             return 0;
         }
 
-        return 15 * text.length();
+        return 60;
     }
 }

@@ -16,12 +16,12 @@ public enum CaptchaType {
     /**
      * 字母
      */
-    LETTER(6, "abcdefghijklmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"),
+    LETTER(4, "abcdefghijklmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"),
 
     /**
      * 字母和数字混合
      */
-    MIXTURE(6, "123456789abcdefghijklmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"),
+    MIXTURE(4, "123456789abcdefghijklmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"),
 
     ;
 
